@@ -3,12 +3,12 @@
 @tailwind utilities;
 
 :root {
-  --background: #111111;
-  --foreground: #f9f9f9;
-  --accent-primary: #DA4453;
-  --accent-primary-hover: #9A2531;
+  --background: #121212;
+  --foreground: #f2f2f2;
+  --accent-primary: #da4453;
+  --accent-primary-hover: #9a2531;
   --accent-primary-active: #f14e5e;
-  --accent-secondary: #4A89DC;
+  --accent-secondary: #4a89dc;
   --accent-black: #0f0e0e;
 }
 
@@ -22,14 +22,17 @@ html {
   height: 100%;
   box-sizing: border-box;
   touch-action: manipulation;
-  font-feature-settings: 'case' 1, 'rlig' 1, 'calt' 0;
+  font-feature-settings:
+    'case' 1,
+    'rlig' 1,
+    'calt' 0;
 }
 
 html,
 body {
   text-rendering: optimizeLegibility;
   -moz-osx-font-smoothing: grayscale;
-  @apply text-foreground bg-background antialiased;
+  @apply bg-background text-foreground antialiased;
 }
 
 body {

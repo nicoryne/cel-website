@@ -1,6 +1,5 @@
-'use client';
 import Image from 'next/image';
-import cel_logo from '@/public/logos/cel.webp';
+import cel_logo from '@/../public/logos/cel.webp';
 import { Button } from '@headlessui/react';
 
 const navigationLinks = [
@@ -36,7 +35,7 @@ export default function Navbar() {
           </ul>
         </div>
         {/* Login Button */}
-        <Button className="rounded-md bg-[var(--accent-primary)] px-8 py-1 font-bold uppercase hover:bg-[var(--accent-primary-hover)] active:bg-[var(--accent-primary-active)]">
+        <Button className="rounded-md bg-[var(--accent-primary)] px-8 py-1 font-bold uppercase text-white hover:bg-[var(--accent-primary-hover)] active:bg-[var(--accent-primary-active)]">
           Login
         </Button>
       </div>
