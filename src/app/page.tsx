@@ -8,7 +8,7 @@ export default async function Home() {
   console.log(seriesList);
 
   return (
-    <div className="overflow-hidden">
+    <div>
       <Navbar />
 
       <StartPage seriesList={seriesList} />

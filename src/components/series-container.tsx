@@ -11,35 +11,10 @@ export default function SeriesContainer({
 }) {
   return (
     <div className="drop-shadow-md">
-      <div className="flex items-center justify-center rounded-t-md bg-neutral-900 px-6 py-4">
-        <div className="text-md grid grid-cols-3 items-center text-base">
-          <div className="flex flex-row items-center justify-between space-x-2">
-            <Image
-              className="text-[2px]"
-              src={series.team_a.logo_url}
-              alt="Logo"
-              width={40}
-              height={40}
-            />
-            <span>{series.team_a.school_abbrev}</span>
-          </div>
-          <div className="flex justify-center space-x-2">
-            <span>{series.team_a_score}</span>
-            <strong className="text-neutral-400">/</strong>
-            <span>{series.team_b_score}</span>
-          </div>
-          <div className="flex flex-row items-center justify-between space-x-2">
-            <span>{series.team_b.school_abbrev}</span>
-            <Image
-              className="text-[2px]"
-              src={series.team_b.logo_url}
-              alt="Logo"
-              width={40}
-              height={40}
-            />
-          </div>
-        </div>
-        {/* <div>
+      {/* Upper Container */}
+      <div className="grid grid-cols-2 items-center rounded-t-md bg-neutral-900 px-6 py-4">
+        {/* Time */}
+        <div>
           <time className="text-xl">
             {new Date(series.start_time)
               .toLocaleTimeString('en-US', {
@@ -54,14 +29,48 @@ export default function SeriesContainer({
           <span className="text-xs text-neutral-300">
             {new Date(series.start_time).getHours() < 12 ? 'AM' : 'PM'}
           </span>
-        </div> */}
+        </div>
+        {/* Team, Logo, Score */}
+        <div className="flex flex-row items-center space-x-6 text-base">
+          {/* Team A */}
+          <div className="flex-start flex min-w-24 flex-row items-center space-x-2">
+            <Image
+              className="text-[2px]"
+              src={series.team_a.logo_url}
+              alt="Logo"
+              width={40}
+              height={40}
+            />
+            <div className="flex flex-1 items-center justify-center">
+              <span>{series.team_a.school_abbrev}</span>
+            </div>
+          </div>
+          {/* Vs and Score */}
+          <div className="flex space-x-2">
+            <span>{series.team_a_score}</span>
+            <span className="text-neutral-400">/</span>
+            <span>{series.team_b_score}</span>
+          </div>
+          {/* Team B */}
+          <div className="flex-end flex min-w-24 flex-row items-center space-x-2">
+            <div className="flex flex-1 items-center justify-center">
+              <span>{series.team_b.school_abbrev}</span>
+            </div>
+            <Image
+              className="text-[2px]"
+              src={series.team_b.logo_url}
+              alt="Logo"
+              width={40}
+              height={40}
+            />
+          </div>
+        </div>
       </div>
+      {/* Lower Container */}
       <div className="flex flex-row justify-between rounded-b-md bg-[#121212] px-4 py-2 text-xs text-neutral-500">
         <Image
           className="text-[2px]"
-          src={
-            'https://uqulenyafyepinfweagp.supabase.co/storage/v1/object/public/logos/platforms/valorant.webp'
-          }
+          src={series.platform.logo_url}
           alt="Logo"
           width={20}
           height={20}
