@@ -12,9 +12,9 @@ export default function SeriesContainer({
   return (
     <div className="drop-shadow-md">
       {/* Upper Container */}
-      <div className="grid grid-cols-2 items-center rounded-t-md bg-neutral-900 px-6 py-4">
+      <div className="grid grid-cols-3 items-center rounded-t-md bg-neutral-900 px-6 py-4">
         {/* Time */}
-        <div>
+        <div className="col-span-1">
           <time className="text-xl">
             {new Date(series.start_time)
               .toLocaleTimeString('en-US', {
@@ -31,7 +31,7 @@ export default function SeriesContainer({
           </span>
         </div>
         {/* Team, Logo, Score */}
-        <div className="flex flex-row items-center space-x-6 text-base">
+        <div className="col-span-2 flex flex-row items-center space-x-6 text-base">
           {/* Team A */}
           <div className="flex-start flex min-w-24 flex-row items-center space-x-2">
             <Image

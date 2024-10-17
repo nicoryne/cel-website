@@ -1,17 +1,19 @@
+'use client';
 import Image from 'next/image';
 import cel_logo from '@/../public/logos/cel.webp';
 import { Button } from '@headlessui/react';
+import { useRouter } from 'next/navigation';
 
 const navigationLinks = [
   { name: 'Schedule', href: '#' },
-  { name: 'News', href: '#' },
   { name: 'Statistics', href: '#' },
-  { name: 'About Us', href: '#' }
+  { name: 'Standing', href: '#' }
 ];
 
 export default function Navbar() {
+  const router = useRouter();
   return (
-    <nav className="sticky top-0 z-50 flex min-w-full items-center justify-center p-8">
+    <nav className="sticky top-0 z-50 flex min-w-full items-center justify-center bg-[var(--background)] p-8">
       {/* Inner Nav */}
       <div className="flex w-full items-center justify-between xl:w-[50%]">
         {/* Logo and Links */}
@@ -35,7 +37,10 @@ export default function Navbar() {
           </ul>
         </div>
         {/* Login Button */}
-        <Button className="rounded-md bg-[var(--accent-primary)] px-8 py-1 font-bold uppercase text-white hover:bg-[var(--accent-primary-hover)] active:bg-[var(--accent-primary-active)]">
+        <Button
+          className="rounded-md bg-[var(--accent-primary)] px-8 py-1 font-bold uppercase text-white hover:bg-[var(--accent-primary-hover)] active:bg-[var(--accent-primary-active)]"
+          onClick={() => router.push('/sign-in')}
+        >
           Login
         </Button>
       </div>

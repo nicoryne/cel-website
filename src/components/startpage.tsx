@@ -116,7 +116,7 @@ export default function StartPage({
       </div>
 
       {/* Match Schedules */}
-      <div className="flex h-full w-full flex-col overflow-y-auto overscroll-auto md:w-[70%] lg:w-[90%] xl:w-[50%]">
+      <div className="flex h-full w-full flex-col md:w-[70%] lg:w-[90%] xl:w-[50%]">
         <div className="h-[calc(100vh-80px)] flex-grow">
           {sortedDates.map((date) => (
             <div key={date} className="flex flex-col p-8">
