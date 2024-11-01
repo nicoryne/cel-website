@@ -1,8 +1,5 @@
 'use client';
 import React from 'react';
-import SwitchGroup from './SwitchGroup';
-import mlbb_logo from '@/../public/logos/mlbb.webp';
-import valorant_logo from '@/../public/logos/valorant.webp';
 import SeriesContainer from './SeriesContainer';
 import { SeriesWithDetails, GamePlatform } from '@/lib/types';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/20/solid';

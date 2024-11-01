@@ -1,9 +1,9 @@
-import TopBar from '@/components/admin/topbar';
+import AdminHeader from '@/components/admin/AdminHeader';
 
 export default async function AdminHome() {
   return (
     <>
-      <TopBar />
+      <AdminHeader />
     </>
   );
 }
