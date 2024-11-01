@@ -12,7 +12,6 @@ export type LeagueSchedule = {
 
 export type Team = {
   id: string;
-  team_name: string;
   school_abbrev: string;
   school_name: string;
   logo_url: string;
@@ -29,7 +28,6 @@ export type GamePlatform = {
 export type Series = {
     id: string; /* PK */
     league_schedule_id: string; /* FK */
-    series_date: Date;
     series_type: string;
     team_a_id: string; /* FK */
     team_a_score: number;

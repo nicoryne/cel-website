@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={rem.variable}>
-      <body className="h-full">{children}</body>
+      <body>{children}</body>
     </html>
   );
 }

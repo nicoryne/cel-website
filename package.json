@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@headlessui/react": "^2.1.9",
     "@heroicons/react": "^2.1.5",
     "@supabase/ssr": "^0.5.1",
     "cel-tracker": "file:",

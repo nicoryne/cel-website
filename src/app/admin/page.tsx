@@ -1,5 +1,9 @@
-import LogoutButton from '@/components/admin/sign-out-button';
+import TopBar from '@/components/admin/topbar';
 
 export default async function AdminHome() {
-  return <LogoutButton />;
+  return (
+    <>
+      <TopBar />
+    </>
+  );
 }

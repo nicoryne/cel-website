@@ -2,7 +2,6 @@
 
 import { SeriesWithDetails } from '@/lib/types';
 import Image from 'next/image';
-import { platform } from 'os';
 
 export default function SeriesContainer({
   series
@@ -10,12 +9,12 @@ export default function SeriesContainer({
   series: SeriesWithDetails;
 }) {
   return (
-    <div className="drop-shadow-md">
+    <div>
       {/* Upper Container */}
-      <div className="grid grid-cols-3 items-center rounded-t-md bg-neutral-900 px-6 py-4">
+      <div className="grid h-20 grid-cols-3 rounded-t-md bg-[#212121] px-4">
         {/* Time */}
-        <div className="col-span-1">
-          <time className="text-xl">
+        <div className="col-span-1 place-content-center">
+          <time className="text-base md:text-xl">
             {new Date(series.start_time)
               .toLocaleTimeString('en-US', {
                 hour: 'numeric',
@@ -24,59 +23,62 @@ export default function SeriesContainer({
               })
               .replace(' AM', '')
               .replace(' PM', '')}
-            {''}
           </time>
           <span className="text-xs text-neutral-300">
             {new Date(series.start_time).getHours() < 12 ? 'AM' : 'PM'}
           </span>
         </div>
+
         {/* Team, Logo, Score */}
-        <div className="col-span-2 flex flex-row items-center space-x-6 text-base">
+        <div className="col-span-2 grid grid-flow-col place-items-center space-x-4 md:col-span-1 md:space-x-8">
           {/* Team A */}
-          <div className="flex-start flex min-w-24 flex-row items-center space-x-2">
+          <div className="grid grid-cols-2 place-items-center gap-1 md:gap-2">
+            <p className="text-nowrap p-1 text-xs font-semibold md:text-sm">
+              {series.team_a.school_abbrev}
+            </p>
             <Image
-              className="text-[2px]"
+              className="h-auto w-8 md:w-12"
               src={series.team_a.logo_url}
               alt="Logo"
-              width={40}
-              height={40}
+              width={256}
+              height={256}
             />
-            <div className="flex flex-1 items-center justify-center">
-              <span>{series.team_a.school_abbrev}</span>
-            </div>
           </div>
+
           {/* Vs and Score */}
-          <div className="flex space-x-2">
+          <div className="space-x-2 text-base md:space-x-3 md:text-lg">
             <span>{series.team_a_score}</span>
-            <span className="text-neutral-400">/</span>
+            <span className="text-gray-700">/</span>
             <span>{series.team_b_score}</span>
           </div>
+
           {/* Team B */}
-          <div className="flex-end flex min-w-24 flex-row items-center space-x-2">
-            <div className="flex flex-1 items-center justify-center">
-              <span>{series.team_b.school_abbrev}</span>
-            </div>
+          <div className="grid grid-cols-2 place-items-center gap-1 md:gap-2">
             <Image
-              className="text-[2px]"
+              className="h-auto w-8 md:w-12"
               src={series.team_b.logo_url}
               alt="Logo"
-              width={40}
-              height={40}
+              width={256}
+              height={256}
             />
+            <p className="text-nowrap p-1 text-xs font-semibold md:text-sm">
+              {series.team_b.school_abbrev}
+            </p>
           </div>
         </div>
       </div>
+
       {/* Lower Container */}
-      <div className="flex flex-row justify-between rounded-b-md bg-[#121212] px-4 py-2 text-xs text-neutral-500">
+      <div className="flex h-8 flex-row items-center justify-between rounded-b-md bg-neutral-900 p-2 text-xs text-neutral-500">
         <Image
-          className="text-[2px]"
+          className="h-auto w-4"
           src={series.platform.logo_url}
-          alt="Logo"
-          width={20}
-          height={20}
+          alt="Platform Logo"
+          width={256}
+          height={256}
         />
 
-        <div className="flex flex-row">
+        <div>
           <strong>
             {series.league_schedule.season_type}{' '}
             {series.league_schedule.season_number}
