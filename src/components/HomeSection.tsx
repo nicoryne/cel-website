@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import SeriesContainer from './SeriesContainer';
+import SeriesContainer from '@/components/SeriesContainer';
 import { SeriesWithDetails, GamePlatform } from '@/lib/types';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/20/solid';
 
@@ -40,7 +40,7 @@ export default function HomeSection({
     return seriesList.filter((item) => {
       return filterState === 'All Games'
         ? seriesList
-        : item.platform.platform_abbrev === filterState;
+        : item.platform?.platform_abbrev === filterState;
     });
   }, [filterState, seriesList]);
 

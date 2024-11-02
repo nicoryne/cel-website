@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import cel_logo from '@/../public/logos/cel.webp';
 import Link from 'next/link';

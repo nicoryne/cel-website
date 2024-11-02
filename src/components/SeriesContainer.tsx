@@ -2,6 +2,7 @@
 
 import { SeriesWithDetails } from '@/lib/types';
 import Image from 'next/image';
+import cel_logo from '@/../public/logos/cel.webp';
 
 export default function SeriesContainer({
   series
@@ -34,11 +35,11 @@ export default function SeriesContainer({
           {/* Team A */}
           <div className="grid grid-cols-2 place-items-center gap-1 md:gap-2">
             <p className="text-nowrap p-1 text-xs font-semibold md:text-sm">
-              {series.team_a.school_abbrev}
+              {series.team_a?.school_abbrev}
             </p>
             <Image
               className="h-auto w-8 md:w-12"
-              src={series.team_a.logo_url}
+              src={series.team_a?.logo_url || cel_logo}
               alt="Logo"
               width={256}
               height={256}
@@ -56,13 +57,13 @@ export default function SeriesContainer({
           <div className="grid grid-cols-2 place-items-center gap-1 md:gap-2">
             <Image
               className="h-auto w-8 md:w-12"
-              src={series.team_b.logo_url}
+              src={series.team_b?.logo_url || cel_logo}
               alt="Logo"
               width={256}
               height={256}
             />
             <p className="text-nowrap p-1 text-xs font-semibold md:text-sm">
-              {series.team_b.school_abbrev}
+              {series.team_b?.school_abbrev}
             </p>
           </div>
         </div>
@@ -72,7 +73,7 @@ export default function SeriesContainer({
       <div className="flex h-8 flex-row items-center justify-between rounded-b-md bg-neutral-900 p-2 text-xs text-neutral-500">
         <Image
           className="h-auto w-4"
-          src={series.platform.logo_url}
+          src={series.platform?.logo_url || cel_logo}
           alt="Platform Logo"
           width={256}
           height={256}
@@ -80,11 +81,11 @@ export default function SeriesContainer({
 
         <div>
           <strong>
-            {series.league_schedule.season_type}{' '}
-            {series.league_schedule.season_number}
+            {series.league_schedule?.season_type}{' '}
+            {series.league_schedule?.season_number}
           </strong>
           <span>&nbsp; • &nbsp;</span>
-          <strong>{series.league_schedule.league_stage}</strong>
+          <strong>{series.league_schedule?.league_stage}</strong>
         </div>
 
         <strong>{series.series_type}</strong>
