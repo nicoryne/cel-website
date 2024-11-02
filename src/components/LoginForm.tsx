@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { login } from '@/actions/auth';
-import PrimaryButton from './PrimaryButton';
+import PrimaryButton from '@/components/PrimaryButton';
 import Link from 'next/link';
 
 export default function LoginForm() {

@@ -1,7 +1,7 @@
 'use client';
 import Image from 'next/image';
 import cel_logo from '@/../public/logos/cel.webp';
-import PrimaryButton from '../PrimaryButton';
+import PrimaryButton from '@/components/PrimaryButton';
 import Link from 'next/link';
 import { logout } from '@/actions/auth';
 
