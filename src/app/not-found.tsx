@@ -2,26 +2,20 @@ import Link from 'next/link';
 
 export default function ErrorPage() {
   return (
-    <main className="grid min-h-full place-items-center px-6 py-24 sm:py-32 lg:px-8">
-      <div className="text-center">
-        <p className="text-base font-semibold text-[var(--accent-primary)]">
-          404
-        </p>
-        <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-5xl">
+    <main className="h-screen place-items-center content-center">
+      <section className="h-auto place-items-center text-center">
+        <h1 className="text-xl font-bold text-[var(--accent-primary)]">404</h1>
+        <h2 className="mb-8 text-4xl font-bold uppercase text-[var(--accent-secondary)]">
           Page not found
-        </h1>
-        <p className="mt-6 text-base leading-7 text-gray-300">
-          Sorry, we couldn’t find the page you’re looking for.
-        </p>
-        <div className="mt-10 flex items-center justify-center gap-x-6">
-          <Link
-            href="/"
-            className="rounded-md bg-[var(--accent-primary)] px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[var(--accent-primary-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            Go back home
-          </Link>
-        </div>
-      </div>
+        </h2>
+
+        <Link
+          href="/"
+          className="mt-10 text-center text-sm font-semibold leading-6 text-gray-500 hover:text-[var(--accent-secondary)]"
+        >
+          Go back home
+        </Link>
+      </section>
     </main>
   );
 }

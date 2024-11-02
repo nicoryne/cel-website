@@ -68,14 +68,12 @@ export default function LoginForm() {
         Login
       </PrimaryButton>
 
-      <p className="mt-10 text-center text-sm text-gray-500">
-        <Link
-          href="/"
-          className="font-semibold leading-6 hover:text-[var(--accent-secondary)]"
-        >
-          Go back home
-        </Link>
-      </p>
+      <Link
+        href="/"
+        className="mt-10 text-center text-sm font-semibold leading-6 text-gray-500 hover:text-[var(--accent-secondary)]"
+      >
+        Go back home
+      </Link>
     </form>
   );
 }

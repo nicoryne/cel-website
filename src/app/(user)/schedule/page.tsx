@@ -3,7 +3,7 @@ import Navbar from '@/components/Navbar';
 export default function SchedulePage() {
   return (
     <>
-      <Navbar />
+      <p>Schedule Page</p>
     </>
   );
 }

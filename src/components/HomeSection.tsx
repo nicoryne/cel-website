@@ -1,4 +1,5 @@
 'use client';
+
 import React from 'react';
 import SeriesContainer from '@/components/SeriesContainer';
 import { SeriesWithDetails, GamePlatform } from '@/lib/types';
@@ -24,16 +25,19 @@ const groupSeriesByDate = (list: SeriesWithDetails[]) => {
   );
 };
 
+type HomeSectionProps = {
+  seriesList: SeriesWithDetails[];
+  gamePlatformList: GamePlatform[];
+};
+
 export default function HomeSection({
   seriesList,
   gamePlatformList
-}: {
-  seriesList: SeriesWithDetails[];
-  gamePlatformList: GamePlatform[];
-}) {
+}: HomeSectionProps) {
+  const dateToday = new Date();
+
   const [filterState, setFilterState] = React.useState('All Games');
   const [menuFilterState, toggleMenuFilter] = React.useState(false);
-  const dateToday = new Date();
   const [currentDate, setCurrentDate] = React.useState(dateToday);
 
   const filteredSeries = React.useMemo(() => {

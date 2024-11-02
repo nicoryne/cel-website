@@ -4,11 +4,10 @@ import { SeriesWithDetails } from '@/lib/types';
 import Image from 'next/image';
 import cel_logo from '@/../public/logos/cel.webp';
 
-export default function SeriesContainer({
-  series
-}: {
+type SeriesContainerProps = {
   series: SeriesWithDetails;
-}) {
+};
+export default function SeriesContainer({ series }: SeriesContainerProps) {
   return (
     <div>
       {/* Upper Container */}
