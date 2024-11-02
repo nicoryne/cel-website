@@ -55,6 +55,11 @@ export default function HomeSection({
     return dateB - dateA;
   });
 
+  const platformOptions = [
+    'All Games',
+    ...gamePlatformList.map((platform) => platform.platform_abbrev)
+  ];
+
   React.useEffect(() => {
     const handleScroll = () => {
       const sections = sortedDates.map((date) => document.getElementById(date));
@@ -79,15 +84,10 @@ export default function HomeSection({
     };
   }, [sortedDates]);
 
-  const platformOptions = [
-    'All Games',
-    ...gamePlatformList.map((platform) => platform.platform_abbrev)
-  ];
-
   return (
     <>
       {/* Control Panel */}
-      <aside className="fixed left-0 right-0 top-24 z-50 h-24 px-8">
+      <aside className="fixed left-0 right-0 top-24 z-40 h-24 px-8">
         <div className="mx-auto flex place-items-center justify-between bg-[var(--background)] py-4 md:w-[1050px]">
           {/* Time Group */}
           <div className="flex flex-col uppercase">

@@ -1,22 +1,28 @@
 'use client';
 import Image from 'next/image';
 import cel_logo from '@/../public/logos/cel.webp';
-import LogoutButton from './LogoutButton';
+import PrimaryButton from '../PrimaryButton';
+import Link from 'next/link';
+import { logout } from '@/actions/auth';
 
 export default function AdminHeader() {
+  const handleLogout = async () => {
+    await logout();
+  };
+
   return (
-    <nav className="sticky top-0 z-50 flex min-w-full items-center justify-center bg-[var(--background)] p-8">
-      {/* Inner Nav */}
-      <div className="flex w-full items-center xl:w-[50%]">
-        {/* Logo and Links */}
-        <div className="flex items-center">
-          {/* Logo */}
-          <a href="/">
-            <Image className="h-12 w-12" src={cel_logo} alt="CEL Logo" />
-          </a>
+    <header className="fixed inset-x-0 top-0 z-50 h-24 min-w-full">
+      {/* Wrapper */}
+      <section className="mx-auto flex h-full place-items-center justify-between gap-16 bg-[var(--background)] p-8 md:w-[1100px]">
+        {/* Logo */}
+        <Link href="/admin">
+          <Image className="h-auto w-12" src={cel_logo} alt="CEL Logo" />
+        </Link>
+
+        <div>
+          <PrimaryButton onClick={handleLogout}>Logout</PrimaryButton>
         </div>
-        <LogoutButton />
-      </div>
-    </nav>
+      </section>
+    </header>
   );
 }

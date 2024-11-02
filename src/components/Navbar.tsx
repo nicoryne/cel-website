@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import cel_logo from '@/../public/logos/cel.webp';
 import Link from 'next/link';
@@ -10,11 +11,13 @@ export type NavigationLink = {
   href: string;
 };
 
-export default function Navbar({
-  navigationLinks
-}: {
-  navigationLinks: NavigationLink[];
-}) {
+const defaultNavLinks: NavigationLink[] = [
+  { text: 'Schedule', href: '/schedule' },
+  { text: 'Statistics', href: '/statistics' },
+  { text: 'Standing', href: '/standing' }
+];
+
+export default function Navbar() {
   // Toggle use state for mobile menu bar
   const [menuState, toggleMenu] = React.useState(false);
 
@@ -30,7 +33,7 @@ export default function Navbar({
         {/* Desktop: Navigation Links */}
         <nav className="hidden md:block">
           <ul className="flex gap-8">
-            {navigationLinks.map((navLink, index) => (
+            {defaultNavLinks.map((navLink, index) => (
               <li key={index}>
                 <Link
                   className="text-base font-medium uppercase hover:text-[var(--accent-secondary)]"
@@ -53,7 +56,7 @@ export default function Navbar({
         {menuState && (
           <nav className="absolute left-0 top-full w-full bg-[var(--background)] md:hidden">
             <ul className="flex flex-col place-items-center gap-8 p-8">
-              {navigationLinks.map((navLink, index) => (
+              {defaultNavLinks.map((navLink, index) => (
                 <li key={index}>
                   <Link
                     className="text-base font-medium uppercase hover:text-[var(--accent-secondary)]"

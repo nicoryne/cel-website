@@ -4,9 +4,9 @@ import HomeSection from '@/components/HomeSection';
 import { getAllGamePlatforms } from '@/actions/fetch-platform';
 
 const navigationLinks: NavigationLink[] = [
-  { text: 'Schedule', href: '#' },
-  { text: 'Statistics', href: '#' },
-  { text: 'Standing', href: '#' }
+  { text: 'Schedule', href: '/schedule' },
+  { text: 'Statistics', href: '/statistics' },
+  { text: 'Standing', href: '/standing' }
 ];
 
 export default async function Home() {
@@ -15,7 +15,7 @@ export default async function Home() {
 
   return (
     <>
-      <Navbar navigationLinks={navigationLinks} />
+      <Navbar />
 
       <main className="mx-auto my-24 flex min-h-fit flex-col p-8 md:w-[1100px]">
         <HomeSection
