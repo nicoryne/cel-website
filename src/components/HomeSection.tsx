@@ -48,10 +48,16 @@ export default function HomeSection({
     });
   }, [filterState, seriesList]);
 
-  const activeSeries = React.useMemo(
-    () => groupSeriesByDate(filteredSeries),
-    [filteredSeries]
-  );
+  const activeSeries = React.useMemo(() => {
+    const groupedSeries = groupSeriesByDate(filteredSeries);
+    const todayDateStr = dateToday.toLocaleDateString('en-CA');
+
+    if (!groupedSeries[todayDateStr]) {
+      groupedSeries[todayDateStr] = [];
+    }
+
+    return groupedSeries;
+  }, [filteredSeries, dateToday]);
 
   const sortedDates = Object.keys(activeSeries).sort((a, b) => {
     const dateA = new Date(a).getTime();
@@ -67,7 +73,7 @@ export default function HomeSection({
   React.useEffect(() => {
     const handleScroll = () => {
       const sections = sortedDates.map((date) => document.getElementById(date));
-      const scrollY = window.scrollY + window.innerHeight / 16;
+      const scrollY = window.scrollY + window.innerHeight / 4;
 
       const currentSection = sections.find((section) => {
         if (section) {
@@ -91,8 +97,8 @@ export default function HomeSection({
   return (
     <>
       {/* Control Panel */}
-      <aside className="fixed left-0 right-0 top-24 z-40 h-24 px-8">
-        <div className="mx-auto flex place-items-center justify-between bg-[var(--background)] py-4 md:w-[1050px]">
+      <aside className="fixed left-0 right-0 top-24 z-40 mx-auto h-24 md:w-[1050px]">
+        <div className="flex place-items-center justify-between bg-[var(--background)] py-4">
           {/* Time Group */}
           <div className="flex flex-col uppercase">
             {/* Month and Numeric Date */}
@@ -138,6 +144,10 @@ export default function HomeSection({
             )}
           </div>
         </div>
+        <div>
+          <button>Preseason 3</button>
+          <button>Season 3</button>
+        </div>
       </aside>
 
       {/* Series Section */}
@@ -156,9 +166,15 @@ export default function HomeSection({
               })}
             </time>
             <div className="col-span-2 mt-4 grid gap-4">
-              {activeSeries[date].map((series: SeriesWithDetails) => (
-                <SeriesContainer key={series.id} series={series} />
-              ))}
+              {activeSeries[date].length > 0 ? (
+                activeSeries[date].map((series: SeriesWithDetails) => (
+                  <SeriesContainer key={series.id} series={series} />
+                ))
+              ) : (
+                <p className="text-center text-lg font-semibold text-neutral-600">
+                  There's no games for today
+                </p>
+              )}
             </div>
           </section>
         ))}

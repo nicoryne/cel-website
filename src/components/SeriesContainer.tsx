@@ -79,12 +79,9 @@ export default function SeriesContainer({ series }: SeriesContainerProps) {
         />
 
         <div>
-          <strong>
-            {series.league_schedule?.season_type}{' '}
-            {series.league_schedule?.season_number}
-          </strong>
-          <span>&nbsp; • &nbsp;</span>
           <strong>{series.league_schedule?.league_stage}</strong>
+          <span>&nbsp; • &nbsp;</span>
+          <strong>Week {series.week}</strong>
         </div>
 
         <strong>{series.series_type}</strong>

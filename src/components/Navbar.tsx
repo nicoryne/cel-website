@@ -11,7 +11,6 @@ export type NavigationLink = {
 };
 
 const defaultNavLinks: NavigationLink[] = [
-  { text: 'Schedule', href: '/schedule' },
   { text: 'Statistics', href: '/statistics' },
   { text: 'Standing', href: '/standing' }
 ];

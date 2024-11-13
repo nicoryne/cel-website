@@ -1,3 +1,4 @@
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
 import { rem } from '@/styles/fonts';
 import '@/styles/main.css';
@@ -18,6 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={rem.variable}>
       <body>{children}</body>
+      <SpeedInsights />
     </html>
   );
 }
