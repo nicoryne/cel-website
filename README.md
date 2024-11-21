@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CESAFI Esports League Website
 
-## Getting Started
+(Not official yet) CESAFI Esports League website that centralizes information on the games from CESAFI Esports League.
 
-First, run the development server:
+## 🚀 Features
+
+> Still in development
+
+- **📅 Live Match Schedules**
+
+  - Be updated with upcoming matches, real-time match schedule updates, and look back at previous matches and their matches results.
+
+- **🏆 League Standings**
+
+  - Track tournament progress with clear, bracket-style visualizations.
+
+- **📊 Player Statistics**
+
+  - Go through a compilation of the players' performances, as well as an aggregrated summary of the match results.
+
+## 🛠️ Installation Guide
+
+> **Prerequisite:** Ensure you have Node.js v16.0 or higher installed.
+
+### Step 1: Install Required Dependencies
+
+Inside your the project directory, make sure you have all the npm dependencies installed
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Step 2: Run The Project
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Once you have all the dependencies, run the project with `next dev`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+next dev
+```
 
-## Learn More
+## Contact
 
-To learn more about Next.js, take a look at the following resources:
+For inquiries or feedback, feel free to reach out:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Nicolo Porter**
+📩 [porternicolo@gmail.com](mailto:porternicolo@gmail.com)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[Logo](https://raw.githubusercontent.com/nicoryne/cel-website/refs/heads/main/public/logos/cel.webp)
