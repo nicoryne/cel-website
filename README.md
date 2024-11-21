@@ -2,6 +2,10 @@
 
 (Not official yet) CESAFI Esports League website that centralizes information on the games from CESAFI Esports League.
 
+## ⏱️ Status
+
+The project is currently **under development**
+
 ## 🚀 Features
 
 > Still in development
@@ -44,5 +48,3 @@ For inquiries or feedback, feel free to reach out:
 
 **Nicolo Porter**
 📩 [porternicolo@gmail.com](mailto:porternicolo@gmail.com)
-
-[Logo](https://raw.githubusercontent.com/nicoryne/cel-website/refs/heads/main/public/logos/cel.webp)
