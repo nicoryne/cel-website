@@ -3,8 +3,8 @@ import type { Metadata } from 'next';
 import { rem } from '@/styles/fonts';
 import '@/styles/main.css';
 
-const title = 'CEL Tracker | Player Statistics and Match Info';
-const description = 'Player statistics webpage for CESAFI Esports League';
+const title = 'CESAFI Esports League | We forge legends!';
+const description = 'The den of the best esports student athletes in Cebu';
 
 export const metadata: Metadata = {
   title: title,
@@ -19,7 +19,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={rem.variable}>
       <body>{children}</body>
-      <SpeedInsights />
     </html>
   );
 }

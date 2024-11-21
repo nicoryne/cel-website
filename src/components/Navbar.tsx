@@ -10,31 +10,60 @@ export type NavigationLink = {
   href: string;
 };
 
-const defaultNavLinks: NavigationLink[] = [
+export const defaultNavLinks: NavigationLink[] = [
+  { text: 'About Us', href: '/#about' },
+  { text: 'Schedule', href: '/schedule' },
   { text: 'Statistics', href: '/statistics' },
-  { text: 'Standing', href: '/standing' }
+  { text: 'Contact Us', href: '/#contact' }
 ];
 
 export default function Navbar() {
-  // Toggle use state for mobile menu bar
-  const [menuState, toggleMenu] = React.useState(false);
+  const [isMobileMenuOpen, toggleMobileMenu] = React.useState(false);
+  const [isScrolled, setIsScrolled] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const thresholdY = 0;
+      setIsScrolled(window.scrollY > thresholdY);
+    };
+
+    const throttleScroll = () => {
+      requestAnimationFrame(handleScroll);
+    };
+
+    window.addEventListener('scroll', throttleScroll);
+
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', throttleScroll);
+    };
+  }, []);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 h-24 min-w-full">
-      {/* Wrapper */}
-      <section className="mx-auto flex h-full place-items-center justify-between gap-16 bg-[var(--background)] p-8 md:w-[1100px] md:justify-normal">
+    <header
+      className={`fixed inset-x-0 top-0 z-50 min-w-full transition-all duration-300 ease-in-out ${
+        isScrolled ? 'h-20 bg-[var(--cel-navy)]' : `h-24 bg-transparent`
+      }`}
+    >
+      <div className="mx-auto flex h-full items-center justify-between gap-16 p-8 md:w-[700px] lg:w-[1000px]">
         {/* Logo */}
         <Link href="/">
-          <Image className="h-auto w-12" src={cel_logo} alt="CEL Logo" />
+          <Image
+            className="h-auto w-12"
+            src={cel_logo}
+            alt="CEL Logo"
+            priority
+          />
         </Link>
 
-        {/* Desktop: Navigation Links */}
+        {/* Desktop Navigation Links */}
         <nav className="hidden md:block">
           <ul className="flex gap-8">
             {defaultNavLinks.map((navLink, index) => (
               <li key={index}>
                 <Link
-                  className="text-base font-medium uppercase hover:text-[var(--accent-secondary)]"
+                  className="text-base font-medium text-[var(--text-light)] hover:text-[var(--cel-red)]"
                   href={navLink.href}
                 >
                   {navLink.text}
@@ -44,31 +73,37 @@ export default function Navbar() {
           </ul>
         </nav>
 
-        {/* Mobile: Menu Icon */}
+        {/* Mobile Menu Icon */}
         <Bars4Icon
-          className="h-auto w-8 cursor-pointer md:hidden"
-          onClick={() => toggleMenu(!menuState)}
+          className="h-auto w-8 cursor-pointer fill-[var(--text-light)] md:hidden"
+          onClick={() => toggleMobileMenu(!isMobileMenuOpen)}
+          aria-label="Toggle navigation menu"
         />
 
-        {/* Mobile: Dropdown Menu */}
-        {menuState && (
-          <nav className="absolute left-0 top-full w-full bg-[var(--background)] md:hidden">
-            <ul className="flex flex-col place-items-center gap-8 p-8">
-              {defaultNavLinks.map((navLink, index) => (
-                <li key={index}>
-                  <Link
-                    className="text-base font-medium uppercase hover:text-[var(--accent-secondary)]"
-                    href={navLink.href}
-                    onClick={() => toggleMenu(false)}
-                  >
-                    {navLink.text}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        )}
-      </section>
+        {/* Mobile Dropdown Menu */}
+        <nav
+          className={`fixed inset-0 -z-10 w-full pt-24 transition-all duration-300 md:hidden ${
+            isMobileMenuOpen
+              ? 'bg-[var(--cel-navy)] opacity-100'
+              : 'pointer-events-none bg-transparent opacity-0'
+          }`}
+          aria-label="Mobile navigation"
+        >
+          <ul className="flex flex-col items-center gap-8 p-8">
+            {defaultNavLinks.map((navLink, index) => (
+              <li key={index}>
+                <Link
+                  className="text-lg font-medium text-[var(--text-light)] hover:text-[var(--cel-red)]"
+                  href={navLink.href}
+                  onClick={() => toggleMobileMenu(false)}
+                >
+                  {navLink.text}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
     </header>
   );
 }
