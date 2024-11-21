@@ -46,5 +46,3 @@ For inquiries or feedback, feel free to reach out:
 
 **Nicolo Porter**
 📩 [porternicolo@gmail.com](mailto:porternicolo@gmail.com)
-
-[Logo](https://uqulenyafyepinfweagp.supabase.co/storage/v1/object/public/logos/teams/TBD.webp)
