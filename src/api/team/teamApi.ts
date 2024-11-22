@@ -42,7 +42,10 @@ export const createTeam = async (team: Team): Promise<Team | null> => {
  */
 export const getAllTeams = async (): Promise<Team[]> => {
   const supabase = createClient();
-  const { data, error } = await supabase.from('teams').select('*');
+  const { data, error } = await supabase.from('teams')
+    .select('*')
+    .not('school_abbrev', 'eq', 'TBD')
+    .order('school_abbrev');
 
   if (error) {
     handleError(error, 'fetching all teams');
