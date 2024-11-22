@@ -3,21 +3,20 @@
 @tailwind utilities;
 
 :root {
-  --background: #121212;
-  --foreground: #f2f2f2;
-  --accent-primary: #da4453;
-  --accent-primary-hover: #9a2531;
-  --accent-primary-active: #f14e5e;
-  --accent-secondary: #4a89dc;
-  --accent-black: #0f0e0e;
-}
+  --background: #f0f5f8;
 
-*,
-*:before,
-*:after {
-  margin: 0;
-  padding: 0;
-  box-sizing: inherit;
+  /* CEL Colors */
+  --cel-red: #df4c42;
+  --cel-blue: #0f5390;
+  --cel-navy: #000f24;
+
+  /* Hero Gradient */
+  --hero-blue-mid: #031d43;
+  --hero-blue-end: #052c62;
+
+  /* Custom Colors */
+  --text-light: #f2f2f2;
+  --text-dark: #1e1e1e;
 }
 
 html {
@@ -38,8 +37,7 @@ body {
   scroll-behavior: smooth;
 }
 
-body {
-  position: relative;
-  min-height: 100%;
-  margin: 0;
+a:hover {
+  color: var(--cel-red);
+  transition: color 0.2s ease-in-out;
 }

@@ -1,18 +1,24 @@
-import { getAllSeriesWithDetails } from '@/api/series/seriesApi';
-import Navbar from '@/components/Navbar';
-import HomeSection from '@/components/HomeSection';
-import { getAllGamePlatforms } from '@/api/platform/platformApi';
+import { getAllTeams } from '@/api/team';
+import Footer from '@/components/Footer';
+import AboutSection from '@/components/landing/AboutSection';
+import ContactSection from '@/components/landing/ContactSection';
+import HeroSection from '@/components/landing/HeroSection';
+import SchoolsSection from '@/components/landing/SchoolsSection';
 
 export default async function Home() {
-  const seriesList = await getAllSeriesWithDetails();
-  const gamePlatformList = await getAllGamePlatforms();
+  const teamList = await getAllTeams();
 
   return (
     <>
-      <HomeSection
-        seriesList={seriesList}
-        gamePlatformList={gamePlatformList}
-      />
+      <HeroSection />
+
+      <SchoolsSection teamList={teamList} />
+
+      <AboutSection />
+
+      <ContactSection />
+
+      <Footer />
     </>
   );
 }
