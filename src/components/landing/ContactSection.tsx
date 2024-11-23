@@ -35,13 +35,7 @@ export default function ContactSection() {
       aria-labelledby="contact-heading"
     >
       {/* Content Section */}
-      <motion.div
-        className="flex w-full flex-col items-center justify-center space-y-16 p-6 text-center md:p-12 lg:p-24"
-        initial={{ y: 100, opacity: 0 }}
-        whileInView={{ y: 0, opacity: 1 }}
-        transition={{ duration: 1 }}
-        viewport={{ once: true }}
-      >
+      <div className="flex w-full flex-col items-center justify-center space-y-16 p-6 text-center md:p-12 lg:p-24">
         {/* Header */}
         <header className="mb-6">
           <h1
@@ -153,7 +147,7 @@ export default function ContactSection() {
         {/* End of Form */}
 
         {/* End of Footer */}
-      </motion.div>
+      </div>
     </section>
   );
 }

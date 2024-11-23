@@ -10,10 +10,7 @@ interface SchooLsSectionProps {
 
 export default function SchoolsSection({ teamList }: SchooLsSectionProps) {
   return (
-    <motion.section
-      initial={{ y: 100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 3, type: 'spring' }}
+    <section
       aria-labelledby="schools-heading"
       className="relative bg-[var(--background)] bg-gradient-to-b from-[var(--background)] to-white px-8 py-16"
     >
@@ -31,6 +28,6 @@ export default function SchoolsSection({ teamList }: SchooLsSectionProps) {
           <SchoolCard school={team} key={index} />
         ))}
       </div>
-    </motion.section>
+    </section>
   );
 }

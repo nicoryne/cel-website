@@ -95,12 +95,12 @@ export default function ScheduleSection({
   }, [sortedDates]);
 
   return (
-    <>
+    <main className="mt-16">
       {/* Control Panel */}
       <aside className="fixed left-0 right-0 top-24 z-40 mx-auto h-24 md:w-[1050px]">
-        <div className="flex place-items-center justify-between bg-[var(--cel-navy)] py-4">
+        <div className="flex place-items-center justify-between py-4">
           {/* Time Group */}
-          <div className="flex flex-col uppercase">
+          <div className="flex flex-col uppercase text-white">
             {/* Month and Numeric Date */}
             <time className="text-3xl font-bold md:text-4xl">
               {currentDate.toLocaleDateString('en-US', {
@@ -179,6 +179,6 @@ export default function ScheduleSection({
           </section>
         ))}
       </div>
-    </>
+    </main>
   );
 }
