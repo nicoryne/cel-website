@@ -8,11 +8,12 @@ The project is currently **under development**
 
 ## 🚀 Features
 
-<<<<<<< HEAD
-=======
+# <<<<<<< HEAD
+
 > Still in development
 
->>>>>>> dev
+> > > > > > > dev
+
 - **📅 Live Match Schedules**
 
   - Be updated with upcoming matches, real-time match schedule updates, and look back at previous matches and their matches results.
