@@ -47,20 +47,15 @@ export default function HeroSection() {
         {/* Animated Logo */}
         <motion.div
           className="w-80"
-          initial={{ y: 0, scale: 0.1 }}
+          initial={{ y: 0 }}
           animate={{
-            y: [0, -20, 0],
-            scale: 1.0
+            y: [0, -20, 0]
           }}
           transition={{
             y: {
               duration: 5,
               repeat: Infinity,
               ease: 'easeInOut'
-            },
-            scale: {
-              duration: 1.2,
-              ease: 'easeOut'
             }
           }}
           role="img"

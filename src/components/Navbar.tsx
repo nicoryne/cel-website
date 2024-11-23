@@ -3,6 +3,7 @@ import React from 'react';
 import Image from 'next/image';
 import cel_logo from '@/../public/logos/cel.webp';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Bars4Icon } from '@heroicons/react/20/solid';
 
 export type NavigationLink = {
@@ -12,19 +13,22 @@ export type NavigationLink = {
 
 export const defaultNavLinks: NavigationLink[] = [
   { text: 'About Us', href: '/#about' },
-  { text: 'Schedule', href: '/schedule' },
-  { text: 'Statistics', href: '/statistics' },
   { text: 'Contact Us', href: '/#contact' }
 ];
 
 export default function Navbar() {
   const [isMobileMenuOpen, toggleMobileMenu] = React.useState(false);
-  const [isScrolled, setIsScrolled] = React.useState(false);
+  const [isScrolling, setScrolling] = React.useState(false);
+  const [isColored, setColored] = React.useState(false);
+  const pathname = usePathname();
+
+  let isLanding = pathname == '/';
 
   React.useEffect(() => {
+    // Scrolling Use Effect
     const handleScroll = () => {
-      const thresholdY = 0;
-      setIsScrolled(window.scrollY > thresholdY);
+      const thresholdY = 50;
+      setScrolling(window.scrollY > thresholdY);
     };
 
     const throttleScroll = () => {
@@ -32,23 +36,25 @@ export default function Navbar() {
     };
 
     window.addEventListener('scroll', throttleScroll);
+  }, [setScrolling]);
 
-    handleScroll();
-
-    return () => {
-      window.removeEventListener('scroll', throttleScroll);
-    };
-  }, []);
+  React.useEffect(() => {
+    if (!isLanding || isScrolling) {
+      setColored(true);
+    } else {
+      setColored(false);
+    }
+  }, [isLanding, isScrolling]);
 
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 min-w-full transition-all duration-300 ease-in-out ${
-        isScrolled ? 'h-20 bg-[var(--cel-navy)]' : `h-24 bg-transparent`
+        isColored ? 'h-20 bg-[var(--cel-navy)]' : `h-24 bg-transparent`
       }`}
     >
       <div className="mx-auto flex h-full items-center justify-between gap-16 p-8 md:w-[700px] lg:w-[1000px]">
         {/* Logo */}
-        <Link href="/">
+        <Link href="/#home">
           <Image
             className="h-auto w-12"
             src={cel_logo}

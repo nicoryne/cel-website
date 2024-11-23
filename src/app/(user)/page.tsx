@@ -9,7 +9,7 @@ export default async function Home() {
   const teamList = await getAllTeams();
 
   return (
-    <>
+    <main>
       <HeroSection />
 
       <SchoolsSection teamList={teamList} />
@@ -17,8 +17,6 @@ export default async function Home() {
       <AboutSection />
 
       <ContactSection />
-
-      <Footer />
-    </>
+    </main>
   );
 }
