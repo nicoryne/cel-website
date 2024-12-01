@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={rem.variable}>
-      <body>{children}</body>
+      <body className="bg-[var(--body-bg)]">{children}</body>
     </html>
   );
 }

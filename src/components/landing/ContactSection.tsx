@@ -31,7 +31,7 @@ export default function ContactSection() {
   return (
     <section
       id="contact"
-      className="bg-[var(--cel-background)]"
+      className="bg-white"
       aria-labelledby="contact-heading"
     >
       {/* Content Section */}
@@ -62,7 +62,7 @@ export default function ContactSection() {
                 name="fname"
                 id="fname"
                 placeholder="Junior"
-                className="text-md flex-1 rounded-md border-none bg-[var(--background)] p-2 text-[var(--text-dark)] outline-none ring-0 focus:ring-0"
+                className="text-md flex-1 rounded-md border-none bg-white p-2 text-[var(--text-dark)] outline-none ring-0 focus:ring-0"
                 type="name"
                 onChange={(e) => setFirstName(e.target.value)}
               />
@@ -82,7 +82,7 @@ export default function ContactSection() {
                 name="lname"
                 id="lname"
                 placeholder="Marlon"
-                className="text-md flex-1 rounded-md border-none bg-[var(--background)] p-2 text-[var(--text-dark)] outline-none ring-0 focus:ring-0 md:indent-1"
+                className="text-md flex-1 rounded-md border-none bg-white p-2 text-[var(--text-dark)] outline-none ring-0 focus:ring-0 md:indent-1"
                 type="name"
                 onChange={(e) => setLastName(e.target.value)}
               />
@@ -102,7 +102,7 @@ export default function ContactSection() {
                 name="email"
                 id="email"
                 placeholder="example@gmail.com"
-                className="text-md w-full flex-1 rounded-md border-none bg-[var(--background)] p-2 indent-1 text-[var(--text-dark)] outline-none ring-0 focus:ring-0"
+                className="text-md w-full flex-1 rounded-md border-none bg-white p-2 indent-1 text-[var(--text-dark)] outline-none ring-0 focus:ring-0"
                 type="email"
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -128,7 +128,7 @@ export default function ContactSection() {
                 id="message"
                 rows={4}
                 placeholder="Hello, I'm writing about..."
-                className="text-md w-full flex-1 rounded-md border-none bg-[var(--background)] text-[var(--text-dark)] outline-none ring-0 focus:ring-0"
+                className="text-md w-full flex-1 rounded-md border-none bg-white text-[var(--text-dark)] outline-none ring-0 focus:ring-0"
                 onChange={(e) => setMessage(e.target.value)}
               />
             </div>

@@ -12,7 +12,7 @@ export default function SchoolsSection({ teamList }: SchooLsSectionProps) {
   return (
     <section
       aria-labelledby="schools-heading"
-      className="relative bg-[var(--background)] bg-gradient-to-b from-[var(--background)] to-white px-8 py-16"
+      className="bg-gradient-to-b from-[var(--cel-white)] to-white px-8 py-16"
     >
       <header className="mx-auto mb-8 w-fit">
         <h2

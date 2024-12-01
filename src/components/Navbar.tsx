@@ -13,7 +13,8 @@ export type NavigationLink = {
 
 export const defaultNavLinks: NavigationLink[] = [
   { text: 'About Us', href: '/#about' },
-  { text: 'Contact Us', href: '/#contact' }
+  { text: 'Contact Us', href: '/#contact' },
+  { text: 'Schedule', href: '/schedule' }
 ];
 
 export default function Navbar() {

@@ -1,9 +1,11 @@
 'use client';
 
 import React from 'react';
-import SeriesContainer from '@/components/SeriesContainer';
+import SeriesContainer from '@/components/schedule/SeriesContainer';
 import { SeriesWithDetails, GamePlatform } from '@/lib/types';
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/20/solid';
+import Image from 'next/image';
+import cel_logo from '@/../public/logos/cel.webp';
+import { motion } from 'framer-motion';
 
 const groupSeriesByDate = (list: SeriesWithDetails[]) => {
   return list.reduce(
@@ -36,15 +38,23 @@ export default function ScheduleSection({
 }: HomeSectionProps) {
   const dateToday = new Date();
 
-  const [filterState, setFilterState] = React.useState('All Games');
+  const platformOptions = [
+    { logo: cel_logo, abbrev: 'All Games' },
+    ...gamePlatformList.map((platform) => ({
+      logo: platform.logo_url,
+      abbrev: platform.platform_abbrev
+    }))
+  ];
+
+  const [filterState, setFilterState] = React.useState(platformOptions[0]);
   const [menuFilterState, toggleMenuFilter] = React.useState(false);
   const [currentDate, setCurrentDate] = React.useState(dateToday);
 
   const filteredSeries = React.useMemo(() => {
     return seriesList.filter((item) => {
-      return filterState === 'All Games'
+      return filterState.abbrev === 'All Games'
         ? seriesList
-        : item.platform?.platform_abbrev === filterState;
+        : item.platform?.platform_abbrev === filterState.abbrev;
     });
   }, [filterState, seriesList]);
 
@@ -64,11 +74,6 @@ export default function ScheduleSection({
     const dateB = new Date(b).getTime();
     return dateB - dateA;
   });
-
-  const platformOptions = [
-    'All Games',
-    ...gamePlatformList.map((platform) => platform.platform_abbrev)
-  ];
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -95,63 +100,78 @@ export default function ScheduleSection({
   }, [sortedDates]);
 
   return (
-    <main className="mt-16">
+    <>
       {/* Control Panel */}
-      <aside className="fixed left-0 right-0 top-24 z-40 mx-auto h-24 md:w-[1050px]">
-        <div className="flex place-items-center justify-between py-4">
-          {/* Time Group */}
-          <div className="flex flex-col uppercase text-white">
-            {/* Month and Numeric Date */}
-            <time className="text-3xl font-bold md:text-4xl">
-              {currentDate.toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric'
-              })}
-            </time>
-            {/* 'Today' and Weekday Long */}
-            <time className="text-sm md:text-base">
-              {currentDate.toLocaleDateString('en-US', {
-                weekday: 'long'
-              })}
-            </time>
-          </div>
+      <aside className="fixed left-0 right-0 top-20 z-40 mx-auto h-24 border-t-2 border-gray-800 bg-[var(--cel-navy)]">
+        <div className="mx-auto rounded-b-md px-8 md:w-[800px] lg:w-[1100px]">
+          <div className="flex place-items-center justify-between py-4">
+            {/* Time Group */}
+            <div className="flex flex-col uppercase text-white">
+              {/* Month and Numeric Date */}
+              <time className="text-3xl font-bold md:text-4xl">
+                {currentDate.toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric'
+                })}
+              </time>
+              {/* 'Today' and Weekday Long */}
+              <time className="text-sm md:text-base">
+                {currentDate.toLocaleDateString('en-US', {
+                  weekday: 'long'
+                })}
+              </time>
+            </div>
 
-          {/* Filter Game Button */}
-          <div className="flex flex-col place-items-center space-y-12">
-            <button
-              className="flex h-10 w-40 items-center justify-center gap-2 rounded-lg border-2 border-neutral-800 hover:bg-neutral-800"
-              onClick={() => toggleMenuFilter(!menuFilterState)}
-            >
-              {filterState}
-              <ChevronDownIcon className="h-4 w-4" />
-            </button>
+            {/* Filter Game Button */}
+            <div className="flex flex-col items-end space-y-12">
+              <button
+                className="flex h-10 w-40 items-center justify-center gap-2 rounded-md bg-[var(--cel-blue)] text-white"
+                onClick={() => toggleMenuFilter(!menuFilterState)}
+              >
+                <Image
+                  src={filterState.logo}
+                  className="h-auto w-4"
+                  width={128}
+                  height={128}
+                  alt={`${filterState.abbrev} Logo`}
+                />
+                {filterState.abbrev}
+              </button>
 
-            {menuFilterState && (
-              <div className="absolute flex flex-col text-center">
-                {platformOptions.map((abbrev) => (
-                  <button
-                    className="flex h-10 w-40 items-center justify-center gap-2 border-b-2 border-neutral-800 bg-neutral-900 p-4 hover:bg-neutral-800"
-                    key={abbrev}
-                    onClick={() => {
-                      setFilterState(abbrev),
-                        toggleMenuFilter(!menuFilterState);
-                    }}
-                  >
-                    {abbrev}
-                  </button>
-                ))}
-              </div>
-            )}
+              {menuFilterState && (
+                <motion.div
+                  className="absolute flex flex-wrap rounded-md bg-[var(--cel-navy)]"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 100, y: 0 }}
+                >
+                  {platformOptions.map((platform, index) => (
+                    <button
+                      className="flex h-24 w-24 flex-col items-center justify-center gap-2 text-xs text-neutral-400 hover:text-white"
+                      key={index}
+                      onClick={() => {
+                        setFilterState(platform),
+                          toggleMenuFilter(!menuFilterState);
+                      }}
+                    >
+                      <Image
+                        src={platform.logo}
+                        className="h-auto w-4"
+                        width={128}
+                        height={128}
+                        alt={`${platform.abbrev} Logo`}
+                      />
+                      {platform.abbrev}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </div>
           </div>
-        </div>
-        <div>
-          <button>Preseason 3</button>
-          <button>Season 3</button>
         </div>
       </aside>
 
       {/* Series Section */}
-      <div className="mt-24 min-h-[90vh] space-y-16 overflow-y-auto">
+      <div className="mt-60 min-h-[90vh] space-y-16 overflow-y-auto">
         {sortedDates.map((date) => (
           <section id={date} key={date} className="grid items-center">
             <h1 className="col-span-1 text-2xl font-bold uppercase md:col-span-2">
@@ -179,6 +199,6 @@ export default function ScheduleSection({
           </section>
         ))}
       </div>
-    </main>
+    </>
   );
 }

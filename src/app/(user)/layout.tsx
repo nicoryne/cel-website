@@ -7,10 +7,10 @@ export default function UserLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <>
+    <div>
       <Navbar />
       {children}
       <Footer />
-    </>
+    </div>
   );
 }

@@ -9,9 +9,9 @@ type SeriesContainerProps = {
 };
 export default function SeriesContainer({ series }: SeriesContainerProps) {
   return (
-    <div>
+    <div className="rounded-md border-2 shadow-lg">
       {/* Upper Container */}
-      <div className="grid h-20 grid-cols-3 rounded-t-md bg-[#212121] px-4">
+      <div className="grid h-20 grid-cols-3 rounded-t-md px-4">
         {/* Time */}
         <div className="col-span-1 place-content-center">
           <time className="text-base md:text-xl">
@@ -24,7 +24,7 @@ export default function SeriesContainer({ series }: SeriesContainerProps) {
               .replace(' AM', '')
               .replace(' PM', '')}
           </time>
-          <span className="text-xs text-neutral-300">
+          <span className="text-xs">
             {new Date(series.start_time).getHours() < 12 ? 'AM' : 'PM'}
           </span>
         </div>
@@ -69,7 +69,7 @@ export default function SeriesContainer({ series }: SeriesContainerProps) {
       </div>
 
       {/* Lower Container */}
-      <div className="flex h-8 flex-row items-center justify-between rounded-b-md bg-neutral-900 p-2 text-xs text-neutral-500">
+      <div className="] flex h-8 flex-row items-center justify-between rounded-b-md bg-[var(--cel-white)] p-2 text-xs text-neutral-500">
         <Image
           className="h-auto w-4"
           src={series.platform?.logo_url || cel_logo}
