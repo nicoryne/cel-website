@@ -12,8 +12,7 @@ export type NavigationLink = {
 };
 
 export const defaultNavLinks: NavigationLink[] = [
-  { text: 'About Us', href: '/#about' },
-  { text: 'Contact Us', href: '/#contact' },
+  { text: 'Home', href: '/' },
   { text: 'Schedule', href: '/schedule' }
 ];
 
@@ -49,13 +48,13 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 min-w-full transition-all duration-300 ease-in-out ${
-        isColored ? 'h-20 bg-[var(--cel-navy)]' : `h-24 bg-transparent`
+      className={`fixed inset-x-0 top-0 z-50 h-20 min-w-full transition-all duration-300 ease-in-out ${
+        isColored ? 'bg-[var(--background)]' : `bg-transparent`
       }`}
     >
       <div className="mx-auto flex h-full items-center justify-between gap-16 p-8 md:w-[700px] lg:w-[1000px]">
         {/* Logo */}
-        <Link href="/#home">
+        <Link href="/">
           <Image
             className="h-auto w-12"
             src={cel_logo}
@@ -82,7 +81,7 @@ export default function Navbar() {
 
         {/* Mobile Menu Icon */}
         <Bars4Icon
-          className="h-auto w-8 cursor-pointer fill-[var(--text-light)] md:hidden"
+          className="h-auto w-8 cursor-pointer fill-[var(--foreground)] md:hidden"
           onClick={() => toggleMobileMenu(!isMobileMenuOpen)}
           aria-label="Toggle navigation menu"
         />
@@ -91,16 +90,16 @@ export default function Navbar() {
         <nav
           className={`fixed inset-0 -z-10 w-full pt-24 transition-all duration-300 md:hidden ${
             isMobileMenuOpen
-              ? 'bg-[var(--cel-navy)] opacity-100'
+              ? 'bg-[var(--background)] opacity-100'
               : 'pointer-events-none bg-transparent opacity-0'
           }`}
           aria-label="Mobile navigation"
         >
-          <ul className="flex flex-col items-center gap-8 p-8">
+          <ul className="flex flex-col items-center gap-16 p-8">
             {defaultNavLinks.map((navLink, index) => (
               <li key={index}>
                 <Link
-                  className="text-lg font-medium text-[var(--text-light)] hover:text-[var(--cel-red)]"
+                  className="text-2xl font-medium text-[var(--text-light)] hover:text-[var(--cel-red)]"
                   href={navLink.href}
                   onClick={() => toggleMobileMenu(false)}
                 >

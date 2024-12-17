@@ -79,7 +79,7 @@ export const defaultSocials: Socials[] = [
 
 export default function Footer() {
   return (
-    <footer id="site-footer" className="h-96 w-full bg-[var(--cel-navy)]">
+    <footer id="site-footer" className="h-96 w-full bg-[var(--background)]">
       <div className="mx-auto grid h-full w-fit content-center gap-8 px-8 text-sm text-[var(--text-light)]">
         {/* Social Links Section */}
         <section className="col-span-1" aria-labelledby="social-links">

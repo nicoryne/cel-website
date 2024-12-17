@@ -63,7 +63,7 @@ export default function WavesDivider() {
           ease: 'easeInOut'
         }}
       >
-        <use xlinkHref="#wave-path" x="50" y="7" fill="#f0f5f8"></use>
+        <use xlinkHref="#wave-path" x="50" y="7" fill="#ffff"></use>
       </motion.g>
     </svg>
   );

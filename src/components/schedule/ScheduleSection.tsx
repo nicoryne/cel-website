@@ -7,26 +7,6 @@ import Image from 'next/image';
 import cel_logo from '@/../public/logos/cel.webp';
 import { motion } from 'framer-motion';
 
-const groupSeriesByDate = (list: SeriesWithDetails[]) => {
-  return list.reduce(
-    (acc: { [date: string]: SeriesWithDetails[] }, item: SeriesWithDetails) => {
-      const date = new Date(item.start_time).toLocaleDateString('en-CA');
-
-      if (!acc[date]) {
-        acc[date] = [];
-      }
-
-      acc[date].push(item);
-      acc[date].sort(
-        (b, a) =>
-          new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
-      );
-      return acc;
-    },
-    {}
-  );
-};
-
 type HomeSectionProps = {
   seriesList: SeriesWithDetails[];
   gamePlatformList: GamePlatform[];
@@ -39,12 +19,36 @@ export default function ScheduleSection({
   const dateToday = new Date();
 
   const platformOptions = [
-    { logo: cel_logo, abbrev: 'All Games' },
+    { logo: cel_logo, abbrev: 'ALL', title: 'All Games' },
     ...gamePlatformList.map((platform) => ({
       logo: platform.logo_url,
-      abbrev: platform.platform_abbrev
+      abbrev: platform.platform_abbrev,
+      title: platform.platform_title
     }))
   ];
+
+  const groupSeriesByDate = (list: SeriesWithDetails[]) => {
+    return list.reduce(
+      (
+        acc: { [date: string]: SeriesWithDetails[] },
+        item: SeriesWithDetails
+      ) => {
+        const date = new Date(item.start_time).toLocaleDateString('en-CA');
+
+        if (!acc[date]) {
+          acc[date] = [];
+        }
+
+        acc[date].push(item);
+        acc[date].sort(
+          (b, a) =>
+            new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
+        );
+        return acc;
+      },
+      {}
+    );
+  };
 
   const [filterState, setFilterState] = React.useState(platformOptions[0]);
   const [menuFilterState, toggleMenuFilter] = React.useState(false);
@@ -52,7 +56,7 @@ export default function ScheduleSection({
 
   const filteredSeries = React.useMemo(() => {
     return seriesList.filter((item) => {
-      return filterState.abbrev === 'All Games'
+      return filterState.abbrev === 'ALL'
         ? seriesList
         : item.platform?.platform_abbrev === filterState.abbrev;
     });
@@ -77,8 +81,9 @@ export default function ScheduleSection({
 
   React.useEffect(() => {
     const handleScroll = () => {
+      const scrollThreshold = 4;
       const sections = sortedDates.map((date) => document.getElementById(date));
-      const scrollY = window.scrollY + window.innerHeight / 4;
+      const scrollY = window.scrollY + window.innerHeight / scrollThreshold;
 
       const currentSection = sections.find((section) => {
         if (section) {
@@ -102,11 +107,11 @@ export default function ScheduleSection({
   return (
     <>
       {/* Control Panel */}
-      <aside className="fixed left-0 right-0 top-20 z-40 mx-auto h-24 border-t-2 border-gray-800 bg-[var(--cel-navy)]">
-        <div className="mx-auto rounded-b-md px-8 md:w-[800px] lg:w-[1100px]">
+      <aside className="fixed left-0 right-0 top-20 z-40 mx-auto h-24 border-t-2 border-neutral-800">
+        <div className="mx-auto rounded-b-md bg-[#121212] px-8 md:w-[800px] lg:w-[1100px]">
           <div className="flex place-items-center justify-between py-4">
             {/* Time Group */}
-            <div className="flex flex-col uppercase text-white">
+            <div className="flex flex-col uppercase">
               {/* Month and Numeric Date */}
               <time className="text-3xl font-bold md:text-4xl">
                 {currentDate.toLocaleDateString('en-US', {
@@ -125,7 +130,7 @@ export default function ScheduleSection({
             {/* Filter Game Button */}
             <div className="flex flex-col items-end space-y-12">
               <button
-                className="flex h-10 w-40 items-center justify-center gap-2 rounded-md bg-[var(--cel-blue)] text-white"
+                className="flex h-10 w-40 items-center justify-center gap-2 rounded-md bg-neutral-800 text-white transition-colors duration-150 ease-linear hover:bg-neutral-700"
                 onClick={() => toggleMenuFilter(!menuFilterState)}
               >
                 <Image
@@ -140,13 +145,13 @@ export default function ScheduleSection({
 
               {menuFilterState && (
                 <motion.div
-                  className="absolute flex flex-wrap rounded-md bg-[var(--cel-navy)]"
+                  className="absolute flex flex-col flex-wrap rounded-md shadow-lg"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 100, y: 0 }}
                 >
                   {platformOptions.map((platform, index) => (
                     <button
-                      className="flex h-24 w-24 flex-col items-center justify-center gap-2 text-xs text-neutral-400 hover:text-white"
+                      className={`flex h-16 w-40 items-center justify-center gap-2 text-neutral-300 hover:text-white ${platform.abbrev === filterState.abbrev ? 'bg-neutral-800' : 'bg-[var(--background)]'}`}
                       key={index}
                       onClick={() => {
                         setFilterState(platform),
@@ -155,12 +160,14 @@ export default function ScheduleSection({
                     >
                       <Image
                         src={platform.logo}
-                        className="h-auto w-4"
+                        className="h-auto w-6"
                         width={128}
                         height={128}
                         alt={`${platform.abbrev} Logo`}
                       />
-                      {platform.abbrev}
+                      <p className="w-24 break-words text-xs">
+                        {platform.title}
+                      </p>
                     </button>
                   ))}
                 </motion.div>
@@ -171,9 +178,13 @@ export default function ScheduleSection({
       </aside>
 
       {/* Series Section */}
-      <div className="mt-60 min-h-[90vh] space-y-16 overflow-y-auto">
+      <div className="min-h-[90vh] space-y-16 overflow-y-auto pt-60">
         {sortedDates.map((date) => (
-          <section id={date} key={date} className="grid items-center">
+          <section
+            id={date}
+            key={date}
+            className="grid items-center rounded-lg bg-neutral-900 p-4"
+          >
             <h1 className="col-span-1 text-2xl font-bold uppercase md:col-span-2">
               {new Date(date).toLocaleDateString('en-US', {
                 month: 'short',
@@ -191,7 +202,7 @@ export default function ScheduleSection({
                   <SeriesContainer key={series.id} series={series} />
                 ))
               ) : (
-                <p className="text-center text-lg font-semibold text-neutral-600">
+                <p className="pb-8 pt-2 text-center text-lg font-semibold text-neutral-600">
                   There's no games for today
                 </p>
               )}
