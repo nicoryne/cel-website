@@ -117,9 +117,10 @@ export default function AdminSeriesClient({
               onCancel: () => setModalProps(null)
             });
 
-            setTimeout(() => {
-              setLocalSeriesList((prev) =>
-                [...prev, formData.current as SeriesWithDetails].sort(
+            setTimeout(async () => {
+              const updatedList = await getAllSeriesWithDetails();
+              setLocalSeriesList(
+                updatedList.sort(
                   (a, b) =>
                     new Date(a.start_time).getTime() -
                     new Date(b.start_time).getTime()
