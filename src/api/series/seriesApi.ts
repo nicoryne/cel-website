@@ -1,9 +1,7 @@
-'use server';
+
 import { createClient } from '@/lib/supabase/client';
 import { Series, SeriesWithDetails } from '@/lib/types';
-import { getTeamById } from '@/api/team/teamApi';
-import { getLeagueScheduleById } from '@/api/league/leagueApi';
-import { getGamePlatformById } from '@/api/platform/platformApi';
+import { getTeamById,getLeagueScheduleById, getGamePlatformById } from '@/api';
 import { handleError } from '@/api/utils/errorHandler';
 
 //====================
@@ -21,10 +19,10 @@ import { handleError } from '@/api/utils/errorHandler';
  * @returns {Promise<Series | null>} A promise that resolves to the created Series object.
  * Returns null if an error occurs.
  */
-export const createSeries = async (series: Series): Promise<Series | null> => {
+export const createSeries = async (series: {}): Promise<{} | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase.from('series').insert([series]).single();
-
+  const { data, error } = await supabase.from('series').insert([series])
+  
   if (error) {
     handleError(error, 'creating series');
     return null; // Return null if there is an error
@@ -158,8 +156,8 @@ export const deleteSeries = async (id: string): Promise<boolean> => {
 
   if (error) {
     handleError(error, `deleting series by ID: ${id}`);
-    return false; // Return false if there is an error
+    return false; 
   }
 
-  return true; // Return true if the deletion was successful
+  return true; 
 };

@@ -1,6 +1,12 @@
 'use client';
 
-import { SeriesWithDetails } from '@/lib/types';
+import {
+  GamePlatform,
+  LeagueSchedule,
+  Series,
+  SeriesWithDetails,
+  Team
+} from '@/lib/types';
 import {
   PencilSquareIcon,
   PlusIcon,
@@ -8,6 +14,15 @@ import {
   XMarkIcon
 } from '@heroicons/react/20/solid';
 import React from 'react';
+import Modal, { ModalProps } from '@/components/Modal';
+import InsertSeriesModal from '@/components/modals/InsertSeriesModal';
+import {
+  createSeries,
+  deleteSeries,
+  getAllSeries,
+  getAllSeriesWithDetails,
+  updateSeries
+} from '@/api';
 
 const tableHeaders = [
   '#',
@@ -18,17 +33,44 @@ const tableHeaders = [
   'Team B',
   'Team B Score',
   'Week',
-  'Is Live',
+  'Status',
   ''
 ];
 
 type AdminSeriesClientProps = {
   seriesList: SeriesWithDetails[];
+  teamsList: Team[];
+  scheduleList: LeagueSchedule[];
+  platforms: GamePlatform[];
 };
 
 export default function AdminSeriesClient({
-  seriesList
+  seriesList,
+  teamsList,
+  scheduleList,
+  platforms
 }: AdminSeriesClientProps) {
+  // Local Series List
+  const [localSeriesList, setLocalSeriesList] = React.useState<
+    SeriesWithDetails[]
+  >(
+    seriesList.sort(
+      (a, b) =>
+        new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
+    )
+  );
+
+  // Format Date
+  const formatDate = (date: Date) =>
+    new Date(date).toLocaleString('en-CA', {
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+  // Row Handler
   const [isARowChecked, setIsARowChecked] = React.useState(false);
   const [checkedRows, setCheckedRows] = React.useState<boolean[]>(
     new Array(seriesList.length).fill(false)
@@ -41,15 +83,6 @@ export default function AdminSeriesClient({
   React.useEffect(() => {
     setIsARowChecked(checkedRows.some(Boolean));
   }, [checkedRows]);
-
-  const formatDate = (date: Date) =>
-    new Date(date).toLocaleString('en-CA', {
-      month: 'short',
-      day: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
 
   const handleRowCheckboxChange = (index: number) => {
     setCheckedRows((prev) => {
@@ -64,12 +97,189 @@ export default function AdminSeriesClient({
     setCheckedRows(new Array(seriesList.length).fill(!allChecked));
   };
 
+  // Modal
+  const [modalProps, setModalProps] = React.useState<ModalProps | null>(null);
+  const formData = React.useRef({});
+
+  const handleInsertClick = () => {
+    setModalProps({
+      title: 'Adding New Series',
+      type: 'info',
+      message: 'Fill out the details to add a new series.',
+      onCancel: () => setModalProps(null),
+      onConfirm: async () => {
+        await createSeries(formData.current)
+          .then(() => {
+            setModalProps({
+              title: 'Success',
+              message: 'Series has been successfully added!',
+              type: 'success',
+              onCancel: () => setModalProps(null)
+            });
+
+            setTimeout(() => {
+              setLocalSeriesList((prev) =>
+                [...prev, formData.current as SeriesWithDetails].sort(
+                  (a, b) =>
+                    new Date(a.start_time).getTime() -
+                    new Date(b.start_time).getTime()
+                )
+              );
+              setModalProps(null);
+              formData.current = {};
+            }, 2000);
+          })
+          .catch(() => {
+            setModalProps({
+              title: 'Error',
+              message: 'Failed to add series. Please try again.',
+              type: 'error',
+              onCancel: () => setModalProps(null)
+            });
+          });
+      },
+      children: (
+        <InsertSeriesModal
+          teamsList={teamsList}
+          platforms={platforms}
+          scheduleList={scheduleList}
+          formData={formData}
+          series={null}
+        />
+      )
+    });
+  };
+
+  const handleUpdateClick = (series: SeriesWithDetails) => {
+    setModalProps({
+      title: 'Updating Series',
+      type: 'info',
+      message: 'Fill out the details to update series.',
+      onCancel: () => setModalProps(null),
+      onConfirm: async () => {
+        await updateSeries(series.id, formData.current)
+          .then(() => {
+            setModalProps({
+              title: 'Success',
+              message: 'Series has been successfully updated!',
+              type: 'success',
+              onCancel: () => setModalProps(null)
+            });
+
+            setTimeout(async () => {
+              const updatedList = await getAllSeriesWithDetails();
+              setLocalSeriesList(
+                updatedList.sort(
+                  (a, b) =>
+                    new Date(a.start_time).getTime() -
+                    new Date(b.start_time).getTime()
+                )
+              );
+              setModalProps(null);
+              formData.current = {};
+            }, 2000);
+          })
+          .catch(() => {
+            setModalProps({
+              title: 'Error',
+              message: 'Failed to update series. Please try again.',
+              type: 'error',
+              onCancel: () => setModalProps(null)
+            });
+          });
+      },
+      children: (
+        <InsertSeriesModal
+          teamsList={teamsList}
+          platforms={platforms}
+          scheduleList={scheduleList}
+          formData={formData}
+          series={series}
+        />
+      )
+    });
+  };
+
+  const handleDeleteSeries = () => {
+    const toDeleteRows = checkedRows
+      .map((isChecked, index) => (isChecked ? index : -1))
+      .filter((index) => index !== -1);
+
+    setModalProps({
+      title: `Deleting Series`,
+      message:
+        'Are you sure you want to delete the following series? This action is irreversible.',
+      type: 'warning',
+      onCancel: () => setModalProps(null),
+      onConfirm: async () => {
+        try {
+          const successfullyDeletedIndices: number[] = [];
+
+          for (const rowIndex of toDeleteRows) {
+            const deleted = await deleteSeries(localSeriesList[rowIndex].id);
+            if (deleted) {
+              successfullyDeletedIndices.push(rowIndex);
+            }
+          }
+
+          setLocalSeriesList((prev) =>
+            prev
+              .filter((_, index) => !successfullyDeletedIndices.includes(index))
+              .sort(
+                (a, b) =>
+                  new Date(a.start_time).getTime() -
+                  new Date(b.start_time).getTime()
+              )
+          );
+
+          setCheckedRows((prev) =>
+            prev.filter(
+              (_, index) => !successfullyDeletedIndices.includes(index)
+            )
+          );
+
+          setModalProps({
+            title: 'Success',
+            message: `${successfullyDeletedIndices.length} series have been successfully deleted!`,
+            type: 'success',
+            onCancel: () => setModalProps(null)
+          });
+
+          setTimeout(() => {
+            setModalProps(null);
+          }, 2000);
+        } catch {
+          setModalProps({
+            title: 'Error',
+            message: 'Failed to delete series. Please try again.',
+            type: 'error',
+            onCancel: () => setModalProps(null)
+          });
+        }
+      }
+    });
+  };
+
   return (
     <>
+      {/* Insert Series Modal */}
+      {modalProps && (
+        <Modal
+          title={modalProps.title}
+          type={modalProps.type}
+          message={modalProps.message}
+          onCancel={modalProps.onCancel}
+          onConfirm={modalProps.onConfirm}
+          children={modalProps.children}
+        />
+      )}
       {/* Series Table */}
       <div className="flex space-x-4 bg-neutral-900 p-2">
         {!isARowChecked && (
-          <button className="flex place-items-center space-x-2 rounded-md border-2 border-green-700 bg-green-900 px-3 py-1 hover:border-green-600">
+          <button
+            className="flex place-items-center space-x-2 rounded-md border-2 border-green-700 bg-green-900 px-3 py-1 hover:border-green-600"
+            onClick={handleInsertClick}
+          >
             <span>
               <PlusIcon className="h-auto w-3 text-green-600" />
             </span>
@@ -89,7 +299,10 @@ export default function AdminSeriesClient({
           </button>
         )}
         {isARowChecked && (
-          <button className="flex place-items-center space-x-2 rounded-md border-2 border-red-700 bg-red-900 px-3 py-1 hover:border-red-600">
+          <button
+            onClick={handleDeleteSeries}
+            className="flex place-items-center space-x-2 rounded-md border-2 border-red-700 bg-red-900 px-3 py-1 hover:border-red-600"
+          >
             <span>
               <TrashIcon className="h-auto w-3 text-red-200" />
             </span>
@@ -117,9 +330,9 @@ export default function AdminSeriesClient({
             </tr>
           </thead>
           <tbody>
-            {seriesList.map((series, index) => (
+            {localSeriesList.map((series, index) => (
               <tr
-                key={series.id}
+                key={index}
                 className="border-b border-transparent text-center text-xs hover:text-neutral-300 [&:not(:last-child)]:border-neutral-700"
               >
                 <td>
@@ -138,9 +351,14 @@ export default function AdminSeriesClient({
                 <td>{series.team_b?.school_abbrev || 'N/A'}</td>
                 <td>{series.team_b_score}</td>
                 <td>{series.week}</td>
-                <td>{series.is_live ? '🟢' : '🔴'}</td>
+                <td>{series.status}</td>
                 <td>
-                  <PencilSquareIcon className="h-auto w-4 cursor-pointer hover:text-[var(--accent-secondary)]" />
+                  <button
+                    type="button"
+                    onClick={() => handleUpdateClick(series)}
+                  >
+                    <PencilSquareIcon className="h-auto w-4 cursor-pointer hover:text-[var(--cel-blue)]" />
+                  </button>
                 </td>
               </tr>
             ))}

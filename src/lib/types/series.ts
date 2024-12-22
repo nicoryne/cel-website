@@ -1,5 +1,13 @@
 import { GamePlatform, LeagueSchedule, Team } from "@/lib/types";
 
+export enum SeriesType {
+  BO2 = 'BO2',
+  BO3 = 'BO3',
+  BO5 = 'BO5',  
+  BO7 = 'BO7',  
+}
+
+
 export type Series = {
     id: string; /* PK */
     league_schedule_id: string; /* FK */
@@ -11,7 +19,7 @@ export type Series = {
     team_b_score: number;
     team_b_status: string;
     week: number;
-    is_live: boolean;
+    status: string;
     platform_id: string; /* FK */
     start_time: Date;
     end_time: Date;

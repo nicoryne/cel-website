@@ -1,4 +1,3 @@
-'use server';
 import { createClient } from '@/lib/supabase/client';
 import { GamePlatform } from '@/lib/types';
 import { handleError } from '@/api/utils/errorHandler';

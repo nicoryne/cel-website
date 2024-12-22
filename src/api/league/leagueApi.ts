@@ -1,4 +1,3 @@
-'use server';
 import { createClient } from '@/lib/supabase/client';
 import { LeagueSchedule } from '@/lib/types';
 import { handleError } from '@/api/utils/errorHandler';

@@ -1,4 +1,3 @@
-'use server';
 import { createClient } from '@/lib/supabase/client';
 import { Team } from '@/lib/types';
 import { handleError } from '../utils/errorHandler';
@@ -44,7 +43,6 @@ export const getAllTeams = async (): Promise<Team[]> => {
   const supabase = createClient();
   const { data, error } = await supabase.from('teams')
     .select('*')
-    .not('school_abbrev', 'eq', 'TBD')
     .order('school_abbrev');
 
   if (error) {
