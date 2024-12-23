@@ -3,7 +3,6 @@
 import {
   GamePlatform,
   LeagueSchedule,
-  Series,
   SeriesWithDetails,
   Team
 } from '@/lib/types';
@@ -15,11 +14,10 @@ import {
 } from '@heroicons/react/20/solid';
 import React from 'react';
 import Modal, { ModalProps } from '@/components/Modal';
-import InsertSeriesModal from '@/components/modals/InsertSeriesModal';
+import SeriesForm from '@/components/forms/SeriesForm';
 import {
   createSeries,
   deleteSeries,
-  getAllSeries,
   getAllSeriesWithDetails,
   updateSeries
 } from '@/api';
@@ -140,7 +138,7 @@ export default function AdminSeriesClient({
           });
       },
       children: (
-        <InsertSeriesModal
+        <SeriesForm
           teamsList={teamsList}
           platforms={platforms}
           scheduleList={scheduleList}
@@ -190,7 +188,7 @@ export default function AdminSeriesClient({
           });
       },
       children: (
-        <InsertSeriesModal
+        <SeriesForm
           teamsList={teamsList}
           platforms={platforms}
           scheduleList={scheduleList}
@@ -263,7 +261,7 @@ export default function AdminSeriesClient({
 
   return (
     <>
-      {/* Insert Series Modal */}
+      {/* Modal*/}
       {modalProps && (
         <Modal
           title={modalProps.title}

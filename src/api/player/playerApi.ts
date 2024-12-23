@@ -18,9 +18,9 @@ import { handleError } from '@/api/utils/errorHandler';
  * @returns {Promise<player | null>} A promise that resolves to the created player object.
  * Returns null if an error occurs.
  */
-export const postPlayer = async (player: Player): Promise<Player | null> => {
+export const createPlayer = async (player: {}): Promise<{} | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase.from('players').insert([player]).single();
+  const { data, error } = await supabase.from('players').insert([player]);
 
   if (error) {
     handleError(error, 'creating player');

@@ -7,11 +7,10 @@ import {
   LeagueSchedule,
   Team,
   SeriesType,
-  Series,
   SeriesWithDetails
 } from '@/lib/types';
 
-type InsertSeriesModalProps = {
+type SeriesFormProps = {
   teamsList: Team[];
   scheduleList: LeagueSchedule[];
   platforms: GamePlatform[];
@@ -19,13 +18,13 @@ type InsertSeriesModalProps = {
   series: SeriesWithDetails | null;
 };
 
-export default function InsertSeriesModal({
+export default function SeriesForm({
   teamsList,
   platforms,
   scheduleList,
   formData,
   series
-}: InsertSeriesModalProps) {
+}: SeriesFormProps) {
   // Team
   const [teamA, setTeamA] = React.useState<Team>(
     series?.team_a || teamsList[3]
@@ -447,7 +446,7 @@ export default function InsertSeriesModal({
                 </p>
               </button>
 
-              {/* Dropdown for Game Platform Selection */}
+              {/* Dropdown for League Schedule Selection */}
               {scheduleMenu && (
                 <motion.div
                   className="absolute flex w-80 flex-col place-self-center rounded-md border-2 border-neutral-600 shadow-lg"
