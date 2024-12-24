@@ -1,0 +1,14 @@
+{
+  "rewrites": [
+    {
+      "source": "/_next/*",
+      "destination": "/404"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/_next/*",
+      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+    }
+  ]
+}
