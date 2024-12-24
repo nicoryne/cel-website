@@ -1,14 +1,23 @@
 {
   "rewrites": [
     {
-      "source": "/_next/*",
+      "source": "/_next/static/:path*",
       "destination": "/404"
+    },
+    {
+      "source": "/feedback/((?!general).*)",
+      "destination": "/api/feedback/general"
     }
   ],
   "headers": [
     {
-      "source": "/_next/*",
-      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+      "source": "/_next/static/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate"
+        }
+      ]
     }
   ]
 }
