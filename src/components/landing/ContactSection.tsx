@@ -30,9 +30,9 @@ export default function ContactSection() {
 
   return (
     <section
+      aria-labelledby="contact-heading"
       id="contact"
       className="bg-white"
-      aria-labelledby="contact-heading"
     >
       {/* Content Section */}
       <div className="flex w-full flex-col items-center justify-center space-y-16 p-6 text-center md:p-12 lg:p-24">

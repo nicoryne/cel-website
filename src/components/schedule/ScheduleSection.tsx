@@ -108,7 +108,9 @@ export default function ScheduleSection({
     <>
       {/* Control Panel */}
       <aside className="fixed left-0 right-0 top-20 z-40 mx-auto h-24 border-t-2 border-neutral-800">
+        {/* Container */}
         <div className="mx-auto rounded-b-md bg-[#121212] px-8 md:w-[800px] lg:w-[1100px]">
+          {/* Wrapper */}
           <div className="flex place-items-center justify-between py-4">
             {/* Time Group */}
             <div className="flex flex-col uppercase">
@@ -126,6 +128,7 @@ export default function ScheduleSection({
                 })}
               </time>
             </div>
+            {/* End of Time Group */}
 
             {/* Filter Game Button */}
             <div className="flex flex-col items-end space-y-12">
@@ -173,11 +176,14 @@ export default function ScheduleSection({
                 </motion.div>
               )}
             </div>
+            {/* End of Filter Game Button */}
           </div>
+          {/* End of Wrapper */}
         </div>
+        {/* End of Container */}
       </aside>
 
-      {/* Series Section */}
+      {/* Series Section Container */}
       <div className="min-h-[90vh] space-y-16 overflow-y-auto pt-60">
         {sortedDates.map((date) => (
           <section

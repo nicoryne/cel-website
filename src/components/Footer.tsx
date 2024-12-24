@@ -1,4 +1,5 @@
 'use client';
+
 import { EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/outline';
 
 import { defaultNavLinks } from '@/components/Navbar';
@@ -80,6 +81,7 @@ export const defaultSocials: Socials[] = [
 export default function Footer() {
   return (
     <footer id="site-footer" className="h-96 w-full bg-[var(--background)]">
+      {/* Wrapper */}
       <div className="mx-auto grid h-full w-fit content-center gap-8 px-8 text-sm text-[var(--text-light)]">
         {/* Social Links Section */}
         <section className="col-span-1" aria-labelledby="social-links">
@@ -150,6 +152,7 @@ export default function Footer() {
         </section>
         {/* End of Footer Legal */}
       </div>
+      {/* End of Wrapper */}
     </footer>
   );
 }

@@ -7,6 +7,7 @@ import cel_logo from '@/../public/logos/cel.webp';
 type SeriesContainerProps = {
   series: SeriesWithDetails;
 };
+
 export default function SeriesContainer({ series }: SeriesContainerProps) {
   return (
     <div className="rounded-md border-2 border-neutral-800 shadow-lg">
@@ -28,6 +29,7 @@ export default function SeriesContainer({ series }: SeriesContainerProps) {
             {new Date(series.start_time).getHours() < 12 ? 'AM' : 'PM'}
           </span>
         </div>
+        {/* End of Time */}
 
         {/* Team, Logo, Score */}
         <div className="col-span-2 grid grid-flow-col place-items-center space-x-4 md:col-span-1 md:space-x-8">
@@ -44,6 +46,7 @@ export default function SeriesContainer({ series }: SeriesContainerProps) {
               height={256}
             />
           </div>
+          {/* End of Team A */}
 
           {/* Vs and Score */}
           <div className="space-x-2 text-base md:space-x-3 md:text-lg">
@@ -51,6 +54,7 @@ export default function SeriesContainer({ series }: SeriesContainerProps) {
             <span className="text-gray-700">/</span>
             <span>{series.team_b_score}</span>
           </div>
+          {/* End of Vs and Score */}
 
           {/* Team B */}
           <div className="grid grid-cols-2 place-items-center gap-4">
@@ -65,8 +69,11 @@ export default function SeriesContainer({ series }: SeriesContainerProps) {
               {series.team_b?.school_abbrev}
             </p>
           </div>
+          {/* End of Team B */}
         </div>
+        {/* End of Team, Logo, Score */}
       </div>
+      {/* End of Upper Container */}
 
       {/* Lower Container */}
       <div className="] flex h-8 flex-row items-center justify-between rounded-b-md bg-neutral-900 p-2 text-xs text-neutral-500">

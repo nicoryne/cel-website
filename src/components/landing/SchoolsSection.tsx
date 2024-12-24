@@ -2,7 +2,6 @@
 import React from 'react';
 import { Team } from '@/lib/types';
 import SchoolCard from '@/components/landing/SchoolCard';
-import { motion } from 'framer-motion';
 
 interface SchooLsSectionProps {
   teamList: Team[];
@@ -15,6 +14,7 @@ export default function SchoolsSection({ teamList }: SchooLsSectionProps) {
     const newTeamList = teamList.filter((team) => team.school_abbrev !== 'TBD');
     setRenderedTeams(newTeamList);
   }, [teamList]);
+
   return (
     <section aria-labelledby="schools-heading" className="bg-white px-8 py-16">
       <header className="mx-auto mb-8 w-fit">

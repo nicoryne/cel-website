@@ -15,6 +15,7 @@ export default function SchoolCard({ school }: SchoolCardProps) {
       className="h-auto w-20 cursor-grab space-y-2 p-2"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
+      aria-label={`Go to ${school.school_abbrev} page`}
     >
       <Image
         width={500}

@@ -4,9 +4,9 @@ import AboutCarousel from '@/components/landing/AboutCarousel';
 export default function AboutSection() {
   return (
     <section
+      aria-labelledby="about-heading"
       id="about"
       className="min-h-screen bg-[var(--cel-red)]"
-      aria-labelledby="about-heading"
     >
       {/* Content Section */}
       <div className="flex w-full flex-col items-center justify-center space-y-16 p-6 text-center md:p-12 lg:p-24">

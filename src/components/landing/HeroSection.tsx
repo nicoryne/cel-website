@@ -7,9 +7,9 @@ import { motion } from 'framer-motion';
 export default function HeroSection() {
   return (
     <section
+      aria-labelledby="hero-heading"
       id="home"
       className="relative min-h-[700px] w-full overflow-hidden bg-gradient-to-b from-[var(--cel-navy)] via-[var(--hero-blue-mid)] to-[var(--hero-blue-end)]"
-      aria-labelledby="hero-heading"
     >
       {/* Background Video */}
       <div aria-hidden="true">

@@ -30,13 +30,8 @@ html {
 
 html,
 body {
+  @apply bg-background text-foreground antialiased;
   text-rendering: optimizeLegibility;
   -moz-osx-font-smoothing: grayscale;
-  @apply bg-background text-foreground antialiased;
   scroll-behavior: smooth;
-}
-
-a:hover {
-  color: var(--cel-red);
-  transition: color 0.2s ease-in-out;
 }

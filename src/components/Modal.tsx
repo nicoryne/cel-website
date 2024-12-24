@@ -1,3 +1,5 @@
+'use client';
+
 import React, { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 
@@ -45,6 +47,7 @@ export default function Modal({
 
   return (
     <aside className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50">
+      {/* Wrapper */}
       <motion.div
         className={`z-50 ml-20 flex w-80 max-w-lg flex-col border-2 bg-neutral-800 p-4 md:ml-0 md:w-full ${currentStyle.borderColor} rounded-md shadow-lg`}
         initial={{ opacity: 0, scale: 0.9 }}
@@ -56,12 +59,14 @@ export default function Modal({
           <span className="text-2xl">{currentStyle.icon}</span>
           <h1 className="ml-2 text-xl font-semibold">{title}</h1>
         </div>
+        {/* End of Header */}
 
         {/* Body */}
         <div className="p-4 text-neutral-400">
           {message && <p>{message}</p>}
           {children && <div>{children}</div>}
         </div>
+        {/* End of Body */}
 
         {/* Footer Buttons */}
         <div className="flex justify-between gap-4 px-4 py-1 text-sm">
@@ -94,7 +99,9 @@ export default function Modal({
             </button>
           )}
         </div>
+        {/* End of Footer Buttons */}
       </motion.div>
+      {/* End of Wrapper */}
     </aside>
   );
 }

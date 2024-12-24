@@ -1,4 +1,5 @@
 'use client';
+
 import React from 'react';
 import Image from 'next/image';
 import cel_logo from '@/../public/logos/cel.webp';
@@ -17,15 +18,15 @@ export const defaultNavLinks: NavigationLink[] = [
 ];
 
 export default function Navbar() {
+  const pathname = usePathname();
+
+  const isLanding = pathname == '/';
+
   const [isMobileMenuOpen, toggleMobileMenu] = React.useState(false);
   const [isScrolling, setScrolling] = React.useState(false);
   const [isColored, setColored] = React.useState(false);
-  const pathname = usePathname();
-
-  let isLanding = pathname == '/';
 
   React.useEffect(() => {
-    // Scrolling Use Effect
     const handleScroll = () => {
       const thresholdY = 50;
       setScrolling(window.scrollY > thresholdY);
@@ -39,11 +40,7 @@ export default function Navbar() {
   }, [setScrolling]);
 
   React.useEffect(() => {
-    if (!isLanding || isScrolling) {
-      setColored(true);
-    } else {
-      setColored(false);
-    }
+    setColored(!isLanding || isScrolling);
   }, [isLanding, isScrolling]);
 
   return (
@@ -52,9 +49,10 @@ export default function Navbar() {
         isColored ? 'bg-[var(--background)]' : `bg-transparent`
       }`}
     >
+      {/* Wrapper */}
       <div className="mx-auto flex h-full items-center justify-between gap-16 p-8 md:w-[700px] lg:w-[1000px]">
         {/* Logo */}
-        <Link href="/">
+        <Link href="/" aria-label="Go to homepage">
           <Image
             className="h-auto w-12"
             src={cel_logo}
@@ -62,14 +60,15 @@ export default function Navbar() {
             priority
           />
         </Link>
+        {/* End of Logo */}
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden md:block">
+        <nav className="hidden md:block" aria-label="Desktop navigation">
           <ul className="flex gap-8">
             {defaultNavLinks.map((navLink, index) => (
               <li key={index}>
                 <Link
-                  className="text-base font-medium text-[var(--text-light)] hover:text-[var(--cel-red)]"
+                  className="text-base font-medium text-[var(--text-light)] duration-150 ease-linear hover:text-[var(--cel-red)]"
                   href={navLink.href}
                 >
                   {navLink.text}
@@ -78,6 +77,7 @@ export default function Navbar() {
             ))}
           </ul>
         </nav>
+        {/* End of Desktop Navigation Links */}
 
         {/* Mobile Menu Icon */}
         <Bars4Icon
@@ -85,6 +85,7 @@ export default function Navbar() {
           onClick={() => toggleMobileMenu(!isMobileMenuOpen)}
           aria-label="Toggle navigation menu"
         />
+        {/* End of Mobile Menu Icon */}
 
         {/* Mobile Dropdown Menu */}
         <nav
@@ -109,7 +110,9 @@ export default function Navbar() {
             ))}
           </ul>
         </nav>
+        {/* End of Mobile Dropdown Menu */}
       </div>
+      {/* End of Wrapper */}
     </header>
   );
 }
