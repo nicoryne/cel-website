@@ -46,7 +46,7 @@ export const getAllSeries = async (): Promise<Series[]> => {
   const { data, error } = await supabase
     .from('series')
     .select('*')
-    .order('start_time', { ascending: true });
+    .order('start_time', { ascending: false });
 
   if (error) {
     handleError(error, 'fetching all series');

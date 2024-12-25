@@ -79,30 +79,27 @@ export default function ScheduleSection({
     return dateB - dateA;
   });
 
+  // Scrolling Effect
+  const sectionRefs = React.useRef<(HTMLElement | null)[]>([]);
+
   React.useEffect(() => {
-    const handleScroll = () => {
-      const scrollThreshold = 4;
-      const sections = sortedDates.map((date) => document.getElementById(date));
-      const scrollY = window.scrollY + window.innerHeight / scrollThreshold;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setCurrentDate(new Date(entry.target.id));
+          }
+        });
+      },
+      { threshold: 1 }
+    );
 
-      const currentSection = sections.find((section) => {
-        if (section) {
-          const { top, bottom } = section.getBoundingClientRect();
-          return top <= scrollY && bottom >= scrollY;
-        }
-        return false;
-      });
+    sectionRefs.current.forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
 
-      if (currentSection) {
-        setCurrentDate(new Date(currentSection.id));
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [sortedDates]);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <>
@@ -185,10 +182,13 @@ export default function ScheduleSection({
 
       {/* Series Section Container */}
       <div className="min-h-[90vh] space-y-16 overflow-y-auto pt-60">
-        {sortedDates.map((date) => (
+        {sortedDates.map((date, index) => (
           <section
             id={date}
             key={date}
+            ref={(el) => {
+              sectionRefs.current[index] = el;
+            }}
             className="grid items-center rounded-lg bg-neutral-900 p-4"
           >
             <h1 className="col-span-1 text-2xl font-bold uppercase md:col-span-2">

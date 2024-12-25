@@ -6,6 +6,7 @@ export default async function AdminPlayers() {
   const playersList = await getAllPlayersWithDetails();
   const teamsList = await getAllTeams();
   const platforms = await getAllGamePlatforms();
+
   return (
     <>
       <AdminPlayersClient

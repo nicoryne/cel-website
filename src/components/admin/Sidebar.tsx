@@ -30,7 +30,7 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`transition-width inset-y-0 left-0 z-50 h-screen border-r-2 border-[#212121] bg-[#131313] shadow-md duration-200 ${
+      className={`transition-width inset-y-0 left-0 z-50 h-full min-h-screen border-r-2 border-[#212121] bg-[#131313] shadow-md duration-200 ${
         isMaximized ? 'w-16 md:w-48' : 'w-16'
       }`}
       onMouseEnter={() => setIsMaximized(true)}
