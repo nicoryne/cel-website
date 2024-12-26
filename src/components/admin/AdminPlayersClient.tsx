@@ -17,16 +17,8 @@ import {
   updatePlayer
 } from '@/api';
 import { createClient } from '@/lib/supabase/client';
-
-const tableHeaders = [
-  '#',
-  'Ingame Name',
-  'Team',
-  'Platform',
-  'Last Name',
-  'First Name',
-  ''
-];
+import Image from 'next/image';
+import not_found from '@/../../public/images/not-found.webp';
 
 type AdminPlayersClientProps = {
   playersList: PlayerWithDetails[];
@@ -42,39 +34,40 @@ export default function AdminPlayersClient({
   const [localPlayersList, setLocalPlayersList] =
     React.useState<PlayerWithDetails[]>(playersList);
 
-  const [isARowChecked, setIsARowChecked] = React.useState(false);
-  const [checkedRows, setCheckedRows] = React.useState<boolean[]>(
-    new Array(playersList.length).fill(false)
-  );
+  // Pagination State
+  const [paginatedPlayers, setPaginatedPlayers] =
+    React.useState<PlayerWithDetails[]>(localPlayersList);
+
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const itemsPerPage = 9;
+
+  const totalPages = Math.ceil(localPlayersList.length / itemsPerPage);
 
   React.useEffect(() => {
-    setCheckedRows(new Array(playersList.length).fill(false));
-  }, [playersList.length]);
+    const sortedPlayers = [...localPlayersList].sort((a, b) => {
+      const schoolComparison = (a.team?.school_abbrev || '').localeCompare(
+        b.team?.school_abbrev || ''
+      );
+      if (schoolComparison !== 0) return schoolComparison;
 
-  React.useEffect(() => {
-    setIsARowChecked(checkedRows.some(Boolean));
-  }, [checkedRows]);
+      const platformComparison = (
+        a.platform?.platform_abbrev || ''
+      ).localeCompare(b.platform?.platform_abbrev || '');
+      if (platformComparison !== 0) return platformComparison;
 
-  const formatDate = (date: Date) =>
-    new Date(date).toLocaleString('en-CA', {
-      month: 'short',
-      day: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+      return (a.ingame_name || '').localeCompare(b.ingame_name || '');
     });
 
-  const handleRowCheckboxChange = (index: number) => {
-    setCheckedRows((prev) => {
-      const newCheckedRows = [...prev];
-      newCheckedRows[index] = !newCheckedRows[index];
-      return newCheckedRows;
-    });
-  };
+    const paginated = sortedPlayers.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
+    );
 
-  const handleRowCheckboxCheckAll = () => {
-    const allChecked = checkedRows.every((checked) => checked);
-    setCheckedRows(new Array(playersList.length).fill(!allChecked));
+    setPaginatedPlayers(paginated);
+  }, [localPlayersList, currentPage]);
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
   };
 
   // Modal
@@ -101,6 +94,88 @@ export default function AdminPlayersClient({
     picture_url: ''
   });
 
+  const resetFormData = () => {
+    formData.current = {
+      first_name: '',
+      last_name: '',
+      ingame_name: '',
+      team_id: '',
+      game_platform_id: '',
+      roles: [],
+      picture: null,
+      picture_url: ''
+    };
+  };
+
+  const updatePlayersList = async () => {
+    const updatedList = await getAllPlayersWithDetails();
+    setLocalPlayersList(updatedList);
+    setModalProps(null);
+    resetFormData();
+  };
+
+  const retrieveProcessedData = async () => {
+    let processedData = {
+      first_name: formData.current.first_name,
+      last_name: formData.current.last_name,
+      ingame_name: formData.current.ingame_name,
+      team_id: formData.current.team_id,
+      game_platform_id: formData.current.game_platform_id,
+      roles: formData.current.roles,
+      picture_url: ''
+    };
+
+    if (formData.current.picture) {
+      const supabase = createClient();
+      const file = formData.current.picture;
+      const fileName = `${formData.current.ingame_name}_${Date.now()}.${file.type.split('/')[1]}`;
+
+      try {
+        const { error } = await supabase.storage
+          .from('images/player_images')
+          .upload(fileName, file);
+
+        if (error) {
+          console.error('Upload error:', error);
+          return;
+        }
+
+        const { data: signedUrlData, error: signedUrlError } =
+          await supabase.storage
+            .from('images/player_images')
+            .createSignedUrl(fileName, 60 * 60 * 24 * 365);
+
+        if (signedUrlError) {
+          console.error('Signed URL generation error:', signedUrlError);
+          return;
+        }
+
+        processedData.picture_url = signedUrlData.signedUrl;
+      } catch (err) {
+        console.error('Unexpected error:', err);
+      }
+    }
+
+    return processedData;
+  };
+
+  const deleteExistingPicture = async (player: PlayerWithDetails) => {
+    const supabase = createClient();
+
+    const url = new URL(player.picture_url);
+    const fileName = url.pathname.replace(
+      '/storage/v1/object/sign/images/',
+      ''
+    );
+
+    const { error } = await supabase.storage.from('images').remove([fileName]);
+
+    if (error) {
+      console.error('Remove error:', error);
+      return;
+    }
+  };
+
   const handleInsertClick = () => {
     setModalProps({
       title: 'Adding New Player',
@@ -108,46 +183,9 @@ export default function AdminPlayersClient({
       message: 'Fill out the details to add a new player.',
       onCancel: () => setModalProps(null),
       onConfirm: async () => {
-        let processedData = {
-          first_name: formData.current.first_name,
-          last_name: formData.current.last_name,
-          ingame_name: formData.current.ingame_name,
-          team_id: formData.current.team_id,
-          game_platform_id: formData.current.game_platform_id,
-          roles: formData.current.roles,
-          picture_url: ''
-        };
-        if (formData.current.picture) {
-          const supabase = createClient();
-          const file = formData.current.picture;
-          const fileName = `${formData.current.ingame_name}_${Date.now()}.${file.type.split('/')[1]}`;
-          try {
-            const { data, error } = await supabase.storage
-              .from('images/player_images')
-              .upload(fileName, file);
+        const processedData = await retrieveProcessedData();
 
-            if (error) {
-              console.error('Upload error:', error);
-              return;
-            }
-
-            const { data: signedUrlData, error: signedUrlError } =
-              await supabase.storage
-                .from('images/player_images')
-                .createSignedUrl(fileName, 60 * 60 * 24 * 365);
-
-            if (signedUrlError) {
-              console.error('Signed URL generation error:', signedUrlError);
-              return;
-            }
-
-            processedData.picture_url = signedUrlData.signedUrl;
-          } catch (err) {
-            console.error('Unexpected error:', err);
-          }
-        }
-
-        await createPlayer(processedData)
+        await createPlayer(processedData as {})
           .then(() => {
             setModalProps({
               title: 'Success',
@@ -157,19 +195,7 @@ export default function AdminPlayersClient({
             });
 
             setTimeout(async () => {
-              const updatedList = await getAllPlayersWithDetails();
-              setLocalPlayersList(updatedList);
-              setModalProps(null);
-              formData.current = {
-                first_name: '',
-                last_name: '',
-                ingame_name: '',
-                team_id: '',
-                game_platform_id: '',
-                roles: [],
-                picture: null,
-                picture_url: ''
-              };
+              updatePlayersList();
             }, 2000);
           })
           .catch(() => {
@@ -199,47 +225,13 @@ export default function AdminPlayersClient({
       message: 'Fill out the details to update player.',
       onCancel: () => setModalProps(null),
       onConfirm: async () => {
-        let processedData = {
-          first_name: formData.current.first_name,
-          last_name: formData.current.last_name,
-          ingame_name: formData.current.ingame_name,
-          team_id: formData.current.team_id,
-          game_platform_id: formData.current.game_platform_id,
-          roles: formData.current.roles,
-          picture_url: ''
-        };
+        const processedData = await retrieveProcessedData();
 
-        if (formData.current.picture) {
-          const supabase = createClient();
-          const file = formData.current.picture;
-          const fileName = `${formData.current.ingame_name}_${Date.now()}.${file.type.split('/')[1]}`;
-          try {
-            const { data, error } = await supabase.storage
-              .from('images/player_images')
-              .upload(fileName, file);
-
-            if (error) {
-              console.error('Upload error:', error);
-              return;
-            }
-
-            const { data: signedUrlData, error: signedUrlError } =
-              await supabase.storage
-                .from('images/player_images')
-                .createSignedUrl(fileName, 60 * 60 * 24 * 365);
-
-            if (signedUrlError) {
-              console.error('Signed URL generation error:', signedUrlError);
-              return;
-            }
-
-            processedData.picture_url = signedUrlData.signedUrl;
-          } catch (err) {
-            console.error('Unexpected error:', err);
-          }
+        if (processedData && player.picture_url) {
+          await deleteExistingPicture(player);
         }
 
-        await updatePlayer(player.id, processedData)
+        await updatePlayer(player.id, processedData as {})
           .then(() => {
             setModalProps({
               title: 'Success',
@@ -249,19 +241,7 @@ export default function AdminPlayersClient({
             });
 
             setTimeout(async () => {
-              const updatedList = await getAllPlayersWithDetails();
-              setLocalPlayersList(updatedList);
-              setModalProps(null);
-              formData.current = {
-                first_name: '',
-                last_name: '',
-                ingame_name: '',
-                team_id: '',
-                game_platform_id: '',
-                roles: [],
-                picture: null,
-                picture_url: ''
-              };
+              updatePlayersList();
             }, 2000);
           })
           .catch(() => {
@@ -284,11 +264,7 @@ export default function AdminPlayersClient({
     });
   };
 
-  const handleDeletePlayer = () => {
-    const toDeleteRows = checkedRows
-      .map((isChecked, index) => (isChecked ? index : -1))
-      .filter((index) => index !== -1);
-
+  const handleDeletePlayer = (player: PlayerWithDetails) => {
     setModalProps({
       title: `Deleting Player`,
       message:
@@ -297,41 +273,16 @@ export default function AdminPlayersClient({
       onCancel: () => setModalProps(null),
       onConfirm: async () => {
         try {
-          const successfullyDeletedIndices: number[] = [];
-          const supabase = createClient();
-
-          for (const rowIndex of toDeleteRows) {
-            let player = localPlayersList[rowIndex];
-            const deleted = await deletePlayer(localPlayersList[rowIndex].id);
-            if (deleted) {
-              const url = new URL(player.picture_url);
-              const fileName = url.pathname.replace(
-                '/storage/v1/object/sign/images/',
-                ''
-              );
-              console.log(fileName);
-              const { error } = await supabase.storage
-                .from('images')
-                .remove([fileName]);
-              successfullyDeletedIndices.push(rowIndex);
-            }
+          const deleted = await deletePlayer(player.id);
+          if (deleted && player.picture_url) {
+            deleteExistingPicture(player);
           }
 
-          setLocalPlayersList((prev) =>
-            prev.filter(
-              (_, index) => !successfullyDeletedIndices.includes(index)
-            )
-          );
-
-          setCheckedRows((prev) =>
-            prev.filter(
-              (_, index) => !successfullyDeletedIndices.includes(index)
-            )
-          );
+          updatePlayersList();
 
           setModalProps({
             title: 'Success',
-            message: `${successfullyDeletedIndices.length} players have been successfully deleted!`,
+            message: `Player has been successfully deleted!`,
             type: 'success',
             onCancel: () => setModalProps(null)
           });
@@ -364,11 +315,11 @@ export default function AdminPlayersClient({
           children={modalProps.children}
         />
       )}
-      {/* Players Table */}
-      <div className="flex space-x-4 bg-neutral-900 p-2">
-        {!isARowChecked && (
+      {/* Series Control Panel*/}
+      <aside className="flex place-items-center bg-neutral-900 p-4">
+        {/* Insert & Delete Button */}
+        <div className="flex space-x-4">
           <button
-            type="button"
             className="flex place-items-center space-x-2 rounded-md border-2 border-green-700 bg-green-900 px-3 py-1 hover:border-green-600"
             onClick={handleInsertClick}
           >
@@ -377,83 +328,164 @@ export default function AdminPlayersClient({
             </span>
             <span className="text-xs text-green-100">Insert</span>
           </button>
-        )}
-        {isARowChecked && (
-          <button
-            onClick={() =>
-              setCheckedRows(new Array(playersList.length).fill(false))
-            }
-            className="flex place-items-center space-x-2 rounded-md border-2 border-neutral-700 bg-neutral-900 px-3 py-1 hover:border-neutral-600"
-          >
-            <span>
-              <XMarkIcon className="h-auto w-3 text-neutral-200" />
-            </span>
-          </button>
-        )}
-        {isARowChecked && (
-          <button
-            type="button"
-            className="flex place-items-center space-x-2 rounded-md border-2 border-red-700 bg-red-900 px-3 py-1 hover:border-red-600"
-            onClick={handleDeletePlayer}
-          >
-            <span>
-              <TrashIcon className="h-auto w-3 text-red-200" />
-            </span>
-            <span className="text-xs text-red-100">Delete</span>
-          </button>
-        )}
-      </div>
-      <div className="w-full overflow-x-auto border-2 border-neutral-800 shadow-md">
-        <table className="w-full text-sm text-neutral-500">
-          <thead className="text-md text-nowrap bg-neutral-800 text-center text-neutral-300">
-            <tr>
-              <th className="px-2">
-                <input
-                  type="checkbox"
-                  checked={checkedRows.every(Boolean)}
-                  onChange={handleRowCheckboxCheckAll}
-                  className="rounded bg-neutral-800 text-[var(--accent-primary)] outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
+        </div>
+        {/* End of Buttons */}
+
+        <div className="flex w-fit flex-col"></div>
+      </aside>
+      {/* End of Controls */}
+
+      {/* Content */}
+      <div className="h-[80vh] w-full overflow-x-auto">
+        {/* Player Cards */}
+        <ul className="grid grid-cols-1 gap-8 p-8 sm:grid-cols-2 md:grid-cols-3">
+          {paginatedPlayers.map((player, index) => (
+            <li
+              className="flex flex-col rounded-md border-2 border-neutral-700 bg-neutral-900 shadow-lg"
+              key={index}
+            >
+              {/* Upper Container */}
+              <div className="flex justify-between p-4">
+                <Image
+                  src={player.team?.logo_url!}
+                  alt={`${player.team?.school_abbrev} Logo`}
+                  height={16}
+                  width={16}
                 />
-              </th>
-              {tableHeaders.map((header, index) => (
-                <th scope="col" key={index} className="px-4 py-2 font-normal">
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {localPlayersList.map((player, index) => (
-              <tr
-                key={player.id}
-                className="border-b border-transparent text-center text-xs hover:text-neutral-300 [&:not(:last-child)]:border-neutral-700"
-              >
-                <td>
-                  <input
-                    type="checkbox"
-                    checked={checkedRows[index]}
-                    onChange={() => handleRowCheckboxChange(index)}
-                    className="rounded bg-neutral-800 text-[var(--accent-primary)] outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
-                  />
-                </td>
-                <td className="py-2">{index + 1}</td>
-                <td>{player.ingame_name}</td>
-                <td>{player.team?.school_abbrev || 'N/A'}</td>
-                <td>{player.platform?.platform_abbrev || 'N/A'}</td>
-                <td>{player.last_name}</td>
-                <td>{player.first_name}</td>
-                <td>
-                  <button
-                    type="button"
-                    onClick={() => handleUpdateClick(player)}
-                  >
-                    <PencilSquareIcon className="h-auto w-4 cursor-pointer hover:text-[var(--accent-secondary)]" />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+
+                <Image
+                  className="rounded-full"
+                  src={player.platform?.logo_url!}
+                  alt={`${player.platform?.platform_abbrev} Logo`}
+                  height={16}
+                  width={16}
+                />
+              </div>
+
+              {/* Body */}
+              <div className="flex gap-4 px-4 pb-4">
+                <div className="flex flex-col place-items-center gap-2">
+                  {/* Picture */}
+                  <div className="h-fit border-2 border-neutral-600 p-1">
+                    {player.picture_url ? (
+                      <Image
+                        src={player.picture_url!}
+                        alt={`${player.ingame_name} Picture`}
+                        height={90}
+                        width={90}
+                      />
+                    ) : (
+                      <Image
+                        src={not_found}
+                        alt={'Not Found Picture'}
+                        height={90}
+                        width={90}
+                      />
+                    )}
+                  </div>
+
+                  {/* Buttons */}
+                  <div className="flex place-items-center gap-4">
+                    <button
+                      type="button"
+                      onClick={() => handleUpdateClick(player)}
+                    >
+                      <PencilSquareIcon className="h-auto w-4 cursor-pointer text-neutral-400 hover:text-[var(--cel-blue)]" />
+                    </button>
+                    <div className="flex gap-1">
+                      <button
+                        type="button"
+                        onClick={() => handleDeletePlayer(player)}
+                      >
+                        <TrashIcon className="h-auto w-4 text-neutral-400 hover:text-[var(--cel-red)]" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-4">
+                  <div>
+                    <p className="text-xs font-semibold text-neutral-600">
+                      In-game Name
+                    </p>
+                    <p className="text-md text-neutral-300">
+                      {player.ingame_name}
+                    </p>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <div>
+                      <p className="text-xs font-semibold text-neutral-600">
+                        First Name
+                      </p>
+                      <p className="text-md text-neutral-300">
+                        {player.first_name}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-neutral-600">
+                        Last Name
+                      </p>
+                      <p className="text-md text-neutral-300">
+                        {player.last_name}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="text-xs font-semibold text-neutral-600">
+                      Roles
+                    </p>
+                    <ul className="flex list-disc flex-wrap gap-8 px-4 text-xs text-neutral-300">
+                      {player.roles.map((role) => (
+                        <li>{role}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+      {/* End of Content */}
+
+      {/* Pagination Controls */}
+      <div className="flex justify-center gap-4 py-4">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => handlePageChange(currentPage - 1)}
+          className={`rounded px-3 py-1 ${
+            currentPage === 1
+              ? 'bg-neutral-700 text-neutral-500'
+              : 'bg-neutral-900 text-neutral-300 hover:bg-neutral-700'
+          }`}
+        >
+          Previous
+        </button>
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          <button
+            key={page}
+            onClick={() => handlePageChange(page)}
+            className={`rounded px-3 py-1 ${
+              page === currentPage
+                ? 'bg-[var(--cel-blue)] text-white'
+                : 'bg-neutral-900 text-neutral-300 hover:bg-neutral-700'
+            }`}
+          >
+            {page}
+          </button>
+        ))}
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => handlePageChange(currentPage + 1)}
+          className={`rounded px-3 py-1 ${
+            currentPage === totalPages
+              ? 'bg-neutral-700 text-neutral-500'
+              : 'bg-neutral-900 text-neutral-300 hover:bg-neutral-700'
+          }`}
+        >
+          Next
+        </button>
       </div>
     </>
   );

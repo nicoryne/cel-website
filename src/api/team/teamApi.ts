@@ -17,7 +17,7 @@ import { handleError } from '../utils/errorHandler';
  * @returns {Promise<Team | null>} A promise that resolves to the created Team object.
  * Returns null if an error occurs.
  */
-export const createTeam = async (team: Team): Promise<Team | null> => {
+export const createTeam = async (team: {}): Promise<{} | null> => {
   const supabase = createClient();
   const { data, error } = await supabase.from('team').insert([team]).single();
 

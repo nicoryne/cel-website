@@ -3,6 +3,7 @@ import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { GamePlatform, Team, PlayerWithDetails, Roles } from '@/lib/types';
+import not_found from '@/../../public/images/not-found.webp';
 
 type PlayerFormProps = {
   teamsList: Team[];
@@ -61,13 +62,18 @@ export default function PlayerForm({
 
   // Picture
   const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
+  const [selectedImagePreview, setSelectedImagePreview] = React.useState('');
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      setSelectedImage(event.target.files[0]);
+    const files = event.target.files;
+
+    if (files && files[0]) {
+      setSelectedImage(files[0]);
+
+      const imageURL = URL.createObjectURL(files[0]);
+      setSelectedImagePreview(imageURL);
     }
   };
-
   React.useEffect(() => {
     if (player?.picture_url) {
       const fetchImage = async () => {
@@ -75,8 +81,8 @@ export default function PlayerForm({
           const response = await fetch(player.picture_url);
           if (response.ok) {
             const blob = await response.blob();
-            const imageFile = new File([blob], 'player_image.png', {
-              type: 'image/png'
+            const imageFile = new File([blob], 'player_image.webp', {
+              type: 'image/webp'
             });
             setSelectedImage(imageFile);
           } else {
@@ -311,14 +317,28 @@ export default function PlayerForm({
         </div>
         {/* Player Image */}
         <div>
-          <label className="mb-2 block text-xs">Player Image</label>
+          <label className="mb-2 block text-xs">Team Image</label>
           <div className="flex items-center gap-4">
             {/* Custom File Upload Button */}
             <label
               htmlFor="file-upload"
-              className="cursor-pointer rounded-md bg-neutral-700 px-4 py-2 text-white hover:bg-neutral-600"
+              className="cursor-pointer hover:opacity-90"
             >
-              Choose File
+              {selectedImagePreview ? (
+                <Image
+                  src={selectedImagePreview}
+                  alt={`${player?.ingame_name} Picture`}
+                  height={60}
+                  width={60}
+                />
+              ) : (
+                <Image
+                  src={not_found}
+                  alt={`No Image Logo`}
+                  height={60}
+                  width={60}
+                />
+              )}
             </label>
             <input
               id="file-upload"

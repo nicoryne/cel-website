@@ -50,9 +50,17 @@ export default function SeriesContainer({ series }: SeriesContainerProps) {
 
           {/* Vs and Score */}
           <div className="space-x-2 text-base md:space-x-3 md:text-lg">
-            <span>{series.team_a_score}</span>
+            <span
+              className={`${series.team_a_status === 'Win' ? 'opacity-100' : 'opacity-40'}`}
+            >
+              {series.team_a_score}
+            </span>
             <span className="text-gray-700">/</span>
-            <span>{series.team_b_score}</span>
+            <span
+              className={`${series.team_b_status === 'Win' ? 'opacity-100' : 'opacity-40'}`}
+            >
+              {series.team_b_score}
+            </span>
           </div>
           {/* End of Vs and Score */}
 
