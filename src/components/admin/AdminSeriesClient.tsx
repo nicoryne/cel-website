@@ -94,28 +94,6 @@ export default function AdminSeriesClient({
     setLocalSeriesList(sortedList);
   };
 
-  // Delete Handlers
-  const [isARowChecked, setIsARowChecked] = React.useState(false);
-  const [checkedRows, setCheckedRows] = React.useState<boolean[]>(
-    new Array(seriesList.length).fill(false)
-  );
-
-  React.useEffect(() => {
-    setCheckedRows(new Array(seriesList.length).fill(false));
-  }, [seriesList.length]);
-
-  React.useEffect(() => {
-    setIsARowChecked(checkedRows.some(Boolean));
-  }, [checkedRows]);
-
-  const handleRowCheckboxChange = (index: number) => {
-    setCheckedRows((prev) => {
-      const newCheckedRows = [...prev];
-      newCheckedRows[index] = !newCheckedRows[index];
-      return newCheckedRows;
-    });
-  };
-
   // Modal
   const [modalProps, setModalProps] = React.useState<ModalProps | null>(null);
   const formData = React.useRef({});
@@ -147,7 +125,7 @@ export default function AdminSeriesClient({
               );
               setModalProps(null);
               formData.current = {};
-            }, 2000);
+            }, 500);
           })
           .catch(() => {
             setModalProps({
@@ -197,7 +175,7 @@ export default function AdminSeriesClient({
               );
               setModalProps(null);
               formData.current = {};
-            }, 2000);
+            }, 500);
           })
           .catch(() => {
             setModalProps({
@@ -220,11 +198,7 @@ export default function AdminSeriesClient({
     });
   };
 
-  const handleDeleteSeries = () => {
-    const toDeleteRows = checkedRows
-      .map((isChecked, index) => (isChecked ? index : -1))
-      .filter((index) => index !== -1);
-
+  const handleDeleteSeries = (series: SeriesWithDetails) => {
     setModalProps({
       title: `Deleting Series`,
       message:
@@ -232,50 +206,35 @@ export default function AdminSeriesClient({
       type: 'warning',
       onCancel: () => setModalProps(null),
       onConfirm: async () => {
-        try {
-          const successfullyDeletedIndices: number[] = [];
+        await deleteSeries(series.id)
+          .then(() => {
+            setModalProps({
+              title: 'Success',
+              message: 'Series has been successfully deleted!',
+              type: 'success',
+              onCancel: () => setModalProps(null)
+            });
 
-          for (const rowIndex of toDeleteRows) {
-            const deleted = await deleteSeries(localSeriesList[rowIndex].id);
-            if (deleted) {
-              successfullyDeletedIndices.push(rowIndex);
-            }
-          }
-
-          setLocalSeriesList((prev) =>
-            prev
-              .filter((_, index) => !successfullyDeletedIndices.includes(index))
-              .sort(
-                (a, b) =>
-                  new Date(a.start_time).getTime() -
-                  new Date(b.start_time).getTime()
-              )
-          );
-
-          setCheckedRows((prev) =>
-            prev.filter(
-              (_, index) => !successfullyDeletedIndices.includes(index)
-            )
-          );
-
-          setModalProps({
-            title: 'Success',
-            message: `${successfullyDeletedIndices.length} series have been successfully deleted!`,
-            type: 'success',
-            onCancel: () => setModalProps(null)
+            setTimeout(async () => {
+              const updatedList = await getAllSeriesWithDetails();
+              setLocalSeriesList(
+                updatedList.sort(
+                  (a, b) =>
+                    new Date(b.start_time).getTime() -
+                    new Date(a.start_time).getTime()
+                )
+              );
+              setModalProps(null);
+            }, 500);
+          })
+          .catch(() => {
+            setModalProps({
+              title: 'Error',
+              message: 'Failed to delete series. Please try again.',
+              type: 'error',
+              onCancel: () => setModalProps(null)
+            });
           });
-
-          setTimeout(() => {
-            setModalProps(null);
-          }, 2000);
-        } catch {
-          setModalProps({
-            title: 'Error',
-            message: 'Failed to delete series. Please try again.',
-            type: 'error',
-            onCancel: () => setModalProps(null)
-          });
-        }
       }
     });
   };
@@ -297,40 +256,15 @@ export default function AdminSeriesClient({
       <aside className="flex place-items-center bg-neutral-900 p-4">
         {/* Insert & Delete Button */}
         <div className="flex space-x-4">
-          {!isARowChecked && (
-            <button
-              className="flex place-items-center space-x-2 rounded-md border-2 border-green-700 bg-green-900 px-3 py-1 hover:border-green-600"
-              onClick={handleInsertClick}
-            >
-              <span>
-                <PlusIcon className="h-auto w-3 text-green-600" />
-              </span>
-              <span className="text-xs text-green-100">Insert</span>
-            </button>
-          )}
-          {isARowChecked && (
-            <button
-              onClick={() =>
-                setCheckedRows(new Array(seriesList.length).fill(false))
-              }
-              className="flex place-items-center space-x-2 rounded-md border-2 border-neutral-700 bg-neutral-900 px-3 py-1 hover:border-neutral-600"
-            >
-              <span>
-                <XMarkIcon className="h-auto w-3 text-neutral-200" />
-              </span>
-            </button>
-          )}
-          {isARowChecked && (
-            <button
-              onClick={handleDeleteSeries}
-              className="flex place-items-center space-x-2 rounded-md border-2 border-red-700 bg-red-900 px-3 py-1 hover:border-red-600"
-            >
-              <span>
-                <TrashIcon className="h-auto w-3 text-red-200" />
-              </span>
-              <span className="text-xs text-red-100">Delete</span>
-            </button>
-          )}
+          <button
+            className="flex place-items-center space-x-2 rounded-md border-2 border-green-700 bg-green-900 px-3 py-1 hover:border-green-600"
+            onClick={handleInsertClick}
+          >
+            <span>
+              <PlusIcon className="h-auto w-3 text-green-600" />
+            </span>
+            <span className="text-xs text-green-100">Insert</span>
+          </button>
         </div>
         {/* End of Buttons */}
 
@@ -341,9 +275,12 @@ export default function AdminSeriesClient({
       {/* Content */}
       <div className="h-[80vh] w-full overflow-x-auto">
         {/* Series Cards */}
-        <ul className="grid grid-cols-1 gap-8 p-8 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="grid grid-cols-1 gap-8 p-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {paginatedSeries.map((series, index) => (
-            <li className="flex flex-col rounded-md border-2 border-neutral-700 bg-neutral-900 shadow-lg">
+            <li
+              className="flex flex-col rounded-md border-2 border-neutral-700 bg-neutral-900 shadow-lg"
+              key={index}
+            >
               {/* Header */}
               <header className="flex justify-between gap-4 px-4 py-2"></header>
               {/* End of Header */}
@@ -443,13 +380,12 @@ export default function AdminSeriesClient({
                       <PencilSquareIcon className="h-auto w-4 cursor-pointer text-neutral-400 hover:text-[var(--cel-blue)]" />
                     </button>
                     <div className="flex gap-1">
-                      <TrashIcon className="h-auto w-4 text-neutral-400" />
-                      <input
-                        type="checkbox"
-                        checked={checkedRows[index]}
-                        onChange={() => handleRowCheckboxChange(index)}
-                        className="cursor-pointer rounded bg-neutral-800 text-[var(--cel-red)] outline-none focus:ring-1 focus:ring-[var(--cel-red)]"
-                      />
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteSeries(series)}
+                      >
+                        <TrashIcon className="h-auto w-4 text-neutral-400 hover:text-[var(--cel-red)]" />
+                      </button>
                     </div>
                   </div>
                 </div>
