@@ -1,70 +1,51 @@
 'use client';
 
-import { GamePlatform, PlayerWithDetails, Team } from '@/lib/types';
+import { GamePlatform } from '@/lib/types';
 import {
   PencilSquareIcon,
   PlusIcon,
-  TrashIcon,
-  XMarkIcon
+  TrashIcon
 } from '@heroicons/react/20/solid';
 import React from 'react';
 import Modal, { ModalProps } from '@/components/Modal';
-import PlayerForm from '@/components/forms/PlayerForm';
 import {
-  createPlayer,
-  deletePlayer,
-  getAllPlayersWithDetails,
-  updatePlayer
+  createGamePlatform,
+  deleteGamePlatform,
+  getAllGamePlatforms,
+  updateGamePlatform
 } from '@/api';
 import { createClient } from '@/lib/supabase/client';
 import Image from 'next/image';
 import not_found from '@/../../public/images/not-found.webp';
+import PlatformsForm from '@/components/forms/PlatformsForm';
 
-type AdminPlayersClientProps = {
-  playersList: PlayerWithDetails[];
-  teamsList: Team[];
+type AdminPlatformsClientProps = {
   platforms: GamePlatform[];
 };
 
-export default function AdminPlayersClient({
-  playersList,
-  teamsList,
+export default function AdminPlatformsClient({
   platforms
-}: AdminPlayersClientProps) {
-  const [localPlayersList, setLocalPlayersList] =
-    React.useState<PlayerWithDetails[]>(playersList);
+}: AdminPlatformsClientProps) {
+  const [localPlatformsList, setLocalPlatformsList] =
+    React.useState<GamePlatform[]>(platforms);
 
   // Pagination State
-  const [paginatedPlayers, setPaginatedPlayers] =
-    React.useState<PlayerWithDetails[]>(localPlayersList);
+  const [paginatedPlatforms, setPaginatedPlatforms] =
+    React.useState<GamePlatform[]>(localPlatformsList);
 
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 9;
 
-  const totalPages = Math.ceil(localPlayersList.length / itemsPerPage);
+  const totalPages = Math.ceil(localPlatformsList.length / itemsPerPage);
 
   React.useEffect(() => {
-    const sortedPlayers = [...localPlayersList].sort((a, b) => {
-      const schoolComparison = (a.team?.school_abbrev || '').localeCompare(
-        b.team?.school_abbrev || ''
-      );
-      if (schoolComparison !== 0) return schoolComparison;
-
-      const platformComparison = (
-        a.platform?.platform_abbrev || ''
-      ).localeCompare(b.platform?.platform_abbrev || '');
-      if (platformComparison !== 0) return platformComparison;
-
-      return (a.ingame_name || '').localeCompare(b.ingame_name || '');
-    });
-
-    const paginated = sortedPlayers.slice(
+    const paginated = localPlatformsList.slice(
       (currentPage - 1) * itemsPerPage,
       currentPage * itemsPerPage
     );
 
-    setPaginatedPlayers(paginated);
-  }, [localPlayersList, currentPage]);
+    setPaginatedPlatforms(paginated);
+  }, [localPlatformsList, currentPage]);
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -72,67 +53,51 @@ export default function AdminPlayersClient({
 
   // Modal
   type FormDataType = {
-    first_name: string;
-    last_name: string;
-    ingame_name: string;
-    team_id: string;
-    game_platform_id: string;
-    roles: string[];
-    picture: File | null;
-    picture_url: string;
+    platform_title: string;
+    platform_abbrev: string;
+    logo: File | null;
+    logo_url: string;
   };
 
   const [modalProps, setModalProps] = React.useState<ModalProps | null>(null);
   const formData = React.useRef<FormDataType>({
-    first_name: '',
-    last_name: '',
-    ingame_name: '',
-    team_id: '',
-    game_platform_id: '',
-    roles: [],
-    picture: null,
-    picture_url: ''
+    platform_title: '',
+    platform_abbrev: '',
+    logo: null,
+    logo_url: ''
   });
 
   const resetFormData = () => {
     formData.current = {
-      first_name: '',
-      last_name: '',
-      ingame_name: '',
-      team_id: '',
-      game_platform_id: '',
-      roles: [],
-      picture: null,
-      picture_url: ''
+      platform_title: '',
+      platform_abbrev: '',
+      logo: null,
+      logo_url: ''
     };
   };
 
-  const updatePlayersList = async () => {
-    const updatedList = await getAllPlayersWithDetails();
-    setLocalPlayersList(updatedList);
+  const updatePlatformsList = async () => {
+    const updatedList = await getAllGamePlatforms();
+    setLocalPlatformsList(updatedList);
     setModalProps(null);
     resetFormData();
   };
 
   const retrieveProcessedData = async () => {
     let processedData = {
-      first_name: formData.current.first_name,
-      last_name: formData.current.last_name,
-      ingame_name: formData.current.ingame_name,
-      team_id: formData.current.team_id,
-      game_platform_id: formData.current.game_platform_id,
-      roles: formData.current.roles,
-      picture_url: ''
+      platform_title: formData.current.platform_title,
+      platform_abbrev: formData.current.platform_abbrev,
+      logo_url: ''
     };
 
-    if (formData.current.picture) {
+    if (formData.current.logo) {
       const supabase = createClient();
-      const file = formData.current.picture;
-      const fileName = `${formData.current.ingame_name}_${Date.now()}.${file.type.split('/')[1]}`;
+      const file = formData.current.logo;
+      const fileName = `${formData.current.platform_abbrev}_${Date.now()}.${file.type.split('/')[1]}`;
 
       try {
         const { error } = await supabase.storage
-          .from('images/player_images')
+          .from('images/icons/platforms')
           .upload(fileName, file);
 
         if (error) {
@@ -142,7 +107,7 @@ export default function AdminPlayersClient({
 
         const { data: signedUrlData, error: signedUrlError } =
           await supabase.storage
-            .from('images/player_images')
+            .from('images/icons/platforms')
             .createSignedUrl(fileName, 60 * 60 * 24 * 365);
 
         if (signedUrlError) {
@@ -150,7 +115,7 @@ export default function AdminPlayersClient({
           return;
         }
 
-        processedData.picture_url = signedUrlData.signedUrl;
+        processedData.logo_url = signedUrlData.signedUrl;
       } catch (err) {
         console.error('Unexpected error:', err);
       }
@@ -159,10 +124,10 @@ export default function AdminPlayersClient({
     return processedData;
   };
 
-  const deleteExistingPicture = async (player: PlayerWithDetails) => {
+  const deleteExistingPicture = async (platform: GamePlatform) => {
     const supabase = createClient();
 
-    const url = new URL(player.picture_url);
+    const url = new URL(platform.logo_url);
     const fileName = url.pathname.replace(
       '/storage/v1/object/sign/images/',
       ''
@@ -178,111 +143,97 @@ export default function AdminPlayersClient({
 
   const handleInsertClick = () => {
     setModalProps({
-      title: 'Adding New Player',
+      title: 'Adding New Platform',
       type: 'info',
-      message: 'Fill out the details to add a new player.',
+      message: 'Fill out the details to add a new Platform.',
       onCancel: () => setModalProps(null),
       onConfirm: async () => {
         const processedData = await retrieveProcessedData();
 
-        await createPlayer(processedData as {})
+        await createGamePlatform(processedData as {})
           .then(() => {
             setModalProps({
               title: 'Success',
-              message: 'Player has been successfully added!',
+              message: 'Platform has been successfully added!',
               type: 'success',
               onCancel: () => setModalProps(null)
             });
 
             setTimeout(async () => {
-              updatePlayersList();
+              updatePlatformsList();
             }, 2000);
           })
           .catch(() => {
             setModalProps({
               title: 'Error',
-              message: 'Failed to add player. Please try again.',
+              message: 'Failed to add Platform. Please try again.',
               type: 'error',
               onCancel: () => setModalProps(null)
             });
           });
       },
-      children: (
-        <PlayerForm
-          teamsList={teamsList}
-          platforms={platforms}
-          formData={formData}
-          player={null}
-        />
-      )
+      children: <PlatformsForm platform={null} formData={formData} />
     });
   };
 
-  const handleUpdateClick = (player: PlayerWithDetails) => {
+  const handleUpdateClick = (platform: GamePlatform) => {
     setModalProps({
-      title: 'Updating Player',
+      title: 'Updating Platform',
       type: 'info',
-      message: 'Fill out the details to update player.',
+      message: 'Fill out the details to update Platform.',
       onCancel: () => setModalProps(null),
       onConfirm: async () => {
         const processedData = await retrieveProcessedData();
 
-        if (processedData && player.picture_url) {
-          await deleteExistingPicture(player);
+        if (processedData && platform.logo_url) {
+          await deleteExistingPicture(platform);
         }
 
-        await updatePlayer(player.id, processedData as {})
+        await updateGamePlatform(platform.id, processedData as {})
           .then(() => {
             setModalProps({
               title: 'Success',
-              message: 'Player has been successfully updated!',
+              message: 'Platform has been successfully updated!',
               type: 'success',
               onCancel: () => setModalProps(null)
             });
 
             setTimeout(async () => {
-              updatePlayersList();
+              updatePlatformsList();
             }, 2000);
           })
           .catch(() => {
             setModalProps({
               title: 'Error',
-              message: 'Failed to update player. Please try again.',
+              message: 'Failed to update Platform. Please try again.',
               type: 'error',
               onCancel: () => setModalProps(null)
             });
           });
       },
-      children: (
-        <PlayerForm
-          teamsList={teamsList}
-          platforms={platforms}
-          formData={formData}
-          player={player}
-        />
-      )
+      children: <PlatformsForm platform={platform} formData={formData} />
     });
   };
 
-  const handleDeletePlayer = (player: PlayerWithDetails) => {
+  const handleDeletePlatform = (platform: GamePlatform) => {
     setModalProps({
-      title: `Deleting Player`,
+      title: `Deleting Platform`,
       message:
-        'Are you sure you want to delete the following player? This action is irreversible.',
+        'Are you sure you want to delete the following Platform? This action is irreversible.',
       type: 'warning',
       onCancel: () => setModalProps(null),
       onConfirm: async () => {
         try {
-          const deleted = await deletePlayer(player.id);
-          if (deleted && player.picture_url) {
-            deleteExistingPicture(player);
+          const deleted = await deleteGamePlatform(platform.id);
+          if (deleted && platform.logo_url) {
+            deleteExistingPicture(platform);
           }
 
-          updatePlayersList();
+          updatePlatformsList();
 
           setModalProps({
             title: 'Success',
-            message: `Player has been successfully deleted!`,
+            message: `Platform has been successfully deleted!`,
             type: 'success',
             onCancel: () => setModalProps(null)
           });
@@ -293,7 +244,7 @@ export default function AdminPlayersClient({
         } catch {
           setModalProps({
             title: 'Error',
-            message: 'Failed to delete player. Please try again.',
+            message: 'Failed to delete Platform. Please try again.',
             type: 'error',
             onCancel: () => setModalProps(null)
           });
@@ -316,61 +267,38 @@ export default function AdminPlayersClient({
         />
       )}
       {/* Series Control Panel*/}
-      <aside className="flex place-items-center bg-neutral-900 p-4">
-        {/* Insert & Delete Button */}
-        <div className="flex space-x-4">
-          <button
-            className="flex place-items-center space-x-2 rounded-md border-2 border-green-700 bg-green-900 px-3 py-1 hover:border-green-600"
-            onClick={handleInsertClick}
-          >
-            <span>
-              <PlusIcon className="h-auto w-3 text-green-600" />
-            </span>
-            <span className="text-xs text-green-100">Insert</span>
-          </button>
-        </div>
-        {/* End of Buttons */}
-
-        <div className="flex w-fit flex-col"></div>
+      <aside className="flex place-items-center gap-4 bg-neutral-900 p-4">
+        {/* Insert */}
+        <button
+          className="flex place-items-center space-x-2 rounded-md border-2 border-green-700 bg-green-900 px-3 py-1 hover:border-green-600"
+          onClick={handleInsertClick}
+        >
+          <span>
+            <PlusIcon className="h-auto w-3 text-green-600" />
+          </span>
+          <span className="text-xs text-green-100">Insert</span>
+        </button>
       </aside>
       {/* End of Controls */}
 
       {/* Content */}
       <div className="h-[80vh] w-full overflow-x-auto">
-        {/* Player Cards */}
+        {/* Platform Cards */}
         <ul className="grid grid-cols-1 gap-8 p-8 sm:grid-cols-2 md:grid-cols-3">
-          {paginatedPlayers.map((player, index) => (
+          {paginatedPlatforms.map((platform, index) => (
             <li
               className="flex flex-col rounded-md border-2 border-neutral-700 bg-neutral-900 shadow-lg"
               key={index}
             >
-              {/* Upper Container */}
-              <div className="flex justify-between p-4">
-                <Image
-                  src={player.team?.logo_url!}
-                  alt={`${player.team?.school_abbrev} Logo`}
-                  height={16}
-                  width={16}
-                />
-
-                <Image
-                  className="rounded-full"
-                  src={player.platform?.logo_url!}
-                  alt={`${player.platform?.platform_abbrev} Logo`}
-                  height={16}
-                  width={16}
-                />
-              </div>
-
               {/* Body */}
-              <div className="flex gap-4 px-4 pb-4">
+              <div className="flex gap-4 p-4">
                 <div className="flex flex-col place-items-center gap-2">
                   {/* Picture */}
                   <div className="h-fit border-2 border-neutral-600 p-1">
-                    {player.picture_url ? (
+                    {platform.logo_url ? (
                       <Image
-                        src={player.picture_url!}
-                        alt={`${player.ingame_name} Picture`}
+                        src={platform.logo_url!}
+                        alt={`${platform.platform_abbrev} Picture`}
                         height={90}
                         width={90}
                       />
@@ -388,14 +316,14 @@ export default function AdminPlayersClient({
                   <div className="flex place-items-center gap-4">
                     <button
                       type="button"
-                      onClick={() => handleUpdateClick(player)}
+                      onClick={() => handleUpdateClick(platform)}
                     >
                       <PencilSquareIcon className="h-auto w-4 cursor-pointer text-neutral-400 hover:text-[var(--cel-blue)]" />
                     </button>
                     <div className="flex gap-1">
                       <button
                         type="button"
-                        onClick={() => handleDeletePlayer(player)}
+                        onClick={() => handleDeletePlatform(platform)}
                       >
                         <TrashIcon className="h-auto w-4 text-neutral-400 hover:text-[var(--cel-red)]" />
                       </button>
@@ -405,41 +333,20 @@ export default function AdminPlayersClient({
                 <div className="flex flex-col gap-4">
                   <div>
                     <p className="text-xs font-semibold text-neutral-600">
-                      In-game Name
+                      Full Title
                     </p>
                     <p className="text-md text-neutral-300">
-                      {player.ingame_name}
+                      {platform.platform_title}
                     </p>
-                  </div>
-
-                  <div className="flex gap-4">
-                    <div>
-                      <p className="text-xs font-semibold text-neutral-600">
-                        First Name
-                      </p>
-                      <p className="text-md text-neutral-300">
-                        {player.first_name}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold text-neutral-600">
-                        Last Name
-                      </p>
-                      <p className="text-md text-neutral-300">
-                        {player.last_name}
-                      </p>
-                    </div>
                   </div>
 
                   <div>
                     <p className="text-xs font-semibold text-neutral-600">
-                      Roles
+                      Abbreviation
                     </p>
-                    <ul className="flex list-disc flex-wrap gap-8 px-4 text-xs text-neutral-300">
-                      {player.roles.map((role) => (
-                        <li>{role}</li>
-                      ))}
-                    </ul>
+                    <p className="text-md text-neutral-300">
+                      {platform.platform_abbrev}
+                    </p>
                   </div>
                 </div>
               </div>

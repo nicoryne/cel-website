@@ -17,7 +17,7 @@ import { handleError } from '@/api/utils/errorHandler';
  * @returns {Promise<LeagueSchedule | null>} A promise that resolves to the created LeagueSchedule object.
  * Returns null if an error occurs.
  */
-export const createLeagueSchedule = async (schedule: LeagueSchedule): Promise<LeagueSchedule | null> => {
+export const createLeagueSchedule = async (schedule: {}): Promise<{} | null> => {
   const supabase = createClient();
   const { data, error } = await supabase.from('league_schedule').insert([schedule]).single();
 

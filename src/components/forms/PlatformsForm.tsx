@@ -1,20 +1,24 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
-import { Team } from '@/lib/types';
+import { motion } from 'framer-motion';
+import { GamePlatform } from '@/lib/types';
 import not_found from '@/../../public/images/not-found.webp';
 
-type TeamsFormProps = {
-  team: Team | null;
+type CharacterFormProps = {
   formData: React.MutableRefObject<{}>;
+  platform: GamePlatform | null;
 };
 
-export default function TeamsForm({ team, formData }: TeamsFormProps) {
-  // Team
-  const [teamAbbrev, setTeamAbbrev] = React.useState(team?.school_abbrev || '');
-  const [teamFullTitle, setTeamFullTitle] = React.useState(
-    team?.school_name || ''
-  );
+export default function PlatformsForm({
+  formData,
+  platform
+}: CharacterFormProps) {
+  // Full Title
+  const [title, setTitle] = React.useState(platform?.platform_title || '');
+
+  // Abbreviation
+  const [abbrev, setAbbrev] = React.useState(platform?.platform_abbrev || '');
 
   // Picture
   const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
@@ -30,19 +34,17 @@ export default function TeamsForm({ team, formData }: TeamsFormProps) {
       setSelectedImagePreview(imageURL);
     }
   };
-
   React.useEffect(() => {
-    if (team?.logo_url) {
+    if (platform?.logo_url) {
       const fetchImage = async () => {
         try {
-          const response = await fetch(team.logo_url);
+          const response = await fetch(platform.logo_url);
           if (response.ok) {
             const blob = await response.blob();
-            const imageFile = new File([blob], `${team.school_abbrev}.webp`, {
+            const imageFile = new File([blob], 'platform_image.webp', {
               type: 'image/webp'
             });
             setSelectedImage(imageFile);
-            setSelectedImagePreview(URL.createObjectURL(imageFile));
           } else {
             console.error('Failed to fetch image');
           }
@@ -52,14 +54,14 @@ export default function TeamsForm({ team, formData }: TeamsFormProps) {
       };
       fetchImage();
     }
-  }, [team?.logo_url]);
+  }, [platform?.logo_url]);
 
-  // Insert New Team
+  // Insert New Platform
   React.useEffect(() => {
     let newFormData = {
-      school_abbrev: teamAbbrev,
-      school_name: teamFullTitle,
-      picture: selectedImage
+      platform_title: title,
+      platform_abbrev: abbrev,
+      logo: selectedImage
     };
 
     formData.current = newFormData;
@@ -68,18 +70,19 @@ export default function TeamsForm({ team, formData }: TeamsFormProps) {
   return (
     <form className="my-4 rounded-md border-2 border-neutral-700 bg-neutral-900 p-4">
       <div className="flex flex-col gap-4">
-        {/* Full Title */}
+        {/* Title */}
         <div>
-          <span className="text-xs">Full Title</span>
+          <span className="text-xs">Title</span>
           <div>
             <input
               type="text"
               className="h-10 w-full rounded-md border-2 border-neutral-700 bg-neutral-900"
-              value={teamFullTitle || ''}
-              onChange={(e) => setTeamFullTitle(e.target.value)}
+              value={title || ''}
+              onChange={(e) => setTitle(e.target.value)}
             />
           </div>
         </div>
+
         {/* Abbreviation */}
         <div>
           <span className="text-xs">Abbreviation</span>
@@ -87,15 +90,15 @@ export default function TeamsForm({ team, formData }: TeamsFormProps) {
             <input
               type="text"
               className="h-10 w-full rounded-md border-2 border-neutral-700 bg-neutral-900"
-              value={teamAbbrev || ''}
-              onChange={(e) => setTeamAbbrev(e.target.value)}
+              value={abbrev || ''}
+              onChange={(e) => setAbbrev(e.target.value)}
             />
           </div>
         </div>
 
-        {/* Team Image */}
+        {/* Platform Image */}
         <div>
-          <label className="mb-2 block text-xs">Team Image</label>
+          <label className="mb-2 block text-xs">Platform Image</label>
           <div className="flex items-center gap-4">
             {/* Custom File Upload Button */}
             <label
@@ -105,7 +108,7 @@ export default function TeamsForm({ team, formData }: TeamsFormProps) {
               {selectedImagePreview ? (
                 <Image
                   src={selectedImagePreview}
-                  alt={`${team?.school_abbrev} Logo`}
+                  alt={`${platform?.platform_abbrev} Picture`}
                   height={60}
                   width={60}
                 />

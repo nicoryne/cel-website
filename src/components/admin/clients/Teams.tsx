@@ -14,7 +14,7 @@ import Modal, { ModalProps } from '@/components/Modal';
 import { createTeam, deleteTeam, getAllTeams, updateTeam } from '@/api';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
-import TeamsForm from '../forms/TeamsForm';
+import TeamsForm from '../../forms/TeamsForm';
 
 type AdminTeamsClientProps = {
   teamsList: Team[];

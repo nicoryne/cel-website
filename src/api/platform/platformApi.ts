@@ -17,7 +17,7 @@ import { handleError } from '@/api/utils/errorHandler';
  * @returns {Promise<GamePlatform | null>} A promise that resolves to the created GamePlatform object.
  * Returns null if an error occurs.
  */
-export const createGamePlatform = async (platform: GamePlatform): Promise<GamePlatform | null> => {
+export const createGamePlatform = async (platform: {}): Promise<{} | null> => {
   const supabase = createClient();
   const { data, error } = await supabase.from('game_platforms').insert([platform]).single();
 

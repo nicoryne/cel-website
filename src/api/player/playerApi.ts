@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/client';
 import { Player, PlayerWithDetails } from '@/lib/types';
-import { getTeamById, getLeagueScheduleById,  getGamePlatformById } from '@/api';
+import { getTeamById, getGamePlatformById } from '@/api';
 import { handleError } from '@/api/utils/errorHandler';
 
 //====================

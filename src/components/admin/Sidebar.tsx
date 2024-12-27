@@ -8,7 +8,9 @@ import {
   TableCellsIcon,
   UserIcon,
   ArrowRightStartOnRectangleIcon,
-  UsersIcon
+  UsersIcon,
+  BoltIcon,
+  TvIcon
 } from '@heroicons/react/24/outline';
 import { logout } from '@/api/auth/authApi';
 
@@ -20,8 +22,10 @@ type SidebarLink = {
 
 const defaultSideLinks: SidebarLink[] = [
   { text: 'Series', href: '/admin/series', icon: TableCellsIcon },
+  { text: 'Teams', href: '/admin/teams', icon: UsersIcon },
   { text: 'Players', href: '/admin/players', icon: UserIcon },
-  { text: 'Teams', href: '/admin/teams', icon: UsersIcon }
+  { text: 'Platforms', href: '/admin/platforms', icon: TvIcon },
+  { text: 'Characters', href: '/admin/characters', icon: BoltIcon }
 ];
 
 export default function Sidebar() {

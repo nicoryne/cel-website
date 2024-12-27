@@ -3,4 +3,4 @@ export * from '@/api/platform'
 export * from '@/api/player'
 export * from '@/api/series'
 export * from '@/api/team'
-
+export * from '@/api/characters'
