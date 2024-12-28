@@ -242,7 +242,7 @@ export default function AdminTeamsClient({ teamsList }: AdminTeamsClientProps) {
         />
       )}
       {/* Series Control Panel*/}
-      <aside className="flex place-items-center bg-neutral-900 p-4">
+      <aside className="flex place-items-center justify-end bg-neutral-900 p-4">
         {/* Insert & Delete Button */}
         <div className="flex space-x-4">
           <button

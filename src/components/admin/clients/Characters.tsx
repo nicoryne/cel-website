@@ -307,7 +307,19 @@ export default function AdminCharactersClient({
         />
       )}
       {/* Series Control Panel*/}
-      <aside className="flex place-items-center gap-4 bg-neutral-900 p-4">
+      <aside className="flex place-items-center justify-between gap-4 bg-neutral-900 p-4">
+        <div>
+          <div className="flex gap-2">
+            {/* Search */}
+            <MagnifyingGlassIcon className="h-auto w-4 text-neutral-600" />
+            <input
+              type="text"
+              className="bg-neutral-800 text-xs"
+              onChange={(e) => setSearchFilter(e.target.value)}
+            />
+          </div>
+        </div>
+
         {/* Insert */}
         <button
           className="flex place-items-center space-x-2 rounded-md border-2 border-green-700 bg-green-900 px-3 py-1 hover:border-green-600"
@@ -318,13 +330,6 @@ export default function AdminCharactersClient({
           </span>
           <span className="text-xs text-green-100">Insert</span>
         </button>
-
-        <MagnifyingGlassIcon className="h-auto w-4 text-neutral-600" />
-        <input
-          type="text"
-          className="bg-neutral-800 text-xs"
-          onChange={(e) => setSearchFilter(e.target.value)}
-        />
       </aside>
       {/* End of Controls */}
 

@@ -267,7 +267,7 @@ export default function AdminPlatformsClient({
         />
       )}
       {/* Series Control Panel*/}
-      <aside className="flex place-items-center gap-4 bg-neutral-900 p-4">
+      <aside className="flex place-items-center justify-end gap-4 bg-neutral-900 p-4">
         {/* Insert */}
         <button
           className="flex place-items-center space-x-2 rounded-md border-2 border-green-700 bg-green-900 px-3 py-1 hover:border-green-600"

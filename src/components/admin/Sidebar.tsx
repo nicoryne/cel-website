@@ -10,7 +10,9 @@ import {
   ArrowRightStartOnRectangleIcon,
   UsersIcon,
   BoltIcon,
-  TvIcon
+  TvIcon,
+  CalendarDateRangeIcon,
+  CalendarDaysIcon
 } from '@heroicons/react/24/outline';
 import { logout } from '@/api/auth/authApi';
 
@@ -21,6 +23,7 @@ type SidebarLink = {
 };
 
 const defaultSideLinks: SidebarLink[] = [
+  { text: 'Schedule', href: '/admin/schedule', icon: CalendarDaysIcon },
   { text: 'Series', href: '/admin/series', icon: TableCellsIcon },
   { text: 'Teams', href: '/admin/teams', icon: UsersIcon },
   { text: 'Players', href: '/admin/players', icon: UserIcon },
