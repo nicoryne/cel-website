@@ -3,6 +3,7 @@
 import React from 'react';
 import SeriesContainer from '@/components/schedule/SeriesContainer';
 import { SeriesWithDetails, GamePlatform } from '@/lib/types';
+import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/16/solid';
 import Image from 'next/image';
 import cel_logo from '@/../public/logos/cel.webp';
 import { motion } from 'framer-motion';
@@ -91,7 +92,7 @@ export default function ScheduleSection({
           }
         });
       },
-      { threshold: 1 }
+      { threshold: 0.9 }
     );
 
     sectionRefs.current.forEach((ref) => {
@@ -101,6 +102,16 @@ export default function ScheduleSection({
     return () => observer.disconnect();
   }, []);
 
+  // Set Date Functions
+  const setDateToCurrentDate = () => {
+    const todaySection = document.getElementById(
+      dateToday.toLocaleDateString('en-CA')
+    );
+    if (todaySection) {
+      todaySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <>
       {/* Control Panel */}
@@ -108,72 +119,107 @@ export default function ScheduleSection({
         {/* Container */}
         <div className="mx-auto rounded-b-md bg-[#121212] px-8 md:w-[800px] lg:w-[1100px]">
           {/* Wrapper */}
-          <div className="flex place-items-center justify-between py-4">
-            {/* Time Group */}
-            <div className="flex flex-col uppercase">
-              {/* Month and Numeric Date */}
-              <time className="text-3xl font-bold md:text-4xl">
-                {currentDate.toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric'
-                })}
-              </time>
-              {/* 'Today' and Weekday Long */}
-              <time className="text-sm md:text-base">
-                {currentDate.toLocaleDateString('en-US', {
-                  weekday: 'long'
-                })}
-              </time>
-            </div>
-            {/* End of Time Group */}
+          <div className="flex flex-col gap-4 py-4">
+            <div className="flex place-items-center justify-between">
+              {/* Time Group */}
+              <div className="flex flex-col uppercase">
+                {/* Month and Numeric Date */}
+                <time className="text-3xl font-bold md:text-4xl">
+                  {currentDate.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric'
+                  })}
+                </time>
+                {/* 'Today' and Weekday Long */}
+                <time className="text-sm md:text-base">
+                  {currentDate.toLocaleDateString('en-US', {
+                    weekday: 'long'
+                  })}
+                </time>
+              </div>
+              {/* End of Time Group */}
 
-            {/* Filter Game Button */}
-            <div className="flex flex-col items-end space-y-12">
-              <button
-                className="flex h-10 w-40 items-center justify-center gap-2 rounded-md bg-neutral-800 text-white transition-colors duration-150 ease-linear hover:bg-neutral-700"
-                onClick={() => toggleMenuFilter(!menuFilterState)}
-              >
-                <Image
-                  src={filterState.logo}
-                  className="h-auto w-4"
-                  width={128}
-                  height={128}
-                  alt={`${filterState.abbrev} Logo`}
-                />
-                {filterState.abbrev}
-              </button>
+              {/* Date Picker Buttons */}
+              <div className="flex place-items-center justify-center">
+                {/* Previous Date */}
+                <button className="bg-neutral-800 p-2 transition-colors duration-150 ease-linear hover:bg-neutral-900">
+                  <ArrowLeftIcon className="h-auto w-6 text-white" />
+                </button>
 
-              {menuFilterState && (
-                <motion.div
-                  className="absolute flex flex-col flex-wrap rounded-md shadow-lg"
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 100, y: 0 }}
+                {/* Today */}
+                <button
+                  className="bg-neutral-800 px-4 py-2 transition-colors duration-150 ease-linear hover:bg-neutral-900"
+                  onClick={setDateToCurrentDate}
                 >
-                  {platformOptions.map((platform, index) => (
-                    <button
-                      className={`flex h-16 w-40 items-center justify-center gap-2 text-neutral-300 hover:text-white ${platform.abbrev === filterState.abbrev ? 'bg-neutral-800' : 'bg-[var(--background)]'}`}
-                      key={index}
-                      onClick={() => {
-                        setFilterState(platform),
-                          toggleMenuFilter(!menuFilterState);
-                      }}
-                    >
-                      <Image
-                        src={platform.logo}
-                        className="h-auto w-6"
-                        width={128}
-                        height={128}
-                        alt={`${platform.abbrev} Logo`}
-                      />
-                      <p className="w-24 break-words text-xs">
-                        {platform.title}
-                      </p>
-                    </button>
-                  ))}
-                </motion.div>
-              )}
+                  <span className="text-xs font-semibold uppercase md:text-base">
+                    Today
+                  </span>
+                </button>
+
+                {/* Next Date */}
+                <button className="bg-neutral-800 p-2 transition-colors duration-150 ease-linear hover:bg-neutral-900">
+                  <ArrowRightIcon className="h-auto w-6 text-white" />
+                </button>
+              </div>
+              {/* End of Date Picker Buttons */}
             </div>
-            {/* End of Filter Game Button */}
+
+            {/* Filters */}
+            <div className="flex gap-4">
+              {/* Filter Game Button */}
+              <div>
+                <span className="text-xs text-neutral-500">Filter Game</span>
+                <div className="flex flex-col space-y-12">
+                  <button
+                    className="flex h-10 w-24 items-center justify-center gap-2 bg-neutral-800 text-xs text-white transition-colors duration-150 ease-linear hover:bg-neutral-700"
+                    onClick={() => toggleMenuFilter(!menuFilterState)}
+                  >
+                    <Image
+                      src={filterState.logo}
+                      className="h-auto w-4"
+                      width={128}
+                      height={128}
+                      alt={`${filterState.abbrev} Logo`}
+                    />
+                    {filterState.abbrev}
+                  </button>
+
+                  {menuFilterState && (
+                    <motion.div
+                      className="absolute flex flex-col flex-wrap rounded-md shadow-lg"
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 100, y: 0 }}
+                    >
+                      {platformOptions.map((platform, index) => (
+                        <button
+                          className={`flex h-16 w-36 items-center justify-center gap-2 text-neutral-300 hover:text-white ${platform.abbrev === filterState.abbrev ? 'bg-neutral-800' : 'bg-[var(--background)]'}`}
+                          key={index}
+                          onClick={() => {
+                            setFilterState(platform),
+                              toggleMenuFilter(!menuFilterState);
+                          }}
+                        >
+                          <Image
+                            src={platform.logo}
+                            className="h-auto w-4"
+                            width={128}
+                            height={128}
+                            alt={`${platform.abbrev} Logo`}
+                          />
+                          <p className="w-24 break-words text-xs">
+                            {platform.title}
+                          </p>
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </div>
+              </div>
+              {/* End of Filter Game Button */}
+
+              {/* Date Button */}
+              <div></div>
+            </div>
           </div>
           {/* End of Wrapper */}
         </div>
@@ -181,7 +227,7 @@ export default function ScheduleSection({
       </aside>
 
       {/* Series Section Container */}
-      <div className="min-h-[90vh] space-y-16 overflow-y-auto pt-60">
+      <div className="min-h-[90vh] space-y-16 overflow-y-auto pt-64">
         {sortedDates.map((date, index) => (
           <section
             id={date}

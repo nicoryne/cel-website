@@ -63,7 +63,7 @@ export default function AboutSection() {
             <div className="relative">
               <Image
                 src={about_1}
-                alt="CEL Preseason 3 Finale Audience"
+                alt="CEL Season 1 Opening"
                 className="object-contain"
               />
             </div>
@@ -72,19 +72,12 @@ export default function AboutSection() {
                 Humble Beginnings
               </h1>
               <p className="text-xs font-light md:text-base">
-                Etiam aliquam risus non ultricies posuere. Ut eu turpis nec
-                massa viverra posuere ut vel felis. Donec tincidunt metus nec
-                tempus accumsan. Ut ultrices consequat aliquet. Nunc rhoncus,
-                urna quis luctus condimentum, risus lectus fringilla justo, sit
-                amet iaculis ante sapien vitae leo. Mauris scelerisque feugiat
-                neque, quis hendrerit libero efficitur vitae. Aliquam erat
-                volutpat. Pellentesque in magna lorem. Nulla euismod nulla id
-                maximus efficitur. Suspendisse vel bibendum neque, a malesuada
-                velit. Integer tempor lectus et massa volutpat, in aliquet neque
-                euismod. Vestibulum mollis lacus vel ipsum viverra, eu tristique
-                sem sollicitudin. Nunc congue congue velit, a dignissim leo
-                consequat in. In mollis tortor commodo lectus fermentum
-                faucibus.
+                The Cebu Schools Athletic Foundation, Inc. (CESAFI) Esports
+                League (CEL) officially inaugurated back in December 2022 after
+                three years of preparation. With the support of CESAFI
+                commissioner Felix Tiukinhoy Jr., and the initiative of now
+                CESAFI Executive Director Ryan Balbuena, the league has become
+                the premier collegiate esports competition in Cebu.
               </p>
             </div>
           </div>
@@ -94,28 +87,22 @@ export default function AboutSection() {
             <div className="relative md:order-2">
               <Image
                 src={about_2}
-                alt="CEL Preseason 3 Finale Production"
+                alt="CEL Preseason 3 Trophy"
                 className="object-contain"
               />
             </div>
             <div className="col-span-1 flex flex-col justify-center gap-4 bg-[var(--background)] p-16">
               <h1 className="text-xl font-bold uppercase md:text-4xl">
-                Into the Forge
+                Forging Legends
               </h1>
               <p className="text-xs font-light md:text-base">
-                Etiam aliquam risus non ultricies posuere. Ut eu turpis nec
-                massa viverra posuere ut vel felis. Donec tincidunt metus nec
-                tempus accumsan. Ut ultrices consequat aliquet. Nunc rhoncus,
-                urna quis luctus condimentum, risus lectus fringilla justo, sit
-                amet iaculis ante sapien vitae leo. Mauris scelerisque feugiat
-                neque, quis hendrerit libero efficitur vitae. Aliquam erat
-                volutpat. Pellentesque in magna lorem. Nulla euismod nulla id
-                maximus efficitur. Suspendisse vel bibendum neque, a malesuada
-                velit. Integer tempor lectus et massa volutpat, in aliquet neque
-                euismod. Vestibulum mollis lacus vel ipsum viverra, eu tristique
-                sem sollicitudin. Nunc congue congue velit, a dignissim leo
-                consequat in. In mollis tortor commodo lectus fermentum
-                faucibus.
+                As a collegiate esports competition, the league is more than a
+                platform for esports student-athletes to showcase their skills,
+                the league has taken steps to ensure that the players are
+                responsible in-game and in their studies. Student-athletes
+                maintain a balanced school-work ethic to be able to compete in
+                the league; forging legends in-game without compromising
+                academic responsibilities.
               </p>
             </div>
           </div>
@@ -125,28 +112,27 @@ export default function AboutSection() {
             <div className="relative">
               <Image
                 src={about_3}
-                alt="CEL Preseason 3 Finale Trophies"
+                alt="CEL Preseason 3 Finale Audience"
                 className="object-contain"
               />
             </div>
             <div className="col-span-1 flex flex-col justify-center gap-4 bg-[var(--background)] p-16">
               <h1 className="text-xl font-bold uppercase md:text-4xl">
-                Burning with Passion
+                For students, by students
               </h1>
               <p className="text-xs font-light md:text-base">
-                Etiam aliquam risus non ultricies posuere. Ut eu turpis nec
-                massa viverra posuere ut vel felis. Donec tincidunt metus nec
-                tempus accumsan. Ut ultrices consequat aliquet. Nunc rhoncus,
-                urna quis luctus condimentum, risus lectus fringilla justo, sit
-                amet iaculis ante sapien vitae leo. Mauris scelerisque feugiat
-                neque, quis hendrerit libero efficitur vitae. Aliquam erat
-                volutpat. Pellentesque in magna lorem. Nulla euismod nulla id
-                maximus efficitur. Suspendisse vel bibendum neque, a malesuada
-                velit. Integer tempor lectus et massa volutpat, in aliquet neque
-                euismod. Vestibulum mollis lacus vel ipsum viverra, eu tristique
-                sem sollicitudin. Nunc congue congue velit, a dignissim leo
-                consequat in. In mollis tortor commodo lectus fermentum
-                faucibus.
+                The organization started as and maintains itself in being a
+                student-led esports community, where student volunteers are
+                operating each department in the CEL– from the production, to
+                the writing, to the media, and creatives. As explained by CESAFI
+                Executive Director, Ryan Balbuena, the league is not only a
+                platform for student-athletes to test their skills but also a
+                platform for student volunteers to develop their skills in
+                esports production, including esports broadcasting and
+                organizing esports events. Furthermore, the CEL is under the
+                supervision of the Athletic Directors of CESAFI member schools,
+                and student-athletes representing their respective schools are
+                supported by their institutions.
               </p>
             </div>
           </div>
@@ -156,7 +142,7 @@ export default function AboutSection() {
             {/* Background Image */}
             <Image
               src={about_4}
-              alt="CEL Preseason 3 Finale Trophies"
+              alt="CEL Preseason 3 Finale Staff"
               className="absolute inset-0 h-full w-full object-cover opacity-60"
             />
 
