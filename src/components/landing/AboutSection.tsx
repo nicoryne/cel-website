@@ -57,10 +57,10 @@ export default function AboutSection() {
         </div>
 
         {/* Pictures */}
-        <div className="flex flex-col">
+        <div className="flex flex-col bg-[var(--background)]">
           {/* About 1 */}
           <div className="grid md:grid-cols-2">
-            <div className="relative">
+            <div className="relative md:p-16">
               <Image
                 src={about_1}
                 alt="CEL Season 1 Opening"
@@ -84,7 +84,7 @@ export default function AboutSection() {
 
           {/* About 2 */}
           <div className="grid md:grid-cols-2">
-            <div className="relative md:order-2">
+            <div className="relative md:order-2 md:p-16">
               <Image
                 src={about_2}
                 alt="CEL Preseason 3 Trophy"
@@ -109,7 +109,7 @@ export default function AboutSection() {
 
           {/* About 3 */}
           <div className="grid md:grid-cols-2">
-            <div className="relative">
+            <div className="relative md:p-16">
               <Image
                 src={about_3}
                 alt="CEL Preseason 3 Finale Audience"
@@ -143,7 +143,7 @@ export default function AboutSection() {
             <Image
               src={about_4}
               alt="CEL Preseason 3 Finale Staff"
-              className="absolute inset-0 h-full w-full object-cover opacity-60"
+              className="absolute inset-0 h-full w-full object-cover px-16 opacity-60"
             />
 
             {/* Content Overlay */}
