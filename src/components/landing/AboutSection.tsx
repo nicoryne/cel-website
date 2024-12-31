@@ -127,9 +127,9 @@ export default function AboutSection() {
                   src={data.image}
                   alt={`${data.title} - CESAFI Esports League`}
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  width={1000}
-                  height={1000}
-                  quality={85}
+                  width={1280}
+                  height={1280}
+                  quality={100}
                   className="h-auto w-full object-contain md:rounded-lg"
                 />
               </figure>
@@ -157,10 +157,10 @@ export default function AboutSection() {
               src={about_4}
               alt="CESAFI Esports League Staff"
               sizes="(max-width: 768px) 100vw, 50vw"
-              width={2000}
-              height={1000}
-              quality={80}
-              className="absolute inset-0 h-full w-full object-cover opacity-40"
+              width={2048}
+              height={1365}
+              quality={100}
+              className="absolute inset-0 h-full w-full object-cover opacity-10"
             />
             <div className="relative z-10 flex h-full items-center justify-center">
               <p className="text-center text-4xl font-extrabold uppercase">

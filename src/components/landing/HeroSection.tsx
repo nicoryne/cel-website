@@ -33,15 +33,7 @@ export default function HeroSection() {
             <source src="/videos/hero_video.mp4" type="video/mp4" />
           </video>
         ) : (
-          <Image
-            src="/images/about_4.webp"
-            alt="Hero Section Placeholder"
-            className="absolute left-0 top-0 h-[700px] w-[1920px] object-cover opacity-30"
-            priority
-            width={1920}
-            height={700}
-            quality={85}
-          />
+          <div className="absolute left-0 top-0 h-[700px] w-[1920px] bg-gradient-to-b from-[var(--cel-navy)] via-[var(--hero-blue-mid)] to-[var(--hero-blue-end)] opacity-30"></div>
         )}
       </div>
       {/* End of Background Video */}
