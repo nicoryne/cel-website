@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/solid';
 
 import { defaultNavLinks } from '@/components/Navbar';
@@ -86,6 +87,12 @@ export const defaultSocials: Socials[] = [
 ];
 
 export default function Footer() {
+  const [currentYear, setCurrentYear] = React.useState(0);
+
+  React.useEffect(() => {
+    setCurrentYear(new Date().getFullYear());
+  }, []);
+
   return (
     <footer
       id="site-footer"
@@ -198,8 +205,7 @@ export default function Footer() {
           {/* Legal */}
           <div className="ml-auto">
             <small className="text-xs text-neutral-300">
-              &copy; {new Date().getFullYear()} CESAFI Esports League. All
-              Rights Reserved.
+              &copy; {currentYear} CESAFI Esports League. All Rights Reserved.
             </small>
           </div>
           {/* End of Legal */}

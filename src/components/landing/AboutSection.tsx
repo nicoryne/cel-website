@@ -5,7 +5,6 @@ import about_3 from '@/../../public/images/about_3.webp';
 import about_4 from '@/../../public/images/about_4.webp';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 
 const statInformation = [
   { heading: '300+', desc: 'Student Volunteers' },
@@ -91,7 +90,7 @@ export default function AboutSection() {
                 <h3 className="text-3xl font-bold text-neutral-800 md:text-5xl">
                   {info.heading}
                 </h3>
-                <span className="md:text-md text-xs text-neutral-400">
+                <span className="md:text-md text-xs text-neutral-500">
                   {info.desc}
                 </span>
               </li>

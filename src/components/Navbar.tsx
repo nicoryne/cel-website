@@ -61,6 +61,8 @@ export default function Navbar() {
             src={cel_logo}
             alt="CEL Logo"
             priority
+            width={64}
+            height={64}
           />
         </Link>
         {/* End of Logo */}

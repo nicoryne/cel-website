@@ -82,8 +82,8 @@ export default function HeroSection() {
             className="h-auto w-80 object-contain"
             src={cel_logo}
             alt="CESAFI Esports League Logo"
-            width={500}
-            height={500}
+            width={300}
+            height={300}
             priority
           />
         </motion.div>

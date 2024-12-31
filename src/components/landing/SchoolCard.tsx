@@ -19,8 +19,8 @@ export default function SchoolCard({ school }: SchoolCardProps) {
     >
       <Image
         className="h-auto w-16 md:w-20"
-        width={128}
-        height={128}
+        width={100}
+        height={100}
         src={school.logo_url}
         alt={`${school.school_abbrev} Logo`}
         quality={90}
