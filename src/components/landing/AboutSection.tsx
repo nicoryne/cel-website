@@ -147,7 +147,7 @@ export default function AboutSection() {
 
           {/* Join Us */}
           <Link
-            href="/join"
+            href="/"
             className="relative h-64 bg-[var(--background)] md:h-96"
           >
             <Image
@@ -156,7 +156,7 @@ export default function AboutSection() {
               className="absolute inset-0 h-full w-full object-cover opacity-40"
             />
             <div className="relative z-10 flex h-full items-center justify-center">
-              <p className="text-4xl font-extrabold uppercase">
+              <p className="text-center text-4xl font-extrabold uppercase">
                 Join the CESAFI Esports Team
               </p>
             </div>
