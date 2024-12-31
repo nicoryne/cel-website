@@ -123,14 +123,12 @@ export default function ContactSection() {
           </div>
 
           <div className="w-full">
-            <motion.button
+            <button
               type="button"
-              className="w-full bg-[var(--cel-red)] py-1"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              className="w-full bg-[var(--cel-red)] py-1 text-neutral-200 duration-200 ease-linear hover:bg-red-600"
             >
               Submit
-            </motion.button>
+            </button>
           </div>
         </form>
         {/* End of Form */}

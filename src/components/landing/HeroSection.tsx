@@ -27,18 +27,20 @@ export default function HeroSection() {
             loop
             muted
             playsInline
-            className="absolute left-0 top-0 object-cover opacity-30"
-            style={{ width: '1920px', height: '700px' }}
+            className="absolute left-0 top-0 h-[700px] w-[1920px] object-cover opacity-30"
             poster="/images/about_4.webp"
           >
             <source src="/videos/hero_video.mp4" type="video/mp4" />
           </video>
         ) : (
-          <img
+          <Image
             src="/images/about_4.webp"
             alt="Hero Section Placeholder"
-            className="absolute left-0 top-0 object-cover opacity-30"
-            style={{ width: '1920px', height: '700px' }}
+            className="absolute left-0 top-0 h-[700px] w-[1920px] object-cover opacity-30"
+            priority
+            width={1920}
+            height={700}
+            quality={85}
           />
         )}
       </div>
