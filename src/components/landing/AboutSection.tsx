@@ -160,7 +160,7 @@ export default function AboutSection() {
               width={2048}
               height={1365}
               quality={100}
-              className="absolute inset-0 h-full w-full object-cover opacity-10"
+              className="absolute inset-0 h-full w-full object-cover opacity-60"
             />
             <div className="relative z-10 flex h-full items-center justify-center">
               <p className="text-center text-4xl font-extrabold uppercase">
