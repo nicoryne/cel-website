@@ -127,7 +127,11 @@ export default function AboutSection() {
                 <Image
                   src={data.image}
                   alt={`${data.title} - CESAFI Esports League`}
-                  className="object-contain md:rounded-lg"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  width={1000}
+                  height={1000}
+                  quality={85}
+                  className="h-auto w-full object-contain md:rounded-lg"
                 />
               </figure>
               <div className="col-span-1">
@@ -153,6 +157,10 @@ export default function AboutSection() {
             <Image
               src={about_4}
               alt="CESAFI Esports League Staff"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              width={2000}
+              height={1000}
+              quality={80}
               className="absolute inset-0 h-full w-full object-cover opacity-40"
             />
             <div className="relative z-10 flex h-full items-center justify-center">

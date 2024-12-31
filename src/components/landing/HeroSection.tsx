@@ -1,10 +1,18 @@
 'use client';
+import React from 'react';
 import WavesDivider from '@/components/landing/WavesDivider';
 import Image from 'next/image';
 import cel_logo from '@/../public/logos/cel.webp';
 import { motion } from 'framer-motion';
 
 export default function HeroSection() {
+  const [showVideo, setShowVideo] = React.useState(false);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => setShowVideo(true), 500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <section
       aria-labelledby="hero-heading"
@@ -13,16 +21,26 @@ export default function HeroSection() {
     >
       {/* Background Video */}
       <div aria-hidden="true">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute left-0 top-0 object-cover opacity-30"
-          style={{ width: '1920px', height: '700px' }}
-        >
-          <source src="/videos/hero_video.mp4" type="video/mp4" />
-        </video>
+        {showVideo ? (
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute left-0 top-0 object-cover opacity-30"
+            style={{ width: '1920px', height: '700px' }}
+            poster="/images/about_4.webp"
+          >
+            <source src="/videos/hero_video.mp4" type="video/mp4" />
+          </video>
+        ) : (
+          <img
+            src="/images/about_4.webp"
+            alt="Hero Section Placeholder"
+            className="absolute left-0 top-0 object-cover opacity-30"
+            style={{ width: '1920px', height: '700px' }}
+          />
+        )}
       </div>
       {/* End of Background Video */}
 
@@ -46,7 +64,6 @@ export default function HeroSection() {
 
         {/* Animated Logo */}
         <motion.div
-          className="w-80"
           initial={{ y: 0 }}
           animate={{
             y: [0, -20, 0]
@@ -62,9 +79,11 @@ export default function HeroSection() {
           aria-label="CESAFI Esports League Logo"
         >
           <Image
-            className="h-auto w-full object-contain"
+            className="h-auto w-80 object-contain"
             src={cel_logo}
             alt="CESAFI Esports League Logo"
+            width={500}
+            height={500}
             priority
           />
         </motion.div>
