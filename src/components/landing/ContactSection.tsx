@@ -32,28 +32,28 @@ export default function ContactSection() {
     <section
       aria-labelledby="contact-heading"
       id="contact"
-      className="bg-[var(--background)] p-8"
+      className="bg-[var(--background)]"
     >
       {/* Content Section */}
-      <div className="flex w-full flex-col items-center justify-center gap-12 p-6 text-center md:flex-row">
+      <div className="flex w-fit flex-col gap-4">
         {/* Header */}
-        <header className="w-80 text-left">
-          <h1
+        <header className="text-left">
+          <h2
             id="contact-heading"
-            className="text-lg font-bold text-white md:text-3xl"
+            className="text-lg font-bold text-neutral-200"
           >
             Contact Us
-          </h1>
-          <p className="text-xs font-light">
+          </h2>
+          <p className="text-xs font-light text-neutral-300">
             Have any burning questions? Feel free to contact us through our
-            email
+            email.
           </p>
         </header>
         {/* End of Header */}
 
         {/* Form */}
         <form className="flex flex-col gap-6">
-          <div className="flex gap-8">
+          <div className="flex flex-col justify-between gap-6 md:flex-row">
             {/* First Name */}
             <div className="flex flex-col gap-2 text-left">
               <label htmlFor="firstName" className="text-xs">

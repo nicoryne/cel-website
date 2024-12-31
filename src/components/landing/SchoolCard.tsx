@@ -12,7 +12,7 @@ type SchoolCardProps = {
 export default function SchoolCard({ school }: SchoolCardProps) {
   return (
     <motion.figure
-      className="h-auto w-20 cursor-grab space-y-2 p-2"
+      className="h-auto w-16 cursor-grab space-y-2 p-2 md:w-20"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
       aria-label={`Go to ${school.school_abbrev} page`}

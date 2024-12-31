@@ -14,8 +14,6 @@ export default async function Home() {
       <SchoolsSection teamList={teamList} />
 
       <AboutSection />
-
-      <ContactSection />
     </main>
   );
 }
