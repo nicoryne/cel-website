@@ -1,26 +1,20 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { EnvelopeIcon } from '@heroicons/react/20/solid';
+import emailjs from '@emailjs/browser';
 
 export default function ContactSection() {
   const [firstName, setFirstName] = React.useState('');
   const [lastName, setLastName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [message, setMessage] = React.useState('');
-
   const [errorEmail, setErrorEmail] = React.useState('');
+  const [successMessage, setSuccessMessage] = React.useState('');
+  const [errorMessage, setErrorMessage] = React.useState('');
 
-  // Email Validation
   React.useEffect(() => {
-    // Checks if string has characters followed by '@', and then a '.'
-    // with atleast 2 extra characters
     const regexEmailPattern =
       /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-    // Tests if email length is greater than 7, and against the regex pattern
-    // if it matches
     if (email.length > 7 && !regexEmailPattern.test(email)) {
       setErrorEmail('Error: Please enter a valid email.');
     } else {
@@ -28,13 +22,54 @@ export default function ContactSection() {
     }
   }, [email, setErrorEmail]);
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!firstName || !lastName || !email || !message) {
+      setErrorMessage('All fields are required.');
+      setSuccessMessage('');
+      return;
+    }
+
+    // EmailJS parameters
+    const templateParams = {
+      first_name: firstName,
+      last_name: lastName,
+      email,
+      message
+    };
+
+    emailjs
+      .send(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+        templateParams,
+        process.env.NEXT_PUBLIC_EMAILJS_USER_ID!
+      )
+      .then(
+        (response) => {
+          setSuccessMessage('Message sent successfully!');
+          setErrorMessage('');
+
+          setFirstName('');
+          setLastName('');
+          setEmail('');
+          setMessage('');
+        },
+        (error) => {
+          setErrorMessage('Failed to send message. Please try again.');
+          setSuccessMessage('');
+          console.error('EmailJS error:', error);
+        }
+      );
+  };
+
   return (
     <section
       aria-labelledby="contact-heading"
       id="contact"
       className="bg-[var(--background)]"
     >
-      {/* Content Section */}
       <div className="flex w-fit flex-col gap-4">
         {/* Header */}
         <header className="text-left">
@@ -49,12 +84,10 @@ export default function ContactSection() {
             email.
           </p>
         </header>
-        {/* End of Header */}
 
         {/* Form */}
-        <form className="flex flex-col gap-6">
+        <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
           <div className="flex flex-col justify-between gap-6 md:flex-row">
-            {/* First Name */}
             <div className="flex flex-col gap-2 text-left">
               <label htmlFor="firstName" className="text-xs">
                 First Name
@@ -71,7 +104,6 @@ export default function ContactSection() {
               />
             </div>
 
-            {/* Last Name */}
             <div className="flex flex-col gap-2 text-left">
               <label htmlFor="lastName" className="text-xs">
                 Last Name
@@ -89,7 +121,6 @@ export default function ContactSection() {
             </div>
           </div>
 
-          {/* Email */}
           <div className="flex flex-col gap-2 text-left">
             <label htmlFor="email" className="text-xs">
               Email
@@ -104,9 +135,9 @@ export default function ContactSection() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
+            {errorEmail && <p className="text-xs text-red-500">{errorEmail}</p>}
           </div>
 
-          {/* Message */}
           <div className="flex flex-col gap-2 text-left">
             <label htmlFor="message" className="text-xs">
               Message
@@ -124,16 +155,19 @@ export default function ContactSection() {
 
           <div className="w-full">
             <button
-              type="button"
+              type="submit"
               className="w-full bg-[var(--cel-red)] py-1 text-neutral-200 duration-200 ease-linear hover:bg-red-600"
             >
               Submit
             </button>
           </div>
         </form>
-        {/* End of Form */}
 
-        {/* End of Footer */}
+        {/* Success/Error Messages */}
+        {successMessage && (
+          <p className="text-xs text-green-500">{successMessage}</p>
+        )}
+        {errorMessage && <p className="text-xs text-red-500">{errorMessage}</p>}
       </div>
     </section>
   );
