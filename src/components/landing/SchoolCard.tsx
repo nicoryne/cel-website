@@ -13,6 +13,8 @@ export default function SchoolCard({ school }: SchoolCardProps) {
   return (
     <motion.figure
       className="cursor-grab space-y-2 p-2"
+      initial={{ opacity: 0, scale: 0.4 }}
+      animate={{ opacity: 1, scale: 1 }}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
       aria-label={`Go to ${school.school_abbrev} page`}

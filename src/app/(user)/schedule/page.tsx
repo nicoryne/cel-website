@@ -1,6 +1,10 @@
 import { getAllSeriesWithDetails } from '@/api/series/seriesApi';
-import ScheduleSection from '@/components/schedule/ScheduleSection';
 import { getAllGamePlatforms } from '@/api/platform/platformApi';
+import dynamic from 'next/dynamic';
+
+const ScheduleSection = dynamic(
+  () => import('@/components/schedule/ScheduleSection')
+);
 
 export default async function SchedulePage() {
   const seriesList = await getAllSeriesWithDetails();

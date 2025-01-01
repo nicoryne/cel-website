@@ -53,7 +53,6 @@ export default function ScheduleSection({
 
   const [filterState, setFilterState] = React.useState(platformOptions[0]);
   const [menuFilterState, toggleMenuFilter] = React.useState(false);
-  const [currentDate, setCurrentDate] = React.useState(dateToday);
 
   const filteredSeries = React.useMemo(() => {
     return seriesList.filter((item) => {
@@ -81,6 +80,8 @@ export default function ScheduleSection({
   });
 
   // Scrolling Effect
+  const [currentDate, setCurrentDate] = React.useState(dateToday);
+
   const sectionRefs = React.useRef<(HTMLElement | null)[]>([]);
 
   React.useEffect(() => {
@@ -88,11 +89,18 @@ export default function ScheduleSection({
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setCurrentDate(new Date(entry.target.id));
+            const targetElement = entry.target as HTMLElement;
+            const dateStr = targetElement.dataset.date;
+            if (dateStr) {
+              setCurrentDate(new Date(dateStr));
+            }
           }
         });
       },
-      { threshold: 0.9 }
+      {
+        threshold: 0.8,
+        rootMargin: '0px 0px -30% 0px'
+      }
     );
 
     sectionRefs.current.forEach((ref) => {
@@ -102,13 +110,50 @@ export default function ScheduleSection({
     return () => observer.disconnect();
   }, []);
 
-  // Set Date Functions
-  const setDateToCurrentDate = () => {
-    const todaySection = document.getElementById(
-      dateToday.toLocaleDateString('en-CA')
+  const scrollToDate = (date: Date) => {
+    const dateStr = date.toLocaleDateString('en-CA', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+
+    const currentSection = document.querySelector(`[data-date="${dateStr}"]`);
+
+    if (currentSection) {
+      currentSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
+  const handlePreviousDate = () => {
+    const currentIndex = sortedDates.indexOf(
+      currentDate.toLocaleDateString('en-CA')
     );
-    if (todaySection) {
-      todaySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    if (currentIndex > 0) {
+      const previousDateStr = sortedDates[currentIndex - 1];
+      const previousDate = new Date(previousDateStr);
+      setCurrentDate(previousDate);
+      scrollToDate(previousDate);
+    }
+  };
+
+  const handleNextDate = () => {
+    const currentIndex = sortedDates.indexOf(
+      currentDate.toLocaleDateString('en-CA')
+    );
+
+    if (currentIndex < sortedDates.length - 1) {
+      const nextDateStr = sortedDates[currentIndex + 1];
+      const nextDate = new Date(nextDateStr);
+      setCurrentDate(nextDate);
+      scrollToDate(nextDate);
+    }
+  };
+
+  const setDateToCurrentDate = () => {
+    if (dateToday !== currentDate) {
+      setCurrentDate(dateToday);
+      scrollToDate(dateToday);
     }
   };
 
@@ -124,30 +169,36 @@ export default function ScheduleSection({
               {/* Time Group */}
               <div className="flex flex-col uppercase">
                 {/* Month and Numeric Date */}
-                <time className="text-3xl font-bold md:text-4xl">
+                <span className="text-xl font-bold md:text-4xl">
                   {currentDate.toLocaleDateString('en-US', {
                     month: 'short',
-                    day: 'numeric'
+                    day: 'numeric',
+                    year: 'numeric'
                   })}
-                </time>
+                </span>
                 {/* 'Today' and Weekday Long */}
-                <time className="text-sm md:text-base">
+                <span className="text-sm md:text-base">
                   {currentDate.toLocaleDateString('en-US', {
                     weekday: 'long'
                   })}
-                </time>
+                </span>
               </div>
               {/* End of Time Group */}
 
               {/* Date Picker Buttons */}
               <div className="flex place-items-center justify-center">
                 {/* Previous Date */}
-                <button className="bg-neutral-800 p-2 transition-colors duration-150 ease-linear hover:bg-neutral-900">
+                <button
+                  type="button"
+                  className="bg-neutral-800 p-2 transition-colors duration-150 ease-linear hover:bg-neutral-900"
+                  onClick={handlePreviousDate}
+                >
                   <ArrowLeftIcon className="h-auto w-6 text-white" />
                 </button>
 
                 {/* Today */}
                 <button
+                  type="button"
                   className="bg-neutral-800 px-4 py-2 transition-colors duration-150 ease-linear hover:bg-neutral-900"
                   onClick={setDateToCurrentDate}
                 >
@@ -157,7 +208,11 @@ export default function ScheduleSection({
                 </button>
 
                 {/* Next Date */}
-                <button className="bg-neutral-800 p-2 transition-colors duration-150 ease-linear hover:bg-neutral-900">
+                <button
+                  type="button"
+                  className="bg-neutral-800 p-2 transition-colors duration-150 ease-linear hover:bg-neutral-900"
+                  onClick={handleNextDate}
+                >
                   <ArrowRightIcon className="h-auto w-6 text-white" />
                 </button>
               </div>
@@ -227,27 +282,44 @@ export default function ScheduleSection({
       </aside>
 
       {/* Series Section Container */}
-      <div className="min-h-[90vh] space-y-16 overflow-y-auto pt-64">
+      <motion.div
+        className="min-h-[90vh] space-y-16 overflow-y-auto pt-64"
+        initial={{ opacity: 0.1 }}
+        animate={{ opacity: 1 }}
+      >
         {sortedDates.map((date, index) => (
           <section
-            id={date}
+            data-tag="date"
+            data-scroll="target"
+            data-today={
+              date === new Date().toLocaleDateString('en-CA') ? 'true' : 'false'
+            }
             key={date}
+            data-date={new Date(date).toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric'
+            })}
+            data-weekday={new Date(date).toLocaleDateString('en-US', {
+              weekday: 'long'
+            })}
             ref={(el) => {
               sectionRefs.current[index] = el;
             }}
             className="grid items-center rounded-lg bg-neutral-900 p-4"
           >
-            <h1 className="col-span-1 text-2xl font-bold uppercase md:col-span-2">
+            <h4 className="col-span-1 text-lg font-bold uppercase md:col-span-2 md:text-2xl">
               {new Date(date).toLocaleDateString('en-US', {
                 month: 'short',
-                day: 'numeric'
+                day: 'numeric',
+                year: 'numeric'
               })}
-            </h1>
-            <time className="col-span-1 text-end text-xs font-semibold uppercase text-neutral-400 md:col-span-2 md:text-start">
+            </h4>
+            <span className="col-span-1 text-end text-xs font-semibold uppercase text-neutral-400 md:col-span-2 md:text-start">
               {new Date(date).toLocaleDateString('en-US', {
                 weekday: 'long'
               })}
-            </time>
+            </span>
             <div className="col-span-2 mt-4 grid gap-4">
               {activeSeries[date].length > 0 ? (
                 activeSeries[date].map((series: SeriesWithDetails) => (
@@ -261,7 +333,7 @@ export default function ScheduleSection({
             </div>
           </section>
         ))}
-      </div>
+      </motion.div>
     </>
   );
 }

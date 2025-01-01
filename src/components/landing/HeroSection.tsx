@@ -6,13 +6,6 @@ import cel_logo from '@/../public/logos/cel.webp';
 import { motion } from 'framer-motion';
 
 export default function HeroSection() {
-  const [showVideo, setShowVideo] = React.useState(false);
-
-  React.useEffect(() => {
-    const timer = setTimeout(() => setShowVideo(true), 500);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <section
       aria-labelledby="hero-heading"
@@ -21,29 +14,18 @@ export default function HeroSection() {
     >
       {/* Background Video */}
       <div aria-hidden="true">
-        {showVideo ? (
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute left-0 top-0 h-[700px] w-[1920px] object-cover opacity-30"
-            poster="/images/about_4.webp"
-          >
-            <source src="/videos/hero_video.mp4" type="video/mp4" />
-          </video>
-        ) : (
-          <Image
-            src="/images/about_4.webp"
-            alt="Hero Section Placeholder"
-            className="absolute left-0 top-0 h-[700px] w-[1920px] object-cover opacity-30"
-            loading="lazy"
-            priority
-            width={1920}
-            height={700}
-            quality={50}
-          />
-        )}
+        <video
+          id="hero-video"
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute left-0 top-0 h-[700px] w-[1920px] object-cover opacity-30"
+          poster="/images/about_4.webp"
+        >
+          <source src="/videos/hero_video.mp4" type="video/mp4" />
+          <source src="/videos/hero_video.webm" type="video/webm" />
+        </video>
       </div>
       {/* End of Background Video */}
 

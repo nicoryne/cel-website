@@ -181,18 +181,15 @@ export default function Footer() {
                 </h2>
                 <ul className="flex flex-col gap-4 md:flex-row md:gap-8">
                   {defaultSocials.map((social, index) => (
-                    <li
-                      key={index}
-                      className="rounded-md border-2 border-neutral-700 bg-neutral-800 p-4"
-                    >
+                    <li key={index} className="list-none">
                       <a
-                        className="fill-white transition-colors duration-300 ease-in-out hover:fill-[var(--cel-red)]"
+                        className="block rounded-md border-2 border-neutral-700 bg-neutral-800 p-4 transition-colors duration-150 ease-linear hover:border-neutral-600 hover:bg-neutral-700 active:bg-neutral-900"
                         href={social.href}
                         aria-label={`Follow CESAFI Esports League on ${social.text}`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        {social.logo}
+                        <span className="fill-white">{social.logo}</span>
                       </a>
                     </li>
                   ))}

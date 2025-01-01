@@ -84,26 +84,31 @@ export default function SeriesContainer({ series }: SeriesContainerProps) {
       {/* End of Upper Container */}
 
       {/* Lower Container */}
-      <div className="] flex h-8 flex-row items-center justify-between rounded-b-md bg-neutral-900 p-2 text-xs text-neutral-500">
-        <Image
-          className="h-auto w-4"
-          src={series.platform?.logo_url || cel_logo}
-          alt="Platform Logo"
-          width={256}
-          height={256}
-        />
+      <div className="] flex h-8 flex-row items-center justify-between rounded-b-md bg-neutral-900 p-2">
+        {/* Platform Logo */}
+        <figure>
+          <Image
+            className="h-auto w-4"
+            src={series.platform?.logo_url || cel_logo}
+            alt="Platform Logo"
+            width={256}
+            height={256}
+          />
+          <figcaption className="sr-only">Platform Logo</figcaption>
+        </figure>
 
-        <div>
-          <strong>
-            {series.league_schedule?.season_type}{' '}
-            {series.league_schedule?.season_number}{' '}
-            {series.league_schedule?.league_stage}
-          </strong>
-          <span>&nbsp; • &nbsp;</span>
-          <strong>Week {series.week}</strong>
-        </div>
+        {/* League Schedule Information */}
+        <span className="text-xs font-semibold text-neutral-400">
+          {series.league_schedule?.season_type}{' '}
+          {series.league_schedule?.season_number}{' '}
+          {series.league_schedule?.league_stage}
+          &nbsp; • &nbsp; Week {series.week}
+        </span>
 
-        <strong>{series.series_type}</strong>
+        {/* Series Type */}
+        <span className="text-xs font-semibold text-neutral-400">
+          {series.series_type}
+        </span>
       </div>
     </div>
   );
