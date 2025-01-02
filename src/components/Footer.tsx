@@ -99,7 +99,7 @@ export default function Footer() {
       className="w-full border-t-2 border-neutral-800 bg-[var(--background)]"
     >
       {/* Wrapper */}
-      <div className="mx-auto grid gap-16 p-8 md:w-[80vw] md:grid-cols-2">
+      <div className="mx-auto grid justify-center gap-16 p-8 md:grid-cols-2 lg:w-[80vw]">
         <ContactSection />
 
         <div className="flex flex-col justify-between">
@@ -200,7 +200,7 @@ export default function Footer() {
           </div>
 
           {/* Legal */}
-          <div className="ml-auto">
+          <div className="mx-auto md:m-0">
             <small className="text-xs text-neutral-300">
               &copy; {currentYear} CESAFI Esports League. All Rights Reserved.
             </small>
