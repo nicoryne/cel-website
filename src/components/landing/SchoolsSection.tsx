@@ -3,11 +3,11 @@ import React from 'react';
 import { Team } from '@/lib/types';
 import SchoolCard from '@/components/landing/SchoolCard';
 
-interface SchooLsSectionProps {
+interface SchoolsSectionProps {
   teamList: Team[];
 }
 
-export default function SchoolsSection({ teamList }: SchooLsSectionProps) {
+export default function SchoolsSection({ teamList }: SchoolsSectionProps) {
   const [renderedTeams, setRenderedTeams] = React.useState<Team[] | null>([]);
 
   React.useEffect(() => {
