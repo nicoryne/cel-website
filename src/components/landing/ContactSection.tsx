@@ -2,6 +2,9 @@
 
 import React from 'react';
 import emailjs from '@emailjs/browser';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
+import contact_us from '@/../public/images/contact_us.webp';
 
 export default function ContactSection() {
   const [firstName, setFirstName] = React.useState('');
@@ -68,107 +71,126 @@ export default function ContactSection() {
     <section
       aria-labelledby="contact-heading"
       id="contact"
-      className="bg-[var(--background)]"
+      className="mx-auto bg-[var(--background)] lg:py-16"
     >
-      <div className="flex w-fit flex-col gap-4">
-        {/* Header */}
-        <header className="text-left">
-          <h2
-            id="contact-heading"
-            className="text-lg font-bold text-neutral-200"
-          >
-            Contact Us
-          </h2>
-          <p className="text-xs font-light text-neutral-300">
-            Have any burning questions? Feel free to contact us through our
-            email.
-          </p>
-        </header>
+      <motion.div
+        className="mx-auto grid w-full lg:w-[80vw] lg:grid-cols-2 lg:py-8"
+        whileInView={{ opacity: [0.6, 1], scale: [0.97, 1] }}
+        initial={{ opacity: 0.6, scale: 0.97 }}
+        animate={{ opacity: 1, scale: 1 }}
+      >
+        {/* Image */}
+        <div className="relative lg:order-2">
+          <Image
+            src={contact_us}
+            alt="CEL Staff Media"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            quality={95}
+            className="h-full w-full object-cover lg:rounded-r-lg"
+          />
+        </div>
 
-        {/* Form */}
-        <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
-          <div className="flex flex-col justify-between gap-6 md:flex-row">
-            <div className="flex flex-col gap-2 text-left">
-              <label htmlFor="firstName" className="text-xs">
-                First Name
-              </label>
-              <input
-                type="text"
-                id="firstName"
-                name="firstName"
-                placeholder="Juan"
-                className="text-xs text-neutral-800"
-                autoComplete="given-name"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-              />
-            </div>
+        <div className="lg:order-1">
+          <div className="flex h-full flex-col justify-center gap-8 px-8 py-16 md:rounded-l-lg md:p-8 lg:bg-neutral-900">
+            <header className="flex flex-col gap-4">
+              <h2 className="bg-gradient-to-r from-[var(--cel-blue)] to-[var(--hero-blue-end)] bg-clip-text text-4xl font-bold uppercase text-transparent">
+                Contact Us
+              </h2>
+              <p className="text-base">
+                Have questions or need assistance? We're here to help! Feel free
+                to send us a message through this form.
+              </p>
+            </header>
+            {/* Form */}
+            <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+              <div className="flex flex-col gap-6 xl:flex-row">
+                <div className="flex flex-1 flex-col gap-2 text-left">
+                  <label htmlFor="firstName" className="text-xs">
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    id="firstName"
+                    name="firstName"
+                    placeholder="Juan"
+                    className="ease rounded-md bg-[var(--background)] p-3 text-sm text-white transition-colors duration-200 focus:border-neutral-300 focus:ring-neutral-100"
+                    autoComplete="given-name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                  />
+                </div>
 
-            <div className="flex flex-col gap-2 text-left">
-              <label htmlFor="lastName" className="text-xs">
-                Last Name
-              </label>
-              <input
-                type="text"
-                id="lastName"
-                name="lastName"
-                placeholder="Dela Cruz"
-                className="text-xs text-neutral-800"
-                autoComplete="family-name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-              />
-            </div>
+                <div className="flex flex-1 flex-col gap-2 text-left">
+                  <label htmlFor="lastName" className="text-xs">
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    placeholder="Dela Cruz"
+                    className="ease rounded-md bg-[var(--background)] p-3 text-sm text-white transition-colors duration-200 focus:border-neutral-300 focus:ring-neutral-100"
+                    autoComplete="family-name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2 text-left">
+                <label htmlFor="email" className="text-xs">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="example@gmail.com"
+                  className="ease rounded-md bg-[var(--background)] p-3 text-sm text-white transition-colors duration-200 focus:border-neutral-300 focus:ring-neutral-100"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                {errorEmail && (
+                  <p className="text-xs text-red-500">{errorEmail}</p>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-2 text-left">
+                <label htmlFor="message" className="text-xs">
+                  Message
+                </label>
+                <textarea
+                  rows={6}
+                  id="message"
+                  name="message"
+                  placeholder="Hello! I am writing about.."
+                  className="ease resize-none rounded-md bg-[var(--background)] p-4 text-sm text-white transition-colors duration-200 focus:border-neutral-300 focus:ring-neutral-100"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                />
+              </div>
+
+              <div className="flex w-full justify-end">
+                <button
+                  type="submit"
+                  className="text-md w-full rounded-md bg-[var(--cel-red)] py-2 text-neutral-200 duration-200 ease-linear hover:bg-red-600"
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+
+            {/* Success/Error Messages */}
+            {successMessage && (
+              <p className="text-xs text-green-500">{successMessage}</p>
+            )}
+            {errorMessage && (
+              <p className="text-xs text-red-500">{errorMessage}</p>
+            )}
           </div>
-
-          <div className="flex flex-col gap-2 text-left">
-            <label htmlFor="email" className="text-xs">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="example@gmail.com"
-              className="text-xs text-neutral-800"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            {errorEmail && <p className="text-xs text-red-500">{errorEmail}</p>}
-          </div>
-
-          <div className="flex flex-col gap-2 text-left">
-            <label htmlFor="message" className="text-xs">
-              Message
-            </label>
-            <textarea
-              rows={4}
-              id="message"
-              name="message"
-              placeholder="Hello! I am writing about.."
-              className="text-xs text-neutral-800"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-            />
-          </div>
-
-          <div className="w-full">
-            <button
-              type="submit"
-              className="w-full bg-[var(--cel-red)] py-1 text-neutral-200 duration-200 ease-linear hover:bg-red-600"
-            >
-              Submit
-            </button>
-          </div>
-        </form>
-
-        {/* Success/Error Messages */}
-        {successMessage && (
-          <p className="text-xs text-green-500">{successMessage}</p>
-        )}
-        {errorMessage && <p className="text-xs text-red-500">{errorMessage}</p>}
-      </div>
+        </div>
+      </motion.div>
     </section>
   );
 }

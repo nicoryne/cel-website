@@ -20,7 +20,7 @@ export default function HeroSection() {
           loop
           muted
           playsInline
-          className="absolute left-0 top-0 h-[700px] w-[1920px] object-cover opacity-30"
+          className="absolute left-0 top-0 h-[700px] w-full object-cover opacity-30"
           poster="/images/about_4.webp"
         >
           <source src="/videos/hero_video.mp4" type="video/mp4" />
@@ -31,18 +31,18 @@ export default function HeroSection() {
 
       {/* Hero Content */}
       <div
-        className="absolute inset-0 m-auto flex h-fit flex-col items-center justify-between px-4 text-white md:w-[700px] md:flex-row lg:w-[1000px]"
+        className="absolute inset-0 m-auto flex h-fit flex-col items-center justify-between px-4 text-white md:w-[700px] md:flex-row lg:w-[900px]"
         role="banner"
       >
         {/* Heading */}
-        <header className="mb-4 max-w-full text-center md:text-left">
+        <header className="mb-12 flex w-[70%] max-w-full flex-col gap-4 text-center md:mb-0 md:text-left">
           <h1
             id="hero-heading"
             className="text-5xl font-bold text-white md:text-6xl"
           >
             CESAFI ESPORTS LEAGUE
           </h1>
-          <p className="mt-2 text-xs font-normal text-[var(--text-white)] md:text-base">
+          <p className="text-base font-normal text-[var(--text-white)]">
             The den of the best esports student athletes
           </p>
         </header>
@@ -60,11 +60,12 @@ export default function HeroSection() {
               ease: 'easeInOut'
             }
           }}
+          whileTap={{ scale: 1.08 }}
           role="img"
           aria-label="CESAFI Esports League Logo"
         >
           <Image
-            className="h-auto w-80 object-contain"
+            className="h-auto w-56 object-contain md:w-80"
             src={cel_logo}
             alt="CESAFI Esports League Logo"
             width={300}

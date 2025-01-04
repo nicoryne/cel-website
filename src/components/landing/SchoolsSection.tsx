@@ -3,9 +3,9 @@ import React from 'react';
 import { Team } from '@/lib/types';
 import SchoolCard from '@/components/landing/SchoolCard';
 
-interface SchoolsSectionProps {
+type SchoolsSectionProps = {
   teamList: Team[];
-}
+};
 
 export default function SchoolsSection({ teamList }: SchoolsSectionProps) {
   const [renderedTeams, setRenderedTeams] = React.useState<Team[] | null>([]);
@@ -16,7 +16,10 @@ export default function SchoolsSection({ teamList }: SchoolsSectionProps) {
   }, [teamList]);
 
   return (
-    <section aria-labelledby="schools-heading" className="bg-white px-8 py-16">
+    <section
+      aria-labelledby="schools-heading"
+      className="bg-white px-8 py-16 dark:bg-white"
+    >
       <header className="mx-auto mb-8 w-fit">
         <h2
           id="schools-heading"

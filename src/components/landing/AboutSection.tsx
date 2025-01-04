@@ -1,76 +1,32 @@
 'use client';
-import about_1 from '@/../../public/images/about_1.webp';
-import about_2 from '@/../../public/images/about_2.webp';
-import about_3 from '@/../../public/images/about_3.webp';
 import about_4 from '@/../../public/images/about_4.webp';
 import Image from 'next/image';
 import Link from 'next/link';
-
-const statInformation = [
-  { heading: '300+', desc: 'Student Volunteers' },
-  { heading: '1000+', desc: 'Student Athletes' },
-  { heading: '12M+', desc: 'Reach' }
-];
-
-const aboutUsData = [
-  {
-    image: about_1,
-    title: 'Humble Beginnings',
-    paragraph: `The Cebu Schools Athletic Foundation, Inc. (CESAFI) Esports
-                  League (CEL) officially inaugurated back in December 2022
-                  after three years of preparation. With the support of CESAFI
-                  commissioner Felix Tiukinhoy Jr., and the initiative of now
-                  CESAFI Executive Director Ryan Balbuena, the league has become
-                  the premier collegiate esports competition in Cebu.`
-  },
-  {
-    image: about_2,
-    title: 'Forging Legends',
-    paragraph: `As a collegiate esports competition, the league is more than a
-                platform for esports student-athletes to showcase their skills,
-                the league has taken steps to ensure that the players are
-                responsible in-game and in their studies. Student-athletes
-                maintain a balanced school-work ethic to be able to compete in
-                the league; forging legends in-game without compromising
-                academic responsibilities.`
-  },
-  {
-    image: about_3,
-    title: 'For students, by students',
-    paragraph: `The organization started as and maintains itself in being a
-                  student-led esports community, where student volunteers are
-                  operating each department in the CEL. As explained by
-                  CESAFI Executive Director, Ryan Balbuena, the league is not
-                  only a platform for student-athletes to test their skills but
-                  also a platform for student volunteers to develop their skills
-                  in esports production, including esports broadcasting and
-                  organizing esports events. 
-                  
-                  Furthermore, the CEL is under the
-                  supervision of the Athletic Directors of CESAFI member
-                  schools, and student-athletes representing their respective
-                  schools are supported by their institutions.`
-  }
-];
+import { motion } from 'framer-motion';
+import {
+  StatInformation,
+  AboutUsData,
+  LiveChannels
+} from '@/components/data/static';
 
 export default function AboutSection() {
   return (
     <section
       aria-labelledby="about-heading"
       id="about"
-      className="min-h-screen bg-white"
+      className="min-h-screen bg-white dark:bg-white"
     >
       {/* Content Section */}
       <div>
         {/* Header */}
         <header
           id="about-heading"
-          className="mx-auto flex flex-col place-items-center gap-4 p-4 text-center"
+          className="mx-auto flex w-[90%] flex-col items-center gap-4 p-4 text-center sm:w-[70%] md:w-[60%]"
         >
-          <h1 className="bg-gradient-to-r from-[var(--cel-blue)] to-[var(--cel-red)] bg-clip-text text-6xl font-bold uppercase text-transparent">
+          <h2 className="bg-gradient-to-r from-[var(--cel-blue)] to-[var(--cel-red)] bg-clip-text text-6xl font-bold uppercase text-transparent">
             We Forge Legends.
-          </h1>
-          <p className="text-wrap text-neutral-500">
+          </h2>
+          <p className="text-wrap text-lg text-neutral-500">
             CESAFI Esports League (CEL) is the biggest student-oriented esports
             league in Cebu City, fostering students' talents in-game.
           </p>
@@ -81,86 +37,82 @@ export default function AboutSection() {
           <h2 id="stats-heading" className="sr-only">
             Statistical Highlights
           </h2>
-          <ul className="flex flex-wrap justify-evenly">
-            {statInformation.map((info, index) => (
-              <li
-                key={index}
-                className="flex h-auto w-40 flex-col gap-1 p-4 text-center"
-              >
-                <h3 className="text-3xl font-bold text-neutral-800 md:text-5xl">
-                  {info.heading}
+          <ul className="flex flex-col flex-wrap place-items-center justify-center gap-8 md:flex-row md:gap-12">
+            {StatInformation.map((info, index) => (
+              <li key={index}>
+                <h3 className="flex h-auto flex-col gap-1 p-4 text-center">
+                  <span className="text-5xl font-bold text-neutral-800">
+                    {info.heading}
+                  </span>
+                  <span className="text-sm text-neutral-500 md:text-base">
+                    {info.desc}
+                  </span>
                 </h3>
-                <span className="md:text-md text-xs text-neutral-500">
-                  {info.desc}
-                </span>
               </li>
             ))}
           </ul>
         </section>
 
-        <section
-          aria-labelledby="seasons-heading"
-          className="flex flex-col bg-[var(--background)]"
-        >
-          <h2 id="seasons-heading" className="sr-only">
-            About Us
-          </h2>
-
-          <p></p>
-        </section>
-
         {/* About Us */}
         <section
           aria-labelledby="about-us-heading"
-          className="flex flex-col bg-[var(--background)] py-16"
+          className="flex flex-col bg-[var(--background)]"
         >
           <h2 id="about-us-heading" className="sr-only">
             About Us
           </h2>
-          {aboutUsData.map((data, index) => (
-            <article
+          {AboutUsData.map((data, index) => (
+            <motion.article
               key={index}
-              className="mx-auto grid gap-8 py-8 md:w-[80vw] md:grid-cols-2"
+              className="mx-auto grid lg:w-[80vw] lg:grid-cols-2 lg:gap-8 lg:py-8"
+              whileInView={{ opacity: [0.6, 1], scale: [0.97, 1] }}
+              initial={{ opacity: 0.6, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
             >
-              <figure className={`${index % 2 !== 0 ? 'md:order-2' : ''}`}>
+              <figure
+                className={`relative ${index % 2 !== 0 ? 'lg:order-2' : ''}`}
+              >
                 <Image
                   src={data.image}
                   alt={`${data.title} - CESAFI Esports League`}
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   quality={95}
-                  className="h-auto w-full object-cover md:rounded-lg"
+                  className="h-auto w-full object-cover lg:rounded-lg"
                 />
+                <figcaption className="absolute bottom-4 left-4">
+                  <span className="text-sm font-semibold uppercase text-white shadow-sm">
+                    {data.imageDesc}
+                  </span>
+                </figcaption>
               </figure>
               <div className="col-span-1">
-                <div className="flex h-full flex-col justify-center gap-4 bg-neutral-900 p-8 md:rounded-lg">
-                  <header>
-                    <h3 className="text-xl font-bold uppercase md:text-4xl">
-                      {data.title}
-                    </h3>
-                  </header>
-                  <p className="text-justify text-xs font-light md:text-base">
+                <div className="flex h-full flex-col justify-center gap-6 bg-neutral-900 px-8 py-16 md:rounded-lg md:p-8">
+                  <h3 className="text-2xl font-bold uppercase xl:text-4xl">
+                    {data.title}
+                  </h3>
+                  <p className="text-sm font-light leading-loose xl:text-lg">
                     {data.paragraph}
                   </p>
                 </div>
               </div>
-            </article>
+            </motion.article>
           ))}
 
           {/* Join Us */}
           <Link
             href="/"
-            className="relative h-64 bg-[var(--background)] md:h-96"
+            className="relative h-64 rounded-md bg-[var(--background)] lg:mx-auto lg:h-96 lg:w-[80vw]"
           >
             <Image
               src={about_4}
               alt="CESAFI Esports League Staff"
               sizes="(max-width: 768px) 100vw, 50vw"
               quality={95}
-              className="absolute inset-0 h-full w-full object-cover opacity-40"
+              className="absolute inset-0 h-full w-full object-cover opacity-70 md:rounded-md"
             />
             <div className="relative z-10 flex h-full items-center justify-center">
               <p className="text-center text-4xl font-extrabold uppercase">
-                Join the CESAFI Esports Team
+                Join the CESAFI Esports Family
               </p>
             </div>
           </Link>

@@ -4,18 +4,12 @@ import React from 'react';
 import { EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/solid';
 
 import { defaultNavLinks } from '@/components/Navbar';
+import { LogoLinks, LiveChannels } from '@/components/data/static';
+import icon_cel from '@/../../public/icons/icon_cel.svg';
 import Link from 'next/link';
 import Image from 'next/image';
-import icon_cel from '@/../../public/icons/icon_cel.svg';
-import ContactSection from '@/components/landing/ContactSection';
 
-export type Socials = {
-  text: string;
-  logo: any;
-  href: string;
-};
-
-export const defaultSocials: Socials[] = [
+export const defaultSocials: LogoLinks[] = [
   {
     text: 'Facebook',
     logo: (
@@ -96,115 +90,150 @@ export default function Footer() {
   return (
     <footer
       id="site-footer"
-      className="w-full border-t-2 border-neutral-800 bg-[var(--background)]"
+      className="mx-auto w-full bg-[var(--background)] px-16 pt-16 xl:w-[80%]"
     >
       {/* Wrapper */}
-      <div className="mx-auto grid justify-center gap-16 p-8 md:grid-cols-2 lg:w-[80vw]">
-        <ContactSection />
-
-        <div className="flex flex-col justify-between">
-          <div className="flex flex-col">
-            {/* Header and Contact Links */}
-            <div className="flex gap-8 md:gap-12">
+      <div className="flex w-full flex-col">
+        {/* Upper Container */}
+        <div className="flex flex-col justify-between gap-16 border-t-2 border-neutral-800 py-8 md:flex-row">
+          {/* Header and Contact Links */}
+          <div className="flex flex-1 flex-col gap-8">
+            <div className="mx flex items-center gap-4">
               <Image
                 className="h-auto w-16"
                 src={icon_cel}
                 alt="CESAFI Esports League Logo"
                 loading="lazy"
               />
-              {/* Contact Details */}
-              <section
-                className="flex flex-col justify-center gap-2"
-                aria-labelledby="contact-details"
-              >
-                <h2 id="contact-details" className="sr-only">
-                  Contact Details
-                </h2>
-                <div className="flex gap-2">
-                  <EnvelopeIcon className="h-auto w-4" />
-                  <address>
-                    <a
-                      href="mailto:cesafiesportsleague@gmail.com"
-                      className="text-xs"
-                    >
-                      cesafiesportsleague@gmail.com
-                    </a>
-                  </address>
-                </div>
-
-                <div className="flex gap-2">
-                  <PhoneIcon className="h-auto w-4" />
-                  <a className="text-xs" href="tel:+639163893780">
-                    +63 916 389 3780
-                  </a>
-                </div>
-              </section>
-              {/* End of Contact Details */}
+              <span className="text-base font-semibold uppercase sm:text-xl">
+                CESAFI Esports League
+              </span>
             </div>
-            {/* End of Header and Contact Links */}
 
-            <div className="my-16 flex justify-between gap-12 md:flex-col">
-              {/* Navigation Section*/}
-              <section
-                className="flex md:flex-col"
-                aria-labelledby="navigation-footer"
+            {/* Contact Details */}
+            <section
+              className="flex flex-col justify-center gap-2"
+              aria-labelledby="contact-details"
+            >
+              <h2
+                id="contact-details"
+                className="sr-only text-base text-neutral-200 md:text-lg"
               >
-                <h2 id="navigation-footer" className="sr-only">
-                  Contact Details
-                </h2>
-                {/* Navigation */}
-                <nav
-                  className="col-span-1"
-                  aria-label="Footer navigation links"
-                >
-                  <ul className="flex flex-col gap-4 md:flex-row md:gap-8">
-                    {defaultNavLinks.map((navLink, index) => (
-                      <li key={index}>
-                        <Link
-                          className="text-sm text-neutral-300 duration-150 ease-linear hover:text-[var(--cel-red)]"
-                          href={navLink.href}
-                        >
-                          {navLink.text}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </nav>
-                {/* Navigation */}
-              </section>
-              {/* End of Navigation Container */}
+                Contact Details
+              </h2>
+              <div className="flex gap-2">
+                <EnvelopeIcon className="h-auto w-4" />
 
-              {/* Social Media Section */}
-              <section aria-labelledby="social-links">
-                <h2 id="social-links" className="sr-only">
-                  CESAFI Esports League Socials
-                </h2>
-                <ul className="flex flex-col gap-4 md:flex-row md:gap-8">
-                  {defaultSocials.map((social, index) => (
-                    <li key={index} className="list-none">
-                      <a
-                        className="block rounded-md border-2 border-neutral-700 bg-neutral-800 p-4 transition-colors duration-150 ease-linear hover:border-neutral-600 hover:bg-neutral-700 active:bg-neutral-900"
-                        href={social.href}
-                        aria-label={`Follow CESAFI Esports League on ${social.text}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                <address>
+                  <a
+                    href="mailto:cesafiesportsleague@gmail.com"
+                    className="text-xs not-italic sm:text-sm"
+                  >
+                    cesafiesportsleague@gmail.com
+                  </a>
+                </address>
+              </div>
+
+              <div className="flex gap-2">
+                <PhoneIcon className="h-auto w-4" />
+
+                <a className="text-xs sm:text-sm" href="tel:+639163893780">
+                  +63 916 389 3780
+                </a>
+              </div>
+            </section>
+            {/* End of Contact Details */}
+          </div>
+          {/* End of Header and Contact Links */}
+
+          <div className="flex flex-1 flex-col gap-16">
+            {/* Navigation Section*/}
+            <section
+              className="flex w-full flex-col gap-2"
+              aria-labelledby="navigation-footer"
+            >
+              <h2 id="navigation-footer" className="sr-only">
+                Navigation
+              </h2>
+              <span className="text-lg font-semibold">Navigation</span>
+              {/* Navigation */}
+              <nav aria-label="Footer navigation links">
+                <ul className="flex flex-wrap justify-start gap-8">
+                  {defaultNavLinks.map((navLink, index) => (
+                    <li key={index}>
+                      <Link
+                        className="text-sm text-neutral-300 duration-150 ease-linear hover:text-[var(--cel-red)]"
+                        href={navLink.href}
                       >
-                        <span className="fill-white">{social.logo}</span>
-                      </a>
+                        {navLink.text}
+                      </Link>
                     </li>
                   ))}
                 </ul>
-              </section>
-              {/* End of Social Media */}
-            </div>
+              </nav>
+              {/* Navigation */}
+            </section>
+            {/* End of Navigation Section */}
+
+            <section
+              aria-labelledby="live-channels"
+              className="flex flex-col gap-2"
+            >
+              <h2 id="live-channels" className="sr-only">
+                CESAFI Esports League Live Channels
+              </h2>
+              <span className="text-lg font-semibold">Watch Us Live</span>
+              <ul className="flex flex-wrap justify-start gap-8">
+                {LiveChannels.map((channel, index) => (
+                  <li key={index} className="list-none">
+                    <Link
+                      className="text-sm text-neutral-300 duration-150 ease-linear hover:text-[var(--cel-red)]"
+                      href={channel.href}
+                    >
+                      {channel.text}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
           </div>
+        </div>
+
+        {/* Lower Container */}
+        <div className="flex w-full flex-col items-center gap-8 border-t-2 border-neutral-800 py-4 md:flex-row md:justify-between">
+          {/* Social Media Section */}
+          <section
+            aria-labelledby="social-links"
+            className="flex flex-col items-center gap-4 sm:flex-row md:order-2 md:flex-col lg:flex-row"
+          >
+            <h2 id="social-links" className="sr-only">
+              CESAFI Esports League Socials
+            </h2>
+            <span className="text-sm sm:text-base md:text-sm lg:text-base">
+              Follow our socials!
+            </span>
+            <ul className="flex gap-4">
+              {defaultSocials.map((social, index) => (
+                <li key={index} className="list-none">
+                  <Link
+                    className="block rounded-md border-2 border-neutral-700 bg-neutral-800 p-4 transition-colors duration-150 ease-linear hover:border-neutral-600 hover:bg-neutral-700 active:bg-neutral-900"
+                    href={social.href}
+                    aria-label={`Follow CESAFI Esports League on ${social.text}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span className="fill-white">{social.logo}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+          {/* End of Social Media */}
 
           {/* Legal */}
-          <div className="mx-auto md:m-0">
-            <small className="text-xs text-neutral-300">
-              &copy; {currentYear} CESAFI Esports League. All Rights Reserved.
-            </small>
-          </div>
+          <small className="flex items-center text-center text-xs text-neutral-300 md:order-1">
+            &copy; {currentYear} CESAFI Esports League. All Rights Reserved.
+          </small>
           {/* End of Legal */}
         </div>
       </div>
