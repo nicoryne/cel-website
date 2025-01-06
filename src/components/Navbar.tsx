@@ -28,7 +28,6 @@ export default function Navbar() {
 
   const [isMobileMenuOpen, toggleMobileMenu] = React.useState(false);
   const [isScrolling, setScrolling] = React.useState(false);
-  const [isColored, setColored] = React.useState(false);
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -41,11 +40,16 @@ export default function Navbar() {
     };
 
     window.addEventListener('scroll', throttleScroll);
-  }, [setScrolling]);
 
-  React.useEffect(() => {
-    setColored(!isLanding || isScrolling);
-  }, [isLanding, isScrolling]);
+    return () => {
+      window.removeEventListener('scroll', throttleScroll);
+    };
+  }, []);
+
+  const isColored = React.useMemo(
+    () => !isLanding || isScrolling,
+    [isLanding, isScrolling]
+  );
 
   return (
     <header
@@ -76,6 +80,7 @@ export default function Navbar() {
                 <Link
                   className="font-medium text-[var(--text-light)] duration-150 ease-linear hover:text-[var(--cel-red)] md:text-sm lg:text-base"
                   href={navLink.href}
+                  prefetch
                 >
                   {navLink.text}
                 </Link>
@@ -90,6 +95,7 @@ export default function Navbar() {
           className="h-auto w-8 cursor-pointer fill-[var(--foreground)] md:hidden"
           onClick={() => toggleMobileMenu(!isMobileMenuOpen)}
           aria-label="Toggle navigation menu"
+          aria-expanded={isMobileMenuOpen}
         />
         {/* End of Mobile Menu Icon */}
 
@@ -109,6 +115,7 @@ export default function Navbar() {
                   className="text-2xl font-medium text-[var(--text-light)] hover:text-[var(--cel-red)]"
                   href={navLink.href}
                   onClick={() => toggleMobileMenu(false)}
+                  prefetch
                 >
                   {navLink.text}
                 </Link>

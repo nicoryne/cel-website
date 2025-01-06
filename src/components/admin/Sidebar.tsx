@@ -14,7 +14,7 @@ import {
   CalendarDateRangeIcon,
   CalendarDaysIcon
 } from '@heroicons/react/24/outline';
-import { logout } from '@/api/auth/authApi';
+import { logout } from '@/api/auth';
 
 type SidebarLink = {
   text: string;

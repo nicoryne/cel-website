@@ -1,6 +1,7 @@
-import { getAllGamePlatforms, getAllTeams } from '@/api';
-import { getAllPlayersWithDetails } from '@/api/player/playerApi';
-import AdminPlayersClient from '@/components/admin/clients/Players';
+import { getAllGamePlatforms } from '@/api/game-platform';
+import { getAllTeams } from '@/api/team';
+import { getAllPlayersWithDetails } from '@/api/player';
+import AdminPlayersClient from '@/components/admin/clients/players';
 
 export default async function AdminPlayers() {
   const playersList = await getAllPlayersWithDetails();

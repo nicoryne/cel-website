@@ -9,14 +9,14 @@ import {
   MagnifyingGlassIcon
 } from '@heroicons/react/20/solid';
 import React from 'react';
-import Modal, { ModalProps } from '@/components/Modal';
-import PlayerForm from '@/components/forms/PlayerForm';
+import Modal, { ModalProps } from '@/components/modal';
+import PlayerForm from '@/components/forms/player-form';
 import {
   createPlayer,
   deletePlayer,
   getAllPlayersWithDetails,
   updatePlayer
-} from '@/api';
+} from '@/api/player';
 import { createClient } from '@/lib/supabase/client';
 import Image from 'next/image';
 import not_found from '@/../../public/images/not-found.webp';

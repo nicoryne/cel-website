@@ -8,17 +8,17 @@ import {
   MagnifyingGlassIcon
 } from '@heroicons/react/20/solid';
 import React from 'react';
-import Modal, { ModalProps } from '@/components/Modal';
+import Modal, { ModalProps } from '@/components/modal';
 import {
   createCharacter,
   deleteCharacter,
   getAllCharactersWithDetails,
   updateCharacter
-} from '@/api';
+} from '@/api/characters';
 import { createClient } from '@/lib/supabase/client';
 import Image from 'next/image';
 import not_found from '@/../../public/images/not-found.webp';
-import CharactersForm from '@/components/forms/CharactersForm';
+import CharactersForm from '@/components/forms/characters-form';
 
 type AdminCharactersClientProps = {
   charactersList: CharacterWithDetails[];

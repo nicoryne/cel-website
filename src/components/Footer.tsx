@@ -3,8 +3,8 @@
 import React from 'react';
 import { EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/solid';
 
-import { defaultNavLinks } from '@/components/Navbar';
-import { LogoLinks, LiveChannels } from '@/components/data/static';
+import { defaultNavLinks } from '@/components/navbar';
+import { LogoLinks, LiveChannels } from '@/components/landing/static';
 import icon_cel from '@/../../public/icons/icon_cel.svg';
 import Link from 'next/link';
 import Image from 'next/image';

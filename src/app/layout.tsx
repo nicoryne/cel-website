@@ -1,14 +1,20 @@
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
-import { rem } from '@/styles/fonts';
-import '@/styles/main.css';
-
-const title = 'CESAFI Esports League | We forge legends!';
-const description = 'The den of the best esports student athletes in Cebu';
+import { rem } from '@/lib/fonts';
+import '@/app/globals.css';
+import Navbar from '@/components/navbar';
+import Footer from '@/components/footer';
 
 export const metadata: Metadata = {
-  title: title,
-  description: description
+  title: 'CESAFI Esports League | We forge legends!',
+  description: 'The den of the best esports student athletes in Cebu',
+  icons: {
+    icon: [
+      {
+        url: 'favicon.ico',
+        href: 'favicon.ico'
+      }
+    ]
+  }
 };
 
 export default function RootLayout({
@@ -18,7 +24,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={rem.variable}>
-      <body>{children}</body>
+      <body>
+        <Navbar />
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }

@@ -1,8 +1,8 @@
-import { getAllLeagueSchedules } from '@/api/league';
-import { getAllGamePlatforms } from '@/api/platform';
+import { getAllLeagueSchedules } from '@/api/league-schedule';
+import { getAllGamePlatforms } from '@/api/game-platform';
 import { getAllSeriesWithDetails } from '@/api/series';
 import { getAllTeams } from '@/api/team';
-import AdminSeriesClient from '@/components/admin/clients/Series';
+import AdminSeriesClient from '@/components/admin/clients/series';
 
 export default async function AdminSeries() {
   const seriesList = await getAllSeriesWithDetails();

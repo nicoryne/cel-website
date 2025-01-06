@@ -10,11 +10,11 @@ import {
   ClockIcon
 } from '@heroicons/react/20/solid';
 import React from 'react';
-import Modal, { ModalProps } from '@/components/Modal';
-import { createTeam, deleteTeam, getAllTeams, updateTeam } from '@/api';
+import Modal, { ModalProps } from '@/components/modal';
+import { createTeam, deleteTeam, getAllTeams, updateTeam } from '@/api/team';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
-import TeamsForm from '../../forms/TeamsForm';
+import TeamsForm from '../../forms/teams-form';
 
 type AdminTeamsClientProps = {
   teamsList: Team[];

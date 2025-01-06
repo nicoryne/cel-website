@@ -7,17 +7,17 @@ import {
   TrashIcon
 } from '@heroicons/react/20/solid';
 import React from 'react';
-import Modal, { ModalProps } from '@/components/Modal';
+import Modal, { ModalProps } from '@/components/modal';
 import {
   createGamePlatform,
   deleteGamePlatform,
   getAllGamePlatforms,
   updateGamePlatform
-} from '@/api';
+} from '@/api/game-platform';
 import { createClient } from '@/lib/supabase/client';
 import Image from 'next/image';
 import not_found from '@/../../public/images/not-found.webp';
-import PlatformsForm from '@/components/forms/PlatformsForm';
+import PlatformsForm from '@/components/forms/platforms-form';
 
 type AdminPlatformsClientProps = {
   platforms: GamePlatform[];

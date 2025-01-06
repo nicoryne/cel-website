@@ -15,14 +15,14 @@ import {
   ClockIcon
 } from '@heroicons/react/20/solid';
 import React from 'react';
-import Modal, { ModalProps } from '@/components/Modal';
-import SeriesForm from '@/components/forms/SeriesForm';
+import Modal, { ModalProps } from '@/components/modal';
+import SeriesForm from '@/components/forms/series-form';
 import {
   createSeries,
   deleteSeries,
   getAllSeriesWithDetails,
   updateSeries
-} from '@/api';
+} from '@/api/series';
 import Image from 'next/image';
 
 type AdminSeriesClientProps = {
