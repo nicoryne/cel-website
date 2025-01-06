@@ -1,2 +1,4 @@
 User-agent: *
-Disallow: /_next/
+Disallow: /admin/
+
+Sitemap: https://www.cesafiesportsleague.com/sitemap.xml
