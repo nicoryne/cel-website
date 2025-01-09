@@ -24,11 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={rem.variable}>
-      <body>
-        <Navbar />
-        {children}
-        <Footer />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

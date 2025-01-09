@@ -106,9 +106,7 @@ export const getAllSeriesWithDetails = async (): Promise<
         league_schedule: leagueSchedule,
         team_a: teamA || null,
         team_b: teamB || null,
-        platform: gamePlatform || null,
-        start_time: new Date(series.start_time),
-        end_time: new Date(series.end_time)
+        platform: gamePlatform || null
       });
     })
   );

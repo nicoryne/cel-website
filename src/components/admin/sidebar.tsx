@@ -23,12 +23,12 @@ type SidebarLink = {
 };
 
 const defaultSideLinks: SidebarLink[] = [
-  { text: 'Schedule', href: '/admin/schedule', icon: CalendarDaysIcon },
-  { text: 'Series', href: '/admin/series', icon: TableCellsIcon },
-  { text: 'Teams', href: '/admin/teams', icon: UsersIcon },
-  { text: 'Players', href: '/admin/players', icon: UserIcon },
-  { text: 'Platforms', href: '/admin/platforms', icon: TvIcon },
-  { text: 'Characters', href: '/admin/characters', icon: BoltIcon }
+  { text: 'Schedule', href: '/dashboard/schedule', icon: CalendarDaysIcon },
+  { text: 'Series', href: '/dashboard/series', icon: TableCellsIcon },
+  { text: 'Teams', href: '/dashboard/teams', icon: UsersIcon },
+  { text: 'Players', href: '/dashboard/players', icon: UserIcon },
+  { text: 'Platforms', href: '/dashboard/platforms', icon: TvIcon },
+  { text: 'Characters', href: '/dashboard/characters', icon: BoltIcon }
 ];
 
 export default function Sidebar() {

@@ -51,12 +51,12 @@ export const updateSession = async (request: NextRequest) => {
     }
 
     // protected routes
-    if (url.startsWith('/admin') && user.error) {
+    if (url.startsWith('/dashboard') && user.error) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
 
     if (url === '/' && !user.error) {
-      return NextResponse.redirect(new URL('/admin', request.url));
+      return NextResponse.redirect(new URL('/dashboard', request.url));
     }
 
     return response;

@@ -14,7 +14,7 @@ export default function SeriesContainer({ series }: SeriesContainerProps) {
         {/* Time */}
         <div className="col-span-1 place-content-center">
           <time className="text-base md:text-xl">
-            {series.start_time
+            {new Date(series.start_time)
               .toLocaleTimeString('en-US', {
                 hour: 'numeric',
                 minute: 'numeric',
@@ -24,7 +24,7 @@ export default function SeriesContainer({ series }: SeriesContainerProps) {
               .replace(' PM', '')}
           </time>
           <span className="text-xs text-neutral-300">
-            {series.start_time.getHours() < 12 ? 'AM' : 'PM'}
+            {new Date(series.start_time).getHours() < 12 ? 'AM' : 'PM'}
           </span>
         </div>
         {/* End of Time */}

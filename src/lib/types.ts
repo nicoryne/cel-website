@@ -7,8 +7,8 @@ export type Team = {
 
 export type LeagueSchedule = {
   id: string /* PK */;
-  start_date: string;
-  end_date: string;
+  start_date: Date;
+  end_date: Date;
   league_stage: string;
   season_number: number;
   season_type: string;
@@ -43,8 +43,8 @@ export type Series = {
   week: number;
   status: string;
   platform_id: string /* FK */;
-  start_time: string;
-  end_time: string;
+  start_time: Date;
+  end_time: Date;
 };
 
 export type Player = {
@@ -69,17 +69,10 @@ export type CharacterWithDetails = Omit<Character, 'platform_id'> & {
 
 export type SeriesWithDetails = Omit<
   Series,
-  | 'league_schedule_id'
-  | 'team_a_id'
-  | 'team_b_id'
-  | 'platform_id'
-  | 'start_time'
-  | 'end_time'
+  'league_schedule_id' | 'team_a_id' | 'team_b_id' | 'platform_id'
 > & {
   league_schedule: LeagueSchedule | null;
   team_a: Team | null;
   team_b: Team | null;
   platform: GamePlatform | null;
-  start_time: Date;
-  end_time: Date;
 };

@@ -4,14 +4,17 @@ import { FilterState } from '@/components/schedule/types';
 const reduceSeriesByDate = (list: SeriesWithDetails[]) => {
   return list.reduce(
     (acc: { [date: string]: SeriesWithDetails[] }, item: SeriesWithDetails) => {
-      const date = item.start_time.toLocaleDateString('en-CA');
+      const date = new Date(item.start_time).toLocaleDateString('en-CA');
 
       if (!acc[date]) {
         acc[date] = [];
       }
 
       acc[date].push(item);
-      acc[date].sort((b, a) => a.start_time.getTime() - b.start_time.getTime());
+      acc[date].sort(
+        (b, a) =>
+          new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
+      );
 
       return acc;
     },
