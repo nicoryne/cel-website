@@ -1,4 +1,4 @@
 User-agent: *
-Disallow: /admin/
+Disallow: /dashboard/
 
 Sitemap: https://www.cesafiesportsleague.com/sitemap.xml

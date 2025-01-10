@@ -1,8 +1,6 @@
 import type { Metadata } from 'next';
 import { rem } from '@/lib/fonts';
 import '@/app/globals.css';
-import Navbar from '@/components/navbar';
-import Footer from '@/components/footer';
 
 export const metadata: Metadata = {
   title: 'CESAFI Esports League | We forge legends!',
