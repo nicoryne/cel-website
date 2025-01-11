@@ -40,12 +40,6 @@ export const updateSession = async (request: NextRequest) => {
     const user = await supabase.auth.getUser();
     const url = request.nextUrl.pathname;
 
-    const maintenancePaths = ['/news', '/standing', '/statistics'];
-
-    if (maintenancePaths.some((path) => url.startsWith(path))) {
-      return NextResponse.redirect(new URL('/maintenance', request.url));
-    }
-
     if (url.startsWith('/_next')) {
       return NextResponse.rewrite(new URL('/404', request.url));
     }
