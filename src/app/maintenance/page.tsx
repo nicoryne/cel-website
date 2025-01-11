@@ -13,7 +13,7 @@ export default function MaintenancePage() {
             <h1 className="text-4xl font-bold uppercase text-[var(--cel-red)]">
               Site is Under Maintenance
             </h1>
-            <p className="text-xl">Stay tuned for more updates!</p>
+            <p className="text-xl">Please stay tuned for more updates!</p>
           </div>
         </div>
       </main>
