@@ -10,39 +10,22 @@ import { handleError } from '@/api/utils/errorHandler';
 // CREATE
 //========
 
-/**
- * Creates a new league schedule.
- *
- * @param {LeagueSchedule} schedule - The league schedule object to create.
- * @returns {Promise<LeagueSchedule | null>} A promise that resolves to the created LeagueSchedule object.
- * Returns null if an error occurs.
- */
-export const createLeagueSchedule =
-  async (schedule: {}): Promise<{} | null> => {
-    const supabase = createClient();
-    const { data, error } = await supabase
-      .from('league_schedule')
-      .insert([schedule])
-      .single();
+export const createLeagueSchedule = async (schedule: {}): Promise<LeagueSchedule | null> => {
+  const supabase = createClient();
+  const { data, error } = await supabase.from('league_schedule').insert([schedule]).select().single();
 
-    if (error) {
-      handleError(error, 'creating league schedule');
-      return null; // Return null if there is an error
-    }
+  if (error) {
+    handleError(error, 'creating league schedule');
+    return null;
+  }
 
-    return data;
-  };
+  return data as LeagueSchedule;
+};
 
 //========
 // READ
 //========
 
-/**
- * Fetches all league schedules from the database.
- *
- * @returns {Promise<LeagueSchedule[]>} A promise that resolves to an array of LeagueSchedule objects.
- * If there is an error during the fetch, an empty array is returned.
- */
 export const getAllLeagueSchedules = async (): Promise<LeagueSchedule[]> => {
   const supabase = createClient();
   const { data, error } = await supabase.from('league_schedule').select('*');
@@ -55,83 +38,79 @@ export const getAllLeagueSchedules = async (): Promise<LeagueSchedule[]> => {
   return data || [];
 };
 
-/**
- * Fetches a league schedule by its ID.
- *
- * @param {string} id - The ID of the league schedule to fetch.
- * @returns {Promise<LeagueSchedule | null>} A promise that resolves to a LeagueSchedule object.
- * If no schedule is found or there is an error, null is returned.
- */
-export const getLeagueScheduleById = async (
-  id: string
-): Promise<LeagueSchedule | null> => {
+export const getScheduleCount = async (): Promise<number | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase
-    .from('league_schedule')
-    .select('*')
-    .eq('id', id)
-    .single();
+  const { count, error } = await supabase.from('league_schedule').select('*', { count: 'exact', head: true });
+
+  if (error) {
+    handleError(error, 'fetching schedule count');
+    return null;
+  }
+
+  return count;
+};
+
+export const getLeagueScheduleById = async (id: string): Promise<LeagueSchedule | null> => {
+  const supabase = createClient();
+  const { data, error } = await supabase.from('league_schedule').select('*').eq('id', id).single();
 
   if (error) {
     handleError(error, `fetching league schedule by ID: ${id}`);
-    return null; // Return null if there is an error
+    return null;
   }
 
   return data;
+};
+
+export const getLeagueSchedulesByIndexRange = async (min: number, max: number): Promise<LeagueSchedule[]> => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('league_schedule')
+    .select('*')
+    .order('season_type', { ascending: true })
+    .order('season_number', { ascending: true })
+    .range(min, max);
+
+  if (error) {
+    handleError(error, 'fetching league schedule by index range');
+    return [];
+  }
+
+  return data as LeagueSchedule[];
 };
 
 //========
 // UPDATE
 //========
 
-/**
- * Updates an existing league schedule by its ID.
- *
- * @param {string} id - The ID of the league schedule to update.
- * @param {Partial<LeagueSchedule>} updates - An object containing the fields to update.
- * @returns {Promise<LeagueSchedule | null>} A promise that resolves to the updated LeagueSchedule object.
- * Returns null if no schedule is found or an error occurs.
- */
-export const updateLeagueSchedule = async (
+export const updateLeagueScheduleById = async (
   id: string,
   updates: Partial<LeagueSchedule>
 ): Promise<LeagueSchedule | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase
-    .from('league_schedule')
-    .update(updates)
-    .eq('id', id)
-    .single();
+  const { data, error } = await supabase.from('league_schedule').update(updates).eq('id', id).select().single();
 
   if (error) {
     handleError(error, `updating league schedule by ID: ${id}`);
-    return null; // Return null if there is an error
+    return null;
   }
 
-  return data;
+  return data as LeagueSchedule;
 };
 
 //========
 // DELETE
 //========
 
-/**
- * Deletes a league schedule by its ID.
- *
- * @param {string} id - The ID of the league schedule to delete.
- * @returns {Promise<boolean>} A promise that resolves to true if the deletion was successful, or false if an error occurs.
- */
 export const deleteLeagueSchedule = async (id: string): Promise<boolean> => {
   const supabase = createClient();
-  const { error } = await supabase
-    .from('league_schedule')
-    .delete()
-    .eq('id', id);
+  const { error } = await supabase.from('league_schedule').delete().eq('id', id);
 
   if (error) {
     handleError(error, `deleting league schedule by ID: ${id}`);
-    return false; // Return false if there is an error
+    return false;
   }
 
-  return true; // Return true if the deletion was successful
+  return true;
 };

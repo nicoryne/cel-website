@@ -1,16 +1,17 @@
 import { getAllGamePlatforms } from '@/api/game-platform';
-import { getAllCharactersWithDetails } from '@/api/characters';
-import AdminCharactersClient from '@/components/admin/clients/characters';
+import { getAllCharactersWithDetails, getCharactersCount } from '@/api/characters';
+import CharactersClientBase from '@/components/admin/clients/characters/base';
+import { Suspense } from 'react';
+import Loading from '@/components/loading';
 
-export default async function AdminCharacters() {
-  const charactersList = await getAllCharactersWithDetails();
-  const platforms = await getAllGamePlatforms();
+export default function AdminCharacters() {
+  const charactersCount = getCharactersCount();
+
   return (
     <>
-      <AdminCharactersClient
-        charactersList={charactersList}
-        platforms={platforms}
-      />
+      <Suspense fallback={<Loading />}>
+        <CharactersClientBase charactersCount={charactersCount} />
+      </Suspense>
     </>
   );
 }

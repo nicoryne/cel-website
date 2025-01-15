@@ -5,6 +5,12 @@ export type Team = {
   logo_url: string;
 };
 
+export type TeamFormType = {
+  school_abbrev: string;
+  school_name: string;
+  logo: File | null;
+};
+
 export type LeagueSchedule = {
   id: string /* PK */;
   start_date: Date;
@@ -22,11 +28,16 @@ export type GamePlatform = {
   logo_url: string;
 };
 
+export type GamePlatformFormType = {
+  platform_title: string;
+  platform_abbrev: string;
+  logo: File | null;
+};
+
 export type Character = {
   id: string /* PK */;
   name: string;
   role: string;
-  logo_url: string;
   platform_id: string;
 };
 
@@ -58,6 +69,16 @@ export type Player = {
   picture_url: string;
 };
 
+export type PlayerFormType = {
+  first_name: string;
+  last_name: string;
+  ingame_name: string;
+  team_id: string;
+  game_platform_id: string;
+  roles: string[];
+  picture: File | null;
+};
+
 export type PlayerWithDetails = Omit<Player, 'team_id' | 'game_platform_id'> & {
   team: Team | null;
   platform: GamePlatform | null;
@@ -67,10 +88,7 @@ export type CharacterWithDetails = Omit<Character, 'platform_id'> & {
   platform: GamePlatform | null;
 };
 
-export type SeriesWithDetails = Omit<
-  Series,
-  'league_schedule_id' | 'team_a_id' | 'team_b_id' | 'platform_id'
-> & {
+export type SeriesWithDetails = Omit<Series, 'league_schedule_id' | 'team_a_id' | 'team_b_id' | 'platform_id'> & {
   league_schedule: LeagueSchedule | null;
   team_a: Team | null;
   team_b: Team | null;

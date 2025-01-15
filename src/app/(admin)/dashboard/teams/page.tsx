@@ -1,12 +1,16 @@
-import { getAllTeams } from '@/api/team';
-import AdminTeamsClient from '@/components/admin/clients/teams';
+import { getTeamCount } from '@/api/team';
+import TeamsClientBase from '@/components/admin/clients/teams/base';
+import Loading from '@/components/loading';
+import { Suspense } from 'react';
 
-export default async function AdminTeams() {
-  const teamsList = await getAllTeams();
+export default function AdminTeams() {
+  const teamCount = getTeamCount();
 
   return (
     <>
-      <AdminTeamsClient teamsList={teamsList} />
+      <Suspense fallback={<Loading />}>
+        <TeamsClientBase teamCount={teamCount} />
+      </Suspense>
     </>
   );
 }

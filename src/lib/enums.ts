@@ -30,4 +30,13 @@ export namespace Roles {
     Jungler = 'Jungler',
     MidLaner = 'Mid Laner'
   }
+
+  export enum MLBB_HEROES {
+    Assassin = 'Assassin',
+    Fighter = 'Fighter',
+    Mage = 'Mage',
+    Marksman = 'Marksman',
+    Support = 'Support',
+    Tank = 'Tank'
+  }
 }

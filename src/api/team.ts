@@ -1,108 +1,124 @@
 import { createClient } from '@/lib/supabase/client';
-import { Team } from '@/lib/types';
+import { GamePlatform, GamePlatformFormType, Team, TeamFormType } from '@/lib/types';
 import { handleError } from '@/api/utils/errorHandler';
+import { deleteFile, uploadFile } from '@/api/utils/storage';
 
 //====================
-// Team API
+// Game Platforms API
 //====================
 
 //========
 // CREATE
 //========
 
-/**
- * Creates a new team in the database.
- *
- * @param {Team} team - The team object to create.
- * @returns {Promise<Team | null>} A promise that resolves to the created Team object.
- * Returns null if an error occurs.
- */
-export const createTeam = async (team: {}): Promise<{} | null> => {
+export const createTeam = async (team: TeamFormType): Promise<Team | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase.from('team').insert([team]).single();
+  let processedTeam = {
+    school_name: team.school_name,
+    school_abbrev: team.school_abbrev,
+    logo_url: ''
+  };
+
+  if (team.logo) {
+    const filePath = 'images/icons/teams';
+    const fileName = `${team.school_abbrev}_${Date.now()}.${team.logo.type.split('/')[1]}`;
+    const signedLogoUrl = await uploadFile(filePath, fileName, team.logo, true);
+
+    if (signedLogoUrl) {
+      processedTeam.logo_url = signedLogoUrl;
+    }
+  }
+
+  const { data, error } = await supabase.from('teams').insert([processedTeam]).select().single();
 
   if (error) {
     handleError(error, 'creating team');
-    return null; // Return null if there is an error
+    return null;
   }
 
-  return data;
+  return data as Team;
 };
 
 //========
 // READ
 //========
 
-/**
- * Fetches all teams from the database.
- *
- * @returns {Promise<Team[]>} A promise that resolves to an array of Team objects.
- * If there is an error during the fetch, an empty array is returned.
- */
-export const getAllTeams = async (): Promise<Team[]> => {
+export const getTeamCount = async (): Promise<number | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase
-    .from('teams')
-    .select('*')
-    .order('school_abbrev');
+  const { count, error } = await supabase.from('teams').select('*', { count: 'exact', head: true });
 
   if (error) {
-    handleError(error, 'fetching all teams');
+    handleError(error, 'fetching team count');
+    return null;
+  }
+
+  return count;
+};
+
+export const getAllTeams = async (): Promise<Team[]> => {
+  const supabase = createClient();
+  const { data, error } = await supabase.from('teams').select('*');
+
+  if (error) {
+    handleError(error, 'fetching teams');
     return [];
   }
 
   return data || [];
 };
 
-/**
- * Fetches a team by its ID.
- *
- * @param {string} id - The ID of the team to fetch.
- * @returns {Promise<Team | null>} A promise that resolves to a Team object.
- * If no team is found or there is an error, null is returned.
- */
 export const getTeamById = async (id: string): Promise<Team | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase
-    .from('teams')
-    .select('*')
-    .eq('id', id)
-    .single();
+  const { data, error } = await supabase.from('teams').select('*').eq('id', id).select().single();
 
   if (error) {
     handleError(error, `fetching team by ID: ${id}`);
-    return null; // Return null if there is an error
+    return null;
   }
 
   return data;
+};
+
+export const getTeamsByIndexRange = async (min: number, max: number): Promise<Team[]> => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase.from('teams').select('*').range(min, max);
+
+  if (error) {
+    handleError(error, 'fetching team by index range');
+    return [];
+  }
+
+  return data as Team[];
 };
 
 //========
 // UPDATE
 //========
 
-/**
- * Updates an existing team by its ID.
- *
- * @param {string} id - The ID of the team to update.
- * @param {Partial<Team>} updates - An object containing the fields to update.
- * @returns {Promise<Team | null>} A promise that resolves to the updated Team object.
- * Returns null if no team is found or an error occurs.
- */
-export const updateTeam = async (
-  id: string,
-  updates: Partial<Team>
-): Promise<Team | null> => {
+export const updateTeam = async (id: string, updates: TeamFormType): Promise<Team | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase
-    .from('teams')
-    .update(updates)
-    .eq('id', id)
-    .single();
+  let processedTeam = {
+    school_name: updates.school_name,
+    school_abbrev: updates.school_abbrev,
+    logo_url: ''
+  };
+
+  if (updates.logo) {
+    const filePath = 'images/icons/teams';
+    const fileName = `${updates.school_abbrev}_${Date.now()}.${updates.logo.type.split('/')[1]}`;
+    const signedLogoUrl = await uploadFile(filePath, fileName, updates.logo, true);
+
+    if (signedLogoUrl) {
+      processedTeam.logo_url = signedLogoUrl;
+    }
+  }
+
+  const { data, error } = await supabase.from('teams').update(processedTeam).eq('id', id).select().single();
 
   if (error) {
     handleError(error, `updating team by ID: ${id}`);
-    return null; // Return null if there is an error
+    return null;
   }
 
   return data;
@@ -112,20 +128,24 @@ export const updateTeam = async (
 // DELETE
 //========
 
-/**
- * Deletes a team by its ID.
- *
- * @param {string} id - The ID of the team to delete.
- * @returns {Promise<boolean>} A promise that resolves to true if the deletion was successful, or false if an error occurs.
- */
-export const deleteTeam = async (id: string): Promise<boolean> => {
+export const deleteTeamById = async (id: string): Promise<boolean> => {
   const supabase = createClient();
-  const { error } = await supabase.from('teams').delete().eq('id', id);
+  const { data, error } = await supabase.from('teams').delete().eq('id', id).select().single();
+
+  if (data.logo_url) {
+    const url = new URL(data.logo_url);
+    const fileName = url.pathname.replace('/storage/v1/object/sign/images/', '');
+    try {
+      await deleteFile('images', [fileName]);
+    } catch (error) {
+      handleError(error, `deleting logo url from team: ${id}`);
+    }
+  }
 
   if (error) {
     handleError(error, `deleting team by ID: ${id}`);
-    return false; // Return false if there is an error
+    return false;
   }
 
-  return true; // Return true if the deletion was successful
+  return true;
 };

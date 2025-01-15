@@ -1,43 +1,24 @@
 'use client';
 import React from 'react';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { LeagueSchedule } from '@/lib/types';
 import { SeasonType } from '@/lib/enums';
-import not_found from '@/../../public/images/not-found.webp';
 
 type LeagueScheduleFormProps = {
   formData: React.MutableRefObject<{}>;
   schedule: LeagueSchedule | null;
 };
 
-export default function LeagueScheduleForm({
-  formData,
-  schedule
-}: LeagueScheduleFormProps) {
-  // Start Date
-  const [startDate, setStartDate] = React.useState(schedule?.start_date || '');
-
-  // End Date
-  const [endDate, setEndDate] = React.useState(schedule?.end_date || '');
-
-  // League Stage
-  const [leagueStageMenu, toggleLeagueStageMenu] = React.useState(false);
-  const [leagueStage, setLeagueStage] = React.useState(
-    schedule?.league_stage || ''
-  );
-
-  // Season Number
-  const [seasonNumber, setSeasonNumber] = React.useState(
-    schedule?.season_number || 0
-  );
-
-  // Season Type
+export default function LeagueScheduleForm({ formData, schedule }: LeagueScheduleFormProps) {
   const seasonTypes = Object.values(SeasonType);
+
+  const [startDate, setStartDate] = React.useState(schedule?.start_date || '');
+  const [endDate, setEndDate] = React.useState(schedule?.end_date || '');
+  const [leagueStageMenu, toggleLeagueStageMenu] = React.useState(false);
+  const [leagueStage, setLeagueStage] = React.useState(schedule?.league_stage || '');
+  const [seasonNumber, setSeasonNumber] = React.useState(schedule?.season_number || 0);
   const [seasonTypeMenu, toggleSeasonTypeMenu] = React.useState(false);
-  const [seasonType, setSeasonType] = React.useState(
-    schedule?.season_type || ''
-  );
+  const [seasonType, setSeasonType] = React.useState(schedule?.season_type || '');
 
   // Insert League Schedule
   React.useEffect(() => {
@@ -50,7 +31,7 @@ export default function LeagueScheduleForm({
     };
 
     formData.current = newFormData;
-  });
+  }, [startDate, endDate, leagueStage, seasonNumber, seasonType, formData]);
 
   return (
     <form className="my-4 rounded-md border-2 border-neutral-700 bg-neutral-900 p-4">
@@ -59,10 +40,14 @@ export default function LeagueScheduleForm({
         <div className="flex justify-between">
           {/* Start Date */}
           <div>
-            <span className="text-xs">Start Date</span>
+            <label htmlFor="startDate" className="text-xs">
+              Start Date
+            </label>
             <div>
               <input
                 type="date"
+                id="startDate"
+                name="startDate"
                 className="flex h-10 items-center gap-2 rounded-md border-2 border-neutral-600 bg-neutral-900 px-2 text-base text-white transition-colors duration-150 ease-linear hover:border-neutral-500 hover:bg-neutral-800 dark:[color-scheme:dark]"
                 value={startDate.toString()}
                 onChange={(e) => {
@@ -75,10 +60,14 @@ export default function LeagueScheduleForm({
 
           {/* End Date */}
           <div>
-            <span className="text-xs">End Date</span>
+            <label htmlFor="endDate" className="text-xs">
+              End Date
+            </label>
             <div>
               <input
                 type="date"
+                id="endDate"
+                name="endDate"
                 className="flex h-10 items-center gap-2 rounded-md border-2 border-neutral-600 bg-neutral-900 px-2 text-base text-white transition-colors duration-150 ease-linear hover:border-neutral-500 hover:bg-neutral-800 dark:[color-scheme:dark]"
                 value={endDate.toString()}
                 onChange={(e) => {
@@ -93,17 +82,17 @@ export default function LeagueScheduleForm({
         <div className="flex gap-4">
           <div className="flex flex-1 flex-col items-end space-y-12">
             <div className="w-full">
-              <span className="text-xs">Season Type</span>
+              <label htmlFor="seasonType" className="text-xs">
+                Season Type
+              </label>
               <button
                 type="button"
-                id="team"
-                name="team"
+                id="seasonType"
+                name="seasonType"
                 className="flex h-10 w-full items-center gap-2 rounded-md border-2 border-neutral-600 bg-neutral-900 px-4 text-white transition-colors duration-150 ease-linear hover:border-neutral-500 hover:bg-neutral-800"
                 onClick={() => toggleSeasonTypeMenu(!seasonTypeMenu)}
               >
-                <p className="text-xs md:text-base">
-                  {seasonType || 'Select Season Type'}
-                </p>
+                <p className="text-xs md:text-base">{seasonType || 'Select Season Type'}</p>
               </button>
             </div>
 
@@ -116,9 +105,7 @@ export default function LeagueScheduleForm({
                 {seasonTypes.map((type, index) => (
                   <button
                     className={`justify-left flex h-10 w-full place-items-center gap-2 px-4 text-neutral-300 hover:text-white ${
-                      type === seasonType
-                        ? 'bg-neutral-800'
-                        : 'bg-[var(--background)]'
+                      type === seasonType ? 'bg-neutral-800' : 'bg-[var(--background)]'
                     }`}
                     key={index}
                     onClick={() => {
@@ -134,12 +121,16 @@ export default function LeagueScheduleForm({
           </div>
           {/* Season Number */}
           <div>
-            <span className="text-xs">Season No.</span>
+            <label htmlFor="seasonNumber" className="text-xs">
+              Season No.
+            </label>
             <div>
               <input
                 type="number"
                 min="0"
                 max="20"
+                id="seasonNumber"
+                name="seasonNumber"
                 placeholder="0"
                 className="h-10 w-16 rounded-md border-2 border-neutral-700 bg-neutral-900"
                 value={seasonNumber || ''}
@@ -151,11 +142,15 @@ export default function LeagueScheduleForm({
 
         {/* Schedule Stage */}
         <div>
-          <span className="text-xs">Schedule Stage</span>
+          <label htmlFor="scheduleStage" className="text-xs">
+            Schedule Stage
+          </label>
           <div>
             <input
               type="text"
               placeholder="Enter Schedule Stage"
+              id="scheduleStage"
+              name="scheduleStage"
               className="flex h-10 w-full items-center gap-2 rounded-md border-2 border-neutral-600 bg-neutral-900 px-2 text-base text-white transition-colors duration-150 ease-linear hover:border-neutral-500 hover:bg-neutral-800 dark:[color-scheme:dark]"
               value={leagueStage}
               onChange={(e) => {

@@ -35,20 +35,14 @@ export default function Sidebar() {
   const handleLogout = async () => {
     await logout();
   };
-  const [isMaximized, setIsMaximized] = React.useState(false);
+  const [isMaximized, setIsMaximized] = React.useState(true);
 
   return (
-    <aside
-      className={`transition-width inset-y-0 left-0 z-50 h-full min-h-screen border-r-2 border-[#212121] bg-[#131313] shadow-md duration-200 ${
-        isMaximized ? 'w-16 md:w-48' : 'w-16'
-      }`}
-      onMouseEnter={() => setIsMaximized(true)}
-      onMouseLeave={() => setIsMaximized(false)}
-    >
+    <aside className="inset-y-0 left-0 z-50 h-full min-h-screen w-60 border-r-2 border-[#212121] bg-[#131313] shadow-md duration-200">
       {/* Wrapper */}
-      <nav className="flex h-full min-w-full flex-col place-items-start space-y-4">
+      <nav className="flex h-screen flex-col justify-between py-4">
         {/* Header */}
-        <Link href="/admin" className="ml-3 mt-4 flex place-items-center">
+        <Link href="/dashboard" className="ml-3 mt-4 flex place-items-center">
           <Image className="h-auto w-10" src={cel_logo} alt="CEL Logo" />
 
           <h1
@@ -59,16 +53,13 @@ export default function Sidebar() {
         </Link>
 
         {/* Pages Section */}
-        <section className="min-w-full border-b-2 border-[#212121] py-4">
+        <section className="min-w-full border-b-2 border-[#212121] py-8">
           <ul className="space-y-4">
             {defaultSideLinks.map((sideLink, index) => {
               const IconComponent = sideLink.icon;
 
               return (
-                <li
-                  key={index}
-                  className="rounded-sm px-5 py-2 text-neutral-500 hover:bg-[#191919] hover:text-neutral-300"
-                >
+                <li key={index} className="rounded-sm px-5 py-2 text-neutral-500 hover:text-neutral-300">
                   <Link href={sideLink.href} className="flex items-center">
                     <IconComponent className="h-auto w-6" aria-hidden="true" />
 
@@ -86,7 +77,7 @@ export default function Sidebar() {
 
         <button
           onClick={handleLogout}
-          className="flex min-w-full place-items-center rounded-sm px-5 py-2 text-neutral-500 hover:bg-[#191919] hover:text-neutral-300"
+          className="mt-auto flex min-w-full place-items-center rounded-sm border-t-2 border-neutral-800 px-6 py-4 text-neutral-500 hover:text-neutral-300"
         >
           <ArrowRightStartOnRectangleIcon className="h-auto w-6" />
           <span

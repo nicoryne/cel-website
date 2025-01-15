@@ -3,6 +3,7 @@ import React from 'react';
 import { Team } from '@/lib/types';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { getCharactersCount } from '@/api/characters';
 
 type SchoolsSectionProps = {
   teams: Promise<Team[]>;

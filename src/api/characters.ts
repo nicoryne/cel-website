@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/client';
-import { Character, CharacterWithDetails } from '@/lib/types';
+import { Character, CharacterWithDetails, GamePlatform } from '@/lib/types';
 import { handleError } from '@/api/utils/errorHandler';
 import { getGamePlatformById } from '@/api/game-platform';
 
@@ -11,41 +11,29 @@ import { getGamePlatformById } from '@/api/game-platform';
 // CREATE
 //========
 
-/**
- * Creates a new character.
- *
- * @param {Character} character - The character object to create.
- * @returns {Promise<Character | null>} A promise that resolves to the created Character object.
- * Returns null if an error occurs.
- */
-export const createCharacter = async (character: {}): Promise<{} | null> => {
+export const createCharacter = async (character: {}): Promise<Character | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase
-    .from('game_characters')
-    .insert([character])
-    .single();
+  const { data, error } = await supabase.from('game_characters').insert([character]).select().single();
 
   if (error) {
     handleError(error, 'creating character');
     return null;
   }
 
-  return data;
+  return data as Character;
 };
 
 //========
 // READ
 //========
 
-/**
- * Fetches all characters from the database.
- *
- * @returns {Promise<Character[]>} A promise that resolves to an array of Character objects.
- * If there is an error during the fetch, an empty array is returned.
- */
 export const getAllCharacters = async (): Promise<Character[]> => {
   const supabase = createClient();
-  const { data, error } = await supabase.from('game_characters').select('*');
+  const { data, error } = await supabase
+    .from('game_characters')
+    .select('*')
+    .order('platform_id', { ascending: false })
+    .order('name', { ascending: false });
 
   if (error) {
     handleError(error, 'fetching all characters');
@@ -55,22 +43,39 @@ export const getAllCharacters = async (): Promise<Character[]> => {
   return data || [];
 };
 
-/**
- * Fetches a character by its ID.
- *
- * @param {string} id - The ID of the character to fetch.
- * @returns {Promise<CharacterWithDetails | null>} A promise that resolves to a CharacterWithDetails object.
- * If no character is found or there is an error, null is returned.
- */
-export const getCharacterById = async (
-  id: string
-): Promise<CharacterWithDetails | null> => {
+export const getCharactersCount = async (): Promise<number | null> => {
   const supabase = createClient();
+  const { count, error } = await supabase.from('game_characters').select('*', { count: 'exact', head: true });
+
+  if (error) {
+    handleError(error, 'fetching character count');
+    return null;
+  }
+
+  return count;
+};
+
+export const getCharactersByIndexRange = async (min: number, max: number): Promise<Character[]> => {
+  const supabase = createClient();
+
   const { data, error } = await supabase
     .from('game_characters')
     .select('*')
-    .eq('id', id)
-    .single();
+    .order('platform_id', { ascending: true })
+    .order('name', { ascending: true })
+    .range(min, max);
+
+  if (error) {
+    handleError(error, 'fetching characters by index range');
+    return [];
+  }
+
+  return data as Character[];
+};
+
+export const getCharacterById = async (id: string): Promise<Character | null> => {
+  const supabase = createClient();
+  const { data, error } = await supabase.from('game_characters').select('*').eq('id', id).single();
 
   if (error) {
     handleError(error, `fetching character by ID: ${id}`);
@@ -80,15 +85,19 @@ export const getCharacterById = async (
   return data;
 };
 
-/**
- * Fetches all characters along with their details.
- *
- * @returns {Promise<CharacterWithDetails[]>} A promise that resolves to an array of CharactersWithDetails objects.
- * Each object includes detailed information about the character.
- */
-export const getAllCharactersWithDetails = async (): Promise<
-  CharacterWithDetails[]
-> => {
+export const getCharacterByName = async (name: string): Promise<Character | null> => {
+  const supabase = createClient();
+  const { data, error } = await supabase.from('game_characters').select('*').textSearch('name', name).single();
+
+  if (error) {
+    handleError(error, `fetching character by name: ${name}`);
+    return null;
+  }
+
+  return data as Character;
+};
+
+export const getAllCharactersWithDetails = async (): Promise<CharacterWithDetails[]> => {
   const charactersList = await getAllCharacters();
   const charactersListWithDetails: CharacterWithDetails[] = [];
 
@@ -107,27 +116,23 @@ export const getAllCharactersWithDetails = async (): Promise<
 };
 
 //========
+// UTILITY
+//========
+
+export const appendCharacterDetails = (platformList: GamePlatform[], character: Character) => {
+  return {
+    ...character,
+    platform: platformList.find((platform) => platform.id === character.platform_id) || null
+  };
+};
+
+//========
 // UPDATE
 //========
 
-/**
- * Updates an existing character by its ID.
- *
- * @param {string} id - The ID of the character to update.
- * @param {Partial<Character>} updates - An object containing the fields to update.
- * @returns {Promise<Character | null>} A promise that resolves to the updated Character object.
- * Returns null if no character is found or an error occurs.
- */
-export const updateCharacter = async (
-  id: string,
-  updates: Partial<Character>
-): Promise<Character | null> => {
+export const updateCharacter = async (id: string, updates: Partial<Character>): Promise<Character | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase
-    .from('game_characters')
-    .update(updates)
-    .eq('id', id)
-    .single();
+  const { data, error } = await supabase.from('game_characters').update(updates).eq('id', id).select().single();
 
   if (error) {
     handleError(error, `updating character by ID: ${id}`);
@@ -141,18 +146,9 @@ export const updateCharacter = async (
 // DELETE
 //========
 
-/**
- * Deletes a character by its ID.
- *
- * @param {string} id - The ID of the character to delete.
- * @returns {Promise<boolean>} A promise that resolves to true if the deletion was successful, or false if an error occurs.
- */
-export const deleteCharacter = async (id: string): Promise<boolean> => {
+export const deleteCharacterById = async (id: string): Promise<boolean> => {
   const supabase = createClient();
-  const { error } = await supabase
-    .from('game_characters')
-    .delete()
-    .eq('id', id);
+  const { error } = await supabase.from('game_characters').delete().eq('id', id);
 
   if (error) {
     handleError(error, `deleting character by ID: ${id}`);

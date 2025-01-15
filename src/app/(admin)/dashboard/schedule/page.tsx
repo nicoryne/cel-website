@@ -1,12 +1,16 @@
-import { getAllLeagueSchedules } from '@/api/league-schedule';
-import AdminLeagueScheduleClient from '@/components/admin/clients/league-schedule';
+import { getScheduleCount } from '@/api/league-schedule';
+import ScheduleClientBase from '@/components/admin/clients/league-schedule/base';
+import Loading from '@/components/loading';
+import { Suspense } from 'react';
 
-export default async function AdminLeagueSchedule() {
-  const schedules = await getAllLeagueSchedules();
+export default function AdminLeagueSchedule() {
+  const scheduleCount = getScheduleCount();
 
   return (
     <>
-      <AdminLeagueScheduleClient schedules={schedules} />
+      <Suspense fallback={<Loading />}>
+        <ScheduleClientBase scheduleCount={scheduleCount} />
+      </Suspense>
     </>
   );
 }

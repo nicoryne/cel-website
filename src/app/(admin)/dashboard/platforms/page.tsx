@@ -1,12 +1,16 @@
-import { getAllGamePlatforms } from '@/api/game-platform';
-import AdminPlatformsClient from '@/components/admin/clients/platforms';
+import { getAllGamePlatforms, getGamePlatformCount } from '@/api/game-platform';
+import GamePlatformsClientBase from '@/components/admin/clients/platforms/base';
+import Loading from '@/components/loading';
+import { Suspense } from 'react';
 
-export default async function AdminCharacters() {
-  const platforms = await getAllGamePlatforms();
+export default function AdminGamePlatforms() {
+  const platformCount = getGamePlatformCount();
 
   return (
     <>
-      <AdminPlatformsClient platforms={platforms} />
+      <Suspense fallback={<Loading />}>
+        <GamePlatformsClientBase platformCount={platformCount} />
+      </Suspense>
     </>
   );
 }

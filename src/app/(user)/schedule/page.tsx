@@ -2,9 +2,7 @@ import { Suspense } from 'react';
 import ScheduleBase from '@/components/schedule/schedule-base';
 import Loading from '@/components/loading';
 import { getAllGamePlatforms } from '@/api/game-platform';
-import { getAllSeries, getAllSeriesWithDetails } from '@/api/series';
-import { GamePlatform, SeriesWithDetails } from '@/lib/types';
-import { FilterState } from '@/components/schedule/types';
+import { getAllSeriesWithDetails } from '@/api/series';
 
 export default function SchedulePage() {
   const series = getAllSeriesWithDetails();
