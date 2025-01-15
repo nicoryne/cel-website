@@ -96,7 +96,7 @@ export const getTeamsByIndexRange = async (min: number, max: number): Promise<Te
 // UPDATE
 //========
 
-export const updateTeam = async (id: string, updates: TeamFormType): Promise<Team | null> => {
+export const updateTeamById = async (id: string, updates: TeamFormType): Promise<Team | null> => {
   const supabase = createClient();
   let processedTeam = {
     school_name: updates.school_name,

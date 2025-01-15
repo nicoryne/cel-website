@@ -47,3 +47,21 @@ export const deleteFile = async (bucketId: string, filePaths: string[]): Promise
 
   return true;
 };
+
+export const fetchImage = async (url: string, imageName: string, fileType: string) => {
+  try {
+    const response = await fetch(url);
+    if (response.ok) {
+      const blob = await response.blob();
+      const imageFile = new File([blob], imageName + `.${fileType}`, {
+        type: `image/${fileType}`
+      });
+
+      return imageFile;
+    } else {
+      console.error('Failed to fetch image');
+    }
+  } catch (error) {
+    handleError(error, 'downloading image');
+  }
+};

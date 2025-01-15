@@ -1,17 +1,14 @@
-import {
-  createGamePlatform,
-  deleteGamePlatform,
-  getGamePlatformById,
-  getGamePlatformsByIndexRange,
-  updateGamePlatform
-} from '@/api/game-platform';
 import { ModalProps } from '@/components/modal';
-import { GamePlatform, GamePlatformFormType, PlayerWithDetails } from '@/lib/types';
+import { Player, PlayerFormType, PlayerWithDetails } from '@/lib/types';
 import React from 'react';
-import GamePlatformForm from '@/components/admin/clients/platforms/form';
+import PlayerForm from '@/components/admin/clients/players/form';
 import { deleteFile } from '@/api/utils/storage';
+import { callModalTemplate } from '../util';
+import { appendPlayerDetails, createPlayer, deletePlayerById, updatePlayerById } from '@/api/player';
+import { getAllGamePlatforms } from '@/api/game-platform';
+import { getAllTeams } from '@/api/team';
 
-export const sortBySchoolPlatformName = (a: PlayerWithDetails, b: PlayerWithDetails): number => {
+export const sortBySchoolPlayerName = (a: PlayerWithDetails, b: PlayerWithDetails): number => {
   if (a.team?.id && b.team?.id && a.team.id !== b.team.id) {
     if (a.team.id < b.team.id) return -1;
     if (a.team.id > b.team.id) return 1;
@@ -38,7 +35,7 @@ export const addPlayerToCache = (
     if (exists) return prev;
 
     const updated = [...prev, player];
-    return updated.sort(sortBySchoolPlatformName);
+    return updated.sort(sortBySchoolPlayerName);
   });
 };
 
@@ -52,66 +49,56 @@ export const deletePlayerFromCache = (
     if (!exists) return prev;
 
     const updated = prev.filter((cachedPlayer) => cachedPlayer.id !== player.id);
-    return updated.sort(sortBySchoolPlatformName);
+    return updated.sort(sortBySchoolPlayerName);
   });
 };
 
 export const updatePlayerFromCache = (
   player: PlayerWithDetails,
-  setCachedPlatforms: React.Dispatch<React.SetStateAction<PlayerWithDetails[]>>
+  setCachedPlayers: React.Dispatch<React.SetStateAction<PlayerWithDetails[]>>
 ) => {
-  setCachedPlatforms((prev) => {
+  setCachedPlayers((prev) => {
     const exists = prev.some((cachedPlayer) => cachedPlayer.id === player.id);
 
     if (!exists) return prev;
 
     const updated = prev.map((cachedPlayer) => (cachedPlayer.id === player.id ? player : cachedPlayer));
 
-    return updated.sort(sortBySchoolPlatformName);
+    return updated.sort(sortBySchoolPlayerName);
   });
 };
 
 export const handleInsert = async (
   setModalProps: React.Dispatch<React.SetStateAction<ModalProps | null>>,
-  formData: React.MutableRefObject<GamePlatformFormType | undefined>,
+  formData: React.MutableRefObject<PlayerFormType | undefined>,
   setCachedPlayers: React.Dispatch<React.SetStateAction<PlayerWithDetails[]>>
 ) => {
-  const addNewPlatform = async () => {
-    const successModal: ModalProps = {
-      title: 'Success',
-      message: 'Schedule has been successfully added!',
-      type: 'success'
-    };
+  const platformList = await getAllGamePlatforms();
+  const teamList = await getAllTeams();
 
-    const failedModal: ModalProps = {
-      title: 'Error',
-      message: 'Failed to add Schedule. Please try again.',
-      type: 'error',
-      onCancel: () => setModalProps(null)
-    };
-
+  const addNewPlayer = async () => {
     try {
-      const createdPlatform: GamePlatform | null = await createGamePlatform(formData.current as GamePlatformFormType);
-
-      setModalProps(successModal);
+      const createdPlayer: Player | null = await createPlayer(formData.current as PlayerFormType);
+      const processedPlayer: PlayerWithDetails = appendPlayerDetails(platformList, teamList, createdPlayer as Player);
+      setModalProps(callModalTemplate('Player', 'success', 'add', setModalProps));
       setTimeout(() => {
-        addPlatformToCache(createdPlatform as GamePlatform, setCachedPlatforms);
+        addPlayerToCache(processedPlayer, setCachedPlayers);
         setModalProps(null);
       }, 500);
     } catch (error) {
-      setModalProps(failedModal);
+      setModalProps(callModalTemplate('Player', 'error', 'add', setModalProps));
     }
   };
 
   const props: ModalProps = {
-    title: 'Adding New Game Platform',
+    title: 'Adding New Game Player',
     type: 'info',
-    message: 'Fill out the details to add a new game Game Platform.',
+    message: 'Fill out the details to add a new game Game Player.',
     onCancel: () => setModalProps(null),
     onConfirm: async () => {
-      await addNewPlatform();
+      await addNewPlayer();
     },
-    children: <GamePlatformForm formData={formData} platform={null} />
+    children: <PlayerForm formData={formData} player={null} />
   };
 
   setModalProps(props);
@@ -119,44 +106,31 @@ export const handleInsert = async (
 
 export const handleDelete = (
   setModalProps: React.Dispatch<React.SetStateAction<ModalProps | null>>,
-  platform: GamePlatform,
-  setCachedPlatforms: React.Dispatch<React.SetStateAction<GamePlatform[]>>
+  player: PlayerWithDetails,
+  setCachedPlayers: React.Dispatch<React.SetStateAction<PlayerWithDetails[]>>
 ) => {
-  const deletePlatform = async (schedule: GamePlatform) => {
-    const successModal: ModalProps = {
-      title: 'Success',
-      message: `Game Platform has been successfully deleted.`,
-      type: 'success'
-    };
-
-    const failedModal: ModalProps = {
-      title: 'Error',
-      message: `Failed to delete Game Platform. Please try again.`,
-      type: 'error',
-      onCancel: () => setModalProps(null)
-    };
-
+  const deletePlayer = async (player: PlayerWithDetails) => {
     try {
-      await deleteGamePlatform(platform.id as string);
+      await deletePlayerById(player.id as string);
 
-      setModalProps(successModal);
+      setModalProps(callModalTemplate('Player', 'success', 'delete', setModalProps));
 
       setTimeout(() => {
-        deletePlatformFromCache(platform, setCachedPlatforms);
+        deletePlayerFromCache(player, setCachedPlayers);
         setModalProps(null);
       }, 500);
     } catch (error) {
-      setModalProps(failedModal);
+      setModalProps(callModalTemplate('Player', 'error', 'delete', setModalProps));
     }
   };
 
   const props: ModalProps = {
-    title: 'Deleting Game Platform',
+    title: 'Deleting Player',
     type: 'warning',
-    message: `Are you sure you want to delete Game Platform?`,
+    message: `Are you sure you want to delete Player?`,
     onCancel: () => setModalProps(null),
     onConfirm: async () => {
-      await deletePlatform(platform);
+      await deletePlayer(player);
     }
   };
 
@@ -165,50 +139,41 @@ export const handleDelete = (
 
 export const handleUpdate = async (
   setModalProps: React.Dispatch<React.SetStateAction<ModalProps | null>>,
-  formData: React.MutableRefObject<GamePlatformFormType | undefined>,
-  platform: GamePlatform,
-  setCachedPlatforms: React.Dispatch<React.SetStateAction<GamePlatform[]>>
+  formData: React.MutableRefObject<PlayerFormType | undefined>,
+  player: PlayerWithDetails,
+  setCachedPlayers: React.Dispatch<React.SetStateAction<PlayerWithDetails[]>>
 ) => {
-  const updateExistingPlatform = async () => {
-    const successModal: ModalProps = {
-      title: 'Success',
-      message: 'Game Platform has been successfully updated!',
-      type: 'success'
-    };
+  const platformList = await getAllGamePlatforms();
+  const teamList = await getAllTeams();
 
-    const failedModal: ModalProps = {
-      title: 'Error',
-      message: 'Failed to update Game Platform. Please try again.',
-      type: 'error',
-      onCancel: () => setModalProps(null)
-    };
-
+  const updateExistingPlayer = async () => {
     try {
-      const updatedPlatform = await updateGamePlatform(platform.id, formData.current as GamePlatformFormType);
+      const updatedPlayer: Player | null = await updatePlayerById(player.id, formData.current as PlayerFormType);
+      const processedPlayer: PlayerWithDetails = appendPlayerDetails(platformList, teamList, updatedPlayer as Player);
 
-      setModalProps(successModal);
+      setModalProps(callModalTemplate('Player', 'success', 'update', setModalProps));
 
       setTimeout(() => {
-        const url = new URL(platform.logo_url);
+        const url = new URL(player.picture_url);
         const fileName = url.pathname.replace('/storage/v1/object/sign/images/', '');
         deleteFile('images', [fileName]);
-        updatePlatformFromCache(updatedPlatform as GamePlatform, setCachedPlatforms);
+        updatePlayerFromCache(processedPlayer, setCachedPlayers);
         setModalProps(null);
       }, 500);
     } catch (error) {
-      setModalProps(failedModal);
+      setModalProps(callModalTemplate('Player', 'error', 'update', setModalProps));
     }
   };
 
   const props: ModalProps = {
-    title: 'Updating Schedule',
+    title: 'Updating Player',
     type: 'info',
-    message: 'Fill out the details to update game Schedule.',
+    message: 'Fill out the details to update player.',
     onCancel: () => setModalProps(null),
     onConfirm: async () => {
-      await updateExistingPlatform();
+      await updateExistingPlayer();
     },
-    children: <GamePlatformForm formData={formData} platform={platform} />
+    children: <PlayerForm formData={formData} player={player} />
   };
 
   setModalProps(props);

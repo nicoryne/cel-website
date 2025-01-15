@@ -1,22 +1,19 @@
 import { ModalProps } from '@/components/modal';
+import React from 'react';
 
-const failedModal: ModalProps = {
-  title: 'Error',
-  message: 'Failed to add Schedule. Please try again.',
-  type: 'error',
-  onCancel: () => setModalProps(null)
-};
-
-export const successModal: ModalProps = {
-  title: 'Success',
-  message: 'Schedule has been successfully added!',
-  type: 'success'
-};
-
-export const callSuccessModal = (val: string): ModalProps => {
+export const callModalTemplate = (
+  name: string,
+  status: 'success' | 'error',
+  action: string,
+  setModalProps: React.Dispatch<React.SetStateAction<ModalProps | null>>
+): ModalProps => {
   return {
-    title: 'Success',
-    message: 'Schedule has been successfully added!',
-    type: 'success'
+    title: status === 'success' ? 'Success' : 'Error',
+    message:
+      status === 'success'
+        ? `${name} has been succesfully ${action}ed!`
+        : `Failed to ${action} ${name}. Please try again.`,
+    type: status,
+    onCancel: () => setModalProps(null)
   };
 };

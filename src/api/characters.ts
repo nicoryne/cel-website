@@ -130,7 +130,7 @@ export const appendCharacterDetails = (platformList: GamePlatform[], character: 
 // UPDATE
 //========
 
-export const updateCharacter = async (id: string, updates: Partial<Character>): Promise<Character | null> => {
+export const updateCharacterById = async (id: string, updates: Partial<Character>): Promise<Character | null> => {
   const supabase = createClient();
   const { data, error } = await supabase.from('game_characters').update(updates).eq('id', id).select().single();
 

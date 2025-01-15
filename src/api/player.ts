@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/client';
-import { Player, PlayerFormType } from '@/lib/types';
+import { GamePlatform, Player, PlayerFormType, Team } from '@/lib/types';
 import { handleError } from '@/api/utils/errorHandler';
 import { deleteFile, uploadFile } from '@/api/utils/storage';
 
@@ -19,10 +19,10 @@ export const createPlayer = async (player: PlayerFormType): Promise<Player | nul
     logo_url: ''
   };
 
-  if (player.logo) {
+  if (player.picture) {
     const filePath = 'images/icons/players';
-    const fileName = `${player.school_abbrev}_${Date.now()}.${player.logo.type.split('/')[1]}`;
-    const signedLogoUrl = await uploadFile(filePath, fileName, player.logo, true);
+    const fileName = `${player.ingame_name}_${Date.now()}.${player.picture.type.split('/')[1]}`;
+    const signedLogoUrl = await uploadFile(filePath, fileName, player.picture, true);
 
     if (signedLogoUrl) {
       processedPlayer.logo_url = signedLogoUrl;
@@ -93,10 +93,22 @@ export const getPlayersByIndexRange = async (min: number, max: number): Promise<
 };
 
 //========
+// UTILITY
+//========
+
+export const appendPlayerDetails = (platformList: GamePlatform[], teamList: Team[], player: Player) => {
+  return {
+    ...player,
+    platform: platformList.find((platform) => platform.id === player.game_platform_id) || null,
+    team: teamList.find((team) => team.id === player.team_id) || null
+  };
+};
+
+//========
 // UPDATE
 //========
 
-export const updatePlayer = async (id: string, updates: PlayerFormType): Promise<Player | null> => {
+export const updatePlayerById = async (id: string, updates: PlayerFormType): Promise<Player | null> => {
   const supabase = createClient();
   let processedPlayer = {
     school_name: updates.school_name,

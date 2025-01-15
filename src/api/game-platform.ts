@@ -96,7 +96,10 @@ export const getGamePlatformsByIndexRange = async (min: number, max: number): Pr
 // UPDATE
 //========
 
-export const updateGamePlatform = async (id: string, updates: GamePlatformFormType): Promise<GamePlatform | null> => {
+export const updateGamePlatformById = async (
+  id: string,
+  updates: GamePlatformFormType
+): Promise<GamePlatform | null> => {
   const supabase = createClient();
   let processedPlatform = {
     platform_title: updates.platform_title,
@@ -133,7 +136,7 @@ export const updateGamePlatform = async (id: string, updates: GamePlatformFormTy
 // DELETE
 //========
 
-export const deleteGamePlatform = async (id: string): Promise<boolean> => {
+export const deleteGamePlatformById = async (id: string): Promise<boolean> => {
   const supabase = createClient();
   const { data, error } = await supabase.from('game_platforms').delete().eq('id', id).select().single();
 

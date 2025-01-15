@@ -1,9 +1,9 @@
 import {
   createGamePlatform,
-  deleteGamePlatform,
+  deleteGamePlatformById,
   getGamePlatformById,
   getGamePlatformsByIndexRange,
-  updateGamePlatform
+  updateGamePlatformById
 } from '@/api/game-platform';
 import { ModalProps } from '@/components/modal';
 import { GamePlatform, GamePlatformFormType } from '@/lib/types';
@@ -127,7 +127,7 @@ export const handleDelete = (
     };
 
     try {
-      await deleteGamePlatform(platform.id as string);
+      await deleteGamePlatformById(platform.id as string);
 
       setModalProps(successModal);
 
@@ -174,7 +174,7 @@ export const handleUpdate = async (
     };
 
     try {
-      const updatedPlatform = await updateGamePlatform(platform.id, formData.current as GamePlatformFormType);
+      const updatedPlatform = await updateGamePlatformById(platform.id, formData.current as GamePlatformFormType);
 
       setModalProps(successModal);
 

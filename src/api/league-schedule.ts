@@ -103,7 +103,7 @@ export const updateLeagueScheduleById = async (
 // DELETE
 //========
 
-export const deleteLeagueSchedule = async (id: string): Promise<boolean> => {
+export const deleteLeagueScheduleById = async (id: string): Promise<boolean> => {
   const supabase = createClient();
   const { error } = await supabase.from('league_schedule').delete().eq('id', id);
 

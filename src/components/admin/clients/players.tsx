@@ -1,22 +1,11 @@
 'use client';
 
 import { GamePlatform, PlayerWithDetails, Team } from '@/lib/types';
-import {
-  PencilSquareIcon,
-  PlusIcon,
-  TrashIcon,
-  XMarkIcon,
-  MagnifyingGlassIcon
-} from '@heroicons/react/20/solid';
+import { PencilSquareIcon, PlusIcon, TrashIcon, XMarkIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import React from 'react';
 import Modal, { ModalProps } from '@/components/modal';
 import PlayerForm from '@/components/forms/player-form';
-import {
-  createPlayer,
-  deletePlayer,
-  getAllPlayersWithDetails,
-  updatePlayer
-} from '@/api/player';
+import { createPlayer, deletePlayerById, getAllPlayersWithDetails, updatePlayerById } from '@/api/player';
 import { createClient } from '@/lib/supabase/client';
 import Image from 'next/image';
 import not_found from '@/../../public/images/not-found.webp';
@@ -27,17 +16,11 @@ type AdminPlayersClientProps = {
   platforms: GamePlatform[];
 };
 
-export default function AdminPlayersClient({
-  playersList,
-  teamsList,
-  platforms
-}: AdminPlayersClientProps) {
-  const [localPlayersList, setLocalPlayersList] =
-    React.useState<PlayerWithDetails[]>(playersList);
+export default function AdminPlayersClient({ playersList, teamsList, platforms }: AdminPlayersClientProps) {
+  const [localPlayersList, setLocalPlayersList] = React.useState<PlayerWithDetails[]>(playersList);
 
   // Pagination State
-  const [paginatedPlayers, setPaginatedPlayers] =
-    React.useState<PlayerWithDetails[]>(localPlayersList);
+  const [paginatedPlayers, setPaginatedPlayers] = React.useState<PlayerWithDetails[]>(localPlayersList);
 
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 9;
@@ -46,23 +29,16 @@ export default function AdminPlayersClient({
 
   React.useEffect(() => {
     const sortedPlayers = [...localPlayersList].sort((a, b) => {
-      const schoolComparison = (a.team?.school_abbrev || '').localeCompare(
-        b.team?.school_abbrev || ''
-      );
+      const schoolComparison = (a.team?.school_abbrev || '').localeCompare(b.team?.school_abbrev || '');
       if (schoolComparison !== 0) return schoolComparison;
 
-      const platformComparison = (
-        a.platform?.platform_abbrev || ''
-      ).localeCompare(b.platform?.platform_abbrev || '');
+      const platformComparison = (a.platform?.platform_abbrev || '').localeCompare(b.platform?.platform_abbrev || '');
       if (platformComparison !== 0) return platformComparison;
 
       return (a.ingame_name || '').localeCompare(b.ingame_name || '');
     });
 
-    const paginated = sortedPlayers.slice(
-      (currentPage - 1) * itemsPerPage,
-      currentPage * itemsPerPage
-    );
+    const paginated = sortedPlayers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     setPaginatedPlayers(paginated);
   }, [localPlayersList, currentPage]);
@@ -147,19 +123,16 @@ export default function AdminPlayersClient({
       const fileName = `${formData.current.ingame_name}_${Date.now()}.${file.type.split('/')[1]}`;
 
       try {
-        const { error } = await supabase.storage
-          .from('images/player_images')
-          .upload(fileName, file);
+        const { error } = await supabase.storage.from('images/player_images').upload(fileName, file);
 
         if (error) {
           console.error('Upload error:', error);
           return;
         }
 
-        const { data: signedUrlData, error: signedUrlError } =
-          await supabase.storage
-            .from('images/player_images')
-            .createSignedUrl(fileName, 60 * 60 * 24 * 365);
+        const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+          .from('images/player_images')
+          .createSignedUrl(fileName, 60 * 60 * 24 * 365);
 
         if (signedUrlError) {
           console.error('Signed URL generation error:', signedUrlError);
@@ -179,10 +152,7 @@ export default function AdminPlayersClient({
     const supabase = createClient();
 
     const url = new URL(player.picture_url);
-    const fileName = url.pathname.replace(
-      '/storage/v1/object/sign/images/',
-      ''
-    );
+    const fileName = url.pathname.replace('/storage/v1/object/sign/images/', '');
 
     const { error } = await supabase.storage.from('images').remove([fileName]);
 
@@ -223,14 +193,7 @@ export default function AdminPlayersClient({
             });
           });
       },
-      children: (
-        <PlayerForm
-          teamsList={teamsList}
-          platforms={platforms}
-          formData={formData}
-          player={null}
-        />
-      )
+      children: <PlayerForm teamsList={teamsList} platforms={platforms} formData={formData} player={null} />
     });
   };
 
@@ -247,7 +210,7 @@ export default function AdminPlayersClient({
           await deleteExistingPicture(player);
         }
 
-        await updatePlayer(player.id, processedData as {})
+        await updatePlayerById(player.id, processedData as {})
           .then(() => {
             setModalProps({
               title: 'Success',
@@ -269,27 +232,19 @@ export default function AdminPlayersClient({
             });
           });
       },
-      children: (
-        <PlayerForm
-          teamsList={teamsList}
-          platforms={platforms}
-          formData={formData}
-          player={player}
-        />
-      )
+      children: <PlayerForm teamsList={teamsList} platforms={platforms} formData={formData} player={player} />
     });
   };
 
   const handleDeletePlayer = (player: PlayerWithDetails) => {
     setModalProps({
       title: `Deleting Player`,
-      message:
-        'Are you sure you want to delete the following player? This action is irreversible.',
+      message: 'Are you sure you want to delete the following player? This action is irreversible.',
       type: 'warning',
       onCancel: () => setModalProps(null),
       onConfirm: async () => {
         try {
-          const deleted = await deletePlayer(player.id);
+          const deleted = await deletePlayerById(player.id);
           if (deleted && player.picture_url) {
             deleteExistingPicture(player);
           }
@@ -337,11 +292,7 @@ export default function AdminPlayersClient({
           <div className="flex gap-2">
             {/* Search */}
             <MagnifyingGlassIcon className="h-auto w-4 text-neutral-600" />
-            <input
-              type="text"
-              className="bg-neutral-800 text-xs"
-              onChange={(e) => setSearchFilter(e.target.value)}
-            />
+            <input type="text" className="bg-neutral-800 text-xs" onChange={(e) => setSearchFilter(e.target.value)} />
           </div>
         </div>
 
@@ -363,45 +314,26 @@ export default function AdminPlayersClient({
         {/* Player Cards */}
         <ul className="grid grid-cols-1 gap-8 p-8 sm:grid-cols-2 md:grid-cols-3">
           {paginatedPlayers.map((player, index) => (
-            <li
-              className="flex flex-col rounded-md border-2 border-neutral-700 bg-neutral-900 shadow-lg"
-              key={index}
-            >
+            <li className="flex flex-col rounded-md border-2 border-neutral-700 bg-neutral-900 shadow-lg" key={index}>
               {/* Body */}
               <div className="flex gap-4 p-4">
                 <div className="flex flex-col place-items-center gap-2">
                   {/* Picture */}
                   <div className="h-fit border-2 border-neutral-600 p-1">
                     {player.picture_url ? (
-                      <Image
-                        src={player.picture_url!}
-                        alt={`${player.ingame_name} Picture`}
-                        height={90}
-                        width={90}
-                      />
+                      <Image src={player.picture_url!} alt={`${player.ingame_name} Picture`} height={90} width={90} />
                     ) : (
-                      <Image
-                        src={not_found}
-                        alt={'Not Found Picture'}
-                        height={90}
-                        width={90}
-                      />
+                      <Image src={not_found} alt={'Not Found Picture'} height={90} width={90} />
                     )}
                   </div>
 
                   {/* Buttons */}
                   <div className="flex place-items-center gap-4">
-                    <button
-                      type="button"
-                      onClick={() => handleUpdateClick(player)}
-                    >
+                    <button type="button" onClick={() => handleUpdateClick(player)}>
                       <PencilSquareIcon className="h-auto w-4 cursor-pointer text-neutral-400 hover:text-[var(--cel-blue)]" />
                     </button>
                     <div className="flex gap-1">
-                      <button
-                        type="button"
-                        onClick={() => handleDeletePlayer(player)}
-                      >
+                      <button type="button" onClick={() => handleDeletePlayer(player)}>
                         <TrashIcon className="h-auto w-4 text-neutral-400 hover:text-[var(--cel-red)]" />
                       </button>
                     </div>
@@ -409,37 +341,23 @@ export default function AdminPlayersClient({
                 </div>
                 <div className="flex flex-col gap-4">
                   <div>
-                    <p className="text-xs font-semibold text-neutral-600">
-                      In-game Name
-                    </p>
-                    <p className="text-md text-neutral-300">
-                      {player.ingame_name}
-                    </p>
+                    <p className="text-xs font-semibold text-neutral-600">In-game Name</p>
+                    <p className="text-md text-neutral-300">{player.ingame_name}</p>
                   </div>
 
                   <div className="flex gap-4">
                     <div>
-                      <p className="text-xs font-semibold text-neutral-600">
-                        First Name
-                      </p>
-                      <p className="text-md text-neutral-300">
-                        {player.first_name}
-                      </p>
+                      <p className="text-xs font-semibold text-neutral-600">First Name</p>
+                      <p className="text-md text-neutral-300">{player.first_name}</p>
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-neutral-600">
-                        Last Name
-                      </p>
-                      <p className="text-md text-neutral-300">
-                        {player.last_name}
-                      </p>
+                      <p className="text-xs font-semibold text-neutral-600">Last Name</p>
+                      <p className="text-md text-neutral-300">{player.last_name}</p>
                     </div>
                   </div>
 
                   <div>
-                    <p className="text-xs font-semibold text-neutral-600">
-                      Roles
-                    </p>
+                    <p className="text-xs font-semibold text-neutral-600">Roles</p>
                     <ul className="flex list-disc flex-wrap gap-8 px-4 text-xs text-neutral-300">
                       {player.roles.map((role, index) => (
                         <li key={index}>{role}</li>
@@ -457,9 +375,7 @@ export default function AdminPlayersClient({
                     height={16}
                     width={16}
                   />
-                  <p className="text-xs font-bold text-neutral-500">
-                    {player.team?.school_name}
-                  </p>
+                  <p className="text-xs font-bold text-neutral-500">{player.team?.school_name}</p>
                 </div>
 
                 <Image

@@ -1,23 +1,27 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
-import { GamePlatform, GamePlatformFormType } from '@/lib/types';
+import { PlayerFormType, PlayerWithDetails } from '@/lib/types';
 import not_found from '@/../../public/images/not-found.webp';
 
-type CharacterFormProps = {
-  formData: React.MutableRefObject<GamePlatformFormType | undefined>;
-  platform: GamePlatform | null;
+type PlayerFormProps = {
+  formData: React.MutableRefObject<PlayerFormType | undefined>;
+  player: PlayerWithDetails | null;
 };
 
-export default function PlatformsForm({ formData, platform }: CharacterFormProps) {
-  const [platformInfo, setPlatformInfo] = React.useState<GamePlatformFormType>({
-    platform_title: platform?.platform_title || '',
-    platform_abbrev: platform?.platform_abbrev || '',
-    logo: null
+export default function PlayerForm({ formData, player }: PlayerFormProps) {
+  const [playerInfo, setPlayerInfo] = React.useState<PlayerFormType>({
+    first_name: player?.first_name || '',
+    last_name: player?.last_name || '',
+    ingame_name: player?.ingame_name || '',
+    team_id: player?.team?.id || '',
+    game_platform_id: player?.platform?.id || '',
+    roles: player?.roles || [],
+    picture: null
   });
 
-  const updatePlatformInfo = (field: keyof GamePlatformFormType, value: File | string) => {
-    setPlatformInfo((platformInfo) => ({
+  const updatePlayerInfo = (field: keyof PlayerFormType, value: File | string) => {
+    setPlayerInfo((platformInfo) => ({
       ...platformInfo,
       [field]: value
     }));
@@ -29,41 +33,26 @@ export default function PlatformsForm({ formData, platform }: CharacterFormProps
     const files = event.target.files;
 
     if (files && files[0]) {
-      updatePlatformInfo('logo', files[0]);
+      updatePlayerInfo('picture', files[0]);
 
       const imageURL = URL.createObjectURL(files[0]);
       setSelectedImagePreview(imageURL);
     }
   };
 
-  const fetchImage = async (platform: GamePlatform, imageName: string, fileType: string) => {
-    try {
-      const response = await fetch(platform.logo_url);
-      if (response.ok) {
-        const blob = await response.blob();
-        const imageFile = new File([blob], imageName + `.${fileType}`, {
-          type: `image/${fileType}`
-        });
-        updatePlatformInfo('logo', imageFile);
-        setSelectedImagePreview(platform.logo_url);
-      } else {
-        console.error('Failed to fetch image');
-      }
-    } catch (error) {
-      console.error('Error downloading image:', error);
-    }
-  };
-
   React.useEffect(() => {
-    if (platform?.logo_url) {
-      fetchImage(platform, `${platform.platform_abbrev}`, 'webp');
+    if (player?.picture_url) {
+      const imageFile = fetchImage(player?.picture_url, `${player.ingame_name}`, 'webp');
+
+      updatePlayerInfo('picture', imageFile);
+      setSelectedImagePreview();
     }
-  }, [platform?.logo_url]);
+  }, [player?.picture_url]);
 
   // Insert New Platform
   React.useEffect(() => {
-    formData.current = platformInfo;
-  }, [platformInfo, formData]);
+    formData.current = playerInfo;
+  }, [playerInfo, formData]);
 
   return (
     <form className="my-4 rounded-md border-2 border-neutral-700 bg-neutral-900 p-4">

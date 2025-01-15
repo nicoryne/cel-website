@@ -81,7 +81,7 @@ export const getAllSeriesWithDetails = async (): Promise<SeriesWithDetails[]> =>
 // UPDATE
 //========
 
-export const updateSeries = async (id: string, updates: Partial<Series>): Promise<Series | null> => {
+export const updateSeriesById = async (id: string, updates: Partial<Series>): Promise<Series | null> => {
   const supabase = createClient();
   const { data, error } = await supabase.from('series').update(updates).eq('id', id).single();
 
@@ -97,7 +97,7 @@ export const updateSeries = async (id: string, updates: Partial<Series>): Promis
 // DELETE
 //========
 
-export const deleteSeries = async (id: string): Promise<boolean> => {
+export const deleteSeriesById = async (id: string): Promise<boolean> => {
   const supabase = createClient();
   const { error } = await supabase.from('series').delete().eq('id', id);
 
