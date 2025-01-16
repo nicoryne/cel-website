@@ -1,25 +1,25 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['uqulenyafyepinfweagp.supabase.co'],
+    domains: ['uqulenyafyepinfweagp.supabase.co']
   },
   redirects() {
-    return process.env.NEXT_PUBLIC_MAINTENANCE_MODE === "1"
+    return process.env.NEXT_PUBLIC_MAINTENANCE_MODE === '1'
       ? [
           {
-            source: "/((?!maintenance).*)",
-            destination: "/maintenance",
-            permanent: false,
-          },
+            source: '/((?!maintenance|dashboard).*)',
+            destination: '/maintenance',
+            permanent: false
+          }
         ]
       : [
           {
-            source: "/maintenance",
-            destination: "/",
-            permanent: false,
-          },
+            source: '/maintenance',
+            destination: '/',
+            permanent: false
+          }
         ];
-  },
+  }
 };
 
 export default nextConfig;

@@ -1,6 +1,6 @@
 'use client';
 
-import { CharacterWithDetails, Character } from '@/lib/types';
+import { CharacterWithDetails, Character, GamePlatform } from '@/lib/types';
 import React from 'react';
 import Image from 'next/image';
 import Modal, { ModalProps } from '@/components/modal';
@@ -11,23 +11,25 @@ import ButtonDelete from '@/components/admin/buttons/button-delete';
 import InputSearch from '@/components/admin/input-search';
 import {
   addCharacterToCache,
-  fetchCharactersByIndexRange,
   fetchCharacterByStringFilter,
   getFilteredCharacters,
   handleDelete,
   handleInsert,
   handleUpdate
 } from '@/components/admin/clients/characters/utils';
+import { appendCharacterDetails, getCharactersByIndexRange } from '@/api/characters';
 
 type CharactersClientBaseProps = {
   charactersCount: Promise<number | null>;
+  platformList: Promise<GamePlatform[]>;
 };
 
 const ITEMS_PER_PAGE = 10;
 
-export default function CharactersClientBase({ charactersCount }: CharactersClientBaseProps) {
+export default function CharactersClientBase({ charactersCount, platformList }: CharactersClientBaseProps) {
   // Retrieving count from Promise
   const processedCharactersCount = React.use(charactersCount);
+  const processedPlatformList = React.use(platformList);
   const formData = React.useRef<Partial<Character>>({});
 
   const [totalItems, setTotalItems] = React.useState<number>(0);
@@ -52,10 +54,11 @@ export default function CharactersClientBase({ charactersCount }: CharactersClie
   const fetchCharactersByPage = async (page: number) => {
     const min = (page - 1) * ITEMS_PER_PAGE;
     const max = min + ITEMS_PER_PAGE;
-    const characterList = await fetchCharactersByIndexRange(min, max);
+    const characterList = await getCharactersByIndexRange(min, max);
 
     characterList.forEach((character) => {
-      addCharacterToCache(character, setCachedCharacters);
+      const characterWithDetails = appendCharacterDetails(processedPlatformList, character);
+      addCharacterToCache(characterWithDetails, setCachedCharacters);
     });
   };
 
@@ -76,7 +79,7 @@ export default function CharactersClientBase({ charactersCount }: CharactersClie
 
   // Filter if not in cache
   const fetchCharactersByName = async () => {
-    const character = await fetchCharacterByStringFilter(searchFilter);
+    const character = await fetchCharacterByStringFilter(searchFilter, processedPlatformList);
 
     if (character) {
       addCharacterToCache(character, setCachedCharacters);

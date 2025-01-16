@@ -1,139 +1,68 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
+import { GamePlatform, LeagueSchedule, SeriesFormType, SeriesWithDetails, Team } from '@/lib/types';
+
 import { motion } from 'framer-motion';
-import {
-  GamePlatform,
-  LeagueSchedule,
-  Team,
-  SeriesWithDetails
-} from '@/lib/types';
 import { SeriesType } from '@/lib/enums';
 
 type SeriesFormProps = {
-  teamsList: Team[];
-  scheduleList: LeagueSchedule[];
-  platforms: GamePlatform[];
-  formData: React.MutableRefObject<{}>;
+  formData: React.MutableRefObject<SeriesFormType | undefined>;
   series: SeriesWithDetails | null;
+  platformList: GamePlatform[];
+  teamList: Team[];
+  leagueScheduleList: LeagueSchedule[];
 };
 
-export default function SeriesForm({
-  teamsList,
-  platforms,
-  scheduleList,
-  formData,
-  series
-}: SeriesFormProps) {
-  // Team
-  const [teamA, setTeamA] = React.useState<Team>(
-    series?.team_a || teamsList[3]
-  );
-  const [teamAScore, setTeamAScore] = React.useState(series?.team_a_score || 0);
-  const [teamAMenu, toggleTeamAMenu] = React.useState(false);
-  const [teamAStatus, setTeamAStatus] = React.useState(
-    series?.team_a_status || 'Draw'
-  );
+export default function SeriesForm({ formData, series, platformList, teamList, leagueScheduleList }: SeriesFormProps) {
+  const [seriesInfo, setSeriesInfo] = React.useState<SeriesFormType>({
+    league_schedule: series?.league_schedule || leagueScheduleList[0],
+    series_type: series?.series_type || '',
+    team_a: series?.team_a || teamList[6],
+    team_a_score: series?.team_a_score || 0,
+    team_a_status: series?.team_a_status || 'Draw',
+    team_b: series?.team_b || teamList[6],
+    team_b_score: series?.team_b_score || 0,
+    team_b_status: series?.team_b_status || 'Draw',
+    week: series?.week || 1,
+    status: series?.status || 'Upcoming',
+    platform: series?.platform || platformList[0],
+    date: series?.start_time ? new Date(series?.start_time!).toISOString().split('T')[0] : '',
+    start_time:
+      new Date(series?.start_time!).toLocaleTimeString('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit'
+      }) || new Date().toLocaleTimeString(),
+    end_time:
+      new Date(series?.end_time!).toLocaleTimeString('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit'
+      }) || new Date().toLocaleTimeString()
+  });
 
-  const [teamB, setTeamB] = React.useState<Team>(
-    series?.team_b || teamsList[3]
-  );
-  const [teamBScore, setTeamBScore] = React.useState(series?.team_b_score || 0);
-  const [teamBMenu, toggleTeamBMenu] = React.useState(false);
-  const [teamBStatus, setTeamBStatus] = React.useState(
-    series?.team_b_status || 'Draw'
-  );
-
-  React.useEffect(() => {
-    if (teamAScore > teamBScore) {
-      setTeamAStatus('Win');
-      setTeamBStatus('Loss');
-    } else if (teamBScore > teamAScore) {
-      setTeamAStatus('Loss');
-      setTeamBStatus('Win');
-    } else if (teamAScore == teamBScore) {
-      setTeamAStatus('Draw');
-      setTeamBStatus('Draw');
-    }
-  }, [teamAScore, teamBScore]);
-
-  // Platform
-  const [selectedPlatform, setSelectedPlatform] = React.useState<GamePlatform>(
-    series?.platform || platforms[0]
-  );
   const [platformMenu, togglePlatformMenu] = React.useState(false);
-
-  // Series Type
+  const [teamAMenu, toggleTeamAMenu] = React.useState(false);
+  const [teamBMenu, toggleTeamBMenu] = React.useState(false);
+  const seriesStatusOptions = ['Upcoming', 'Ongoing', 'Finished'];
+  const [statusMenu, toggleStatusMenu] = React.useState(false);
   const seriesTypeOptions = Object.values(SeriesType);
-
-  const [selectedType, setSelectedType] = React.useState(
-    series?.series_type || seriesTypeOptions[0]
-  );
   const [typeMenu, toggleTypeMenu] = React.useState(false);
-
-  // League Schedule
-  const [selectedSchedule, setSelectedSchedule] =
-    React.useState<LeagueSchedule>(series?.league_schedule || scheduleList[0]);
   const [scheduleMenu, toggleScheduleMenu] = React.useState(false);
 
-  // Date & Time
-  const [seriesDate, setSeriesDate] = React.useState<string>(
-    series?.start_time
-      ? new Date(series.start_time).toISOString().split('T')[0]
-      : ''
-  );
-
-  const [startTime, setStartTime] = React.useState<string>(
-    series?.start_time
-      ? new Date(series.start_time).toLocaleTimeString('en-GB', {
-          hour: '2-digit',
-          minute: '2-digit'
-        })
-      : ''
-  );
-
-  const [endTime, setEndTime] = React.useState<string>(
-    series?.end_time
-      ? new Date(series.end_time).toLocaleTimeString('en-GB', {
-          hour: '2-digit',
-          minute: '2-digit'
-        })
-      : ''
-  );
-
-  // Week
-  const [seriesWeek, setSeriesWeek] = React.useState(series?.week || 0);
-
-  // Status
-  const seriesStatusOptions = ['Upcoming', 'Ongoing', 'Finished'];
-  const [seriesStatus, setSeriesStatus] = React.useState(
-    series?.status || seriesStatusOptions[0]
-  );
-  const [statusMenu, toggleStatusMenu] = React.useState(false);
+  const updateSeriesInfo = (
+    field: keyof SeriesFormType,
+    value: string | number | Date | LeagueSchedule | GamePlatform | Team
+  ) => {
+    setSeriesInfo((seriesInfo) => ({
+      ...seriesInfo,
+      [field]: value
+    }));
+  };
 
   // Insert New Series
   React.useEffect(() => {
-    const startDateTime = `${seriesDate} ${startTime}:00`;
-    const endDateTime = `${seriesDate} ${endTime}:00`;
-
-    let newFormData = {
-      league_schedule_id: selectedSchedule.id,
-      platform_id: selectedPlatform.id,
-      series_type: selectedType,
-      team_a_id: teamA.id,
-      team_a_score: teamAScore,
-      team_a_status: teamAStatus,
-      team_b_id: teamB.id,
-      team_b_score: teamBScore,
-      team_b_status: teamBStatus,
-      week: seriesWeek,
-      start_time: startDateTime,
-      end_time: endDateTime,
-      status: seriesStatus
-    };
-
-    formData.current = newFormData;
-  });
+    formData.current = seriesInfo;
+  }, [seriesInfo, formData]);
 
   return (
     <form className="my-4 rounded-md border-2 border-neutral-700 bg-neutral-900 p-4">
@@ -150,13 +79,13 @@ export default function SeriesForm({
                 onClick={() => toggleTeamAMenu(!teamAMenu)}
               >
                 <Image
-                  src={teamA?.logo_url || '/placeholder.png'}
+                  src={seriesInfo.team_a.logo_url}
                   className="h-auto w-4"
                   width={128}
                   height={128}
-                  alt={`${teamA?.school_abbrev || 'Team'} Logo`}
+                  alt={`${seriesInfo?.team_a.school_abbrev || 'Team'} Logo`}
                 />
-                {teamA?.school_abbrev || 'Select Team'}
+                {seriesInfo.team_a.school_abbrev || 'Select Team'}
               </button>
 
               {/* Dropdown for Team A Selection */}
@@ -166,16 +95,14 @@ export default function SeriesForm({
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 50 }}
                 >
-                  {teamsList.map((team, index) => (
+                  {teamList.map((team, index) => (
                     <button
                       className={`flex h-16 w-16 flex-col place-items-center justify-center gap-2 text-neutral-300 hover:text-white md:h-24 md:w-24 ${
-                        team.id === teamA?.id
-                          ? 'bg-neutral-800'
-                          : 'bg-[var(--background)]'
+                        team.id === seriesInfo.team_a.id ? 'bg-neutral-800' : 'bg-[var(--background)]'
                       }`}
                       key={index}
                       onClick={() => {
-                        setTeamA(team);
+                        updateSeriesInfo('team_a', team);
                         toggleTeamAMenu(!teamAMenu);
                       }}
                     >
@@ -186,9 +113,7 @@ export default function SeriesForm({
                         height={128}
                         alt={`${team.school_abbrev} Logo`}
                       />
-                      <p className="w-24 break-words text-xs">
-                        {team.school_abbrev}
-                      </p>
+                      <p className="w-24 break-words text-xs">{team.school_abbrev}</p>
                     </button>
                   ))}
                 </motion.div>
@@ -200,9 +125,9 @@ export default function SeriesForm({
                 type="number"
                 min="0"
                 max="5"
-                value={teamAScore}
+                value={seriesInfo.team_a_score}
                 className="w-16 rounded-md border-2 border-neutral-700 bg-neutral-900"
-                onChange={(e) => setTeamAScore(e.target.valueAsNumber)}
+                onChange={(e) => updateSeriesInfo('team_a_score', e.target.valueAsNumber)}
               />
             </div>
           </div>
@@ -218,9 +143,9 @@ export default function SeriesForm({
                 type="number"
                 min="0"
                 max="5"
-                value={teamBScore}
+                value={seriesInfo.team_b_score}
                 className="w-16 rounded-md border-2 border-neutral-700 bg-neutral-900"
-                onChange={(e) => setTeamBScore(e.target.valueAsNumber)}
+                onChange={(e) => updateSeriesInfo('team_b_score', e.target.valueAsNumber)}
               />
             </div>
             {/* Team B */}
@@ -232,13 +157,13 @@ export default function SeriesForm({
                 onClick={() => toggleTeamBMenu(!teamBMenu)}
               >
                 <Image
-                  src={teamB?.logo_url || '/placeholder.png'}
+                  src={seriesInfo.team_b.logo_url}
                   className="h-auto w-4"
                   width={128}
                   height={128}
-                  alt={`${teamB?.school_abbrev || 'Team'} Logo`}
+                  alt={`${seriesInfo?.team_b.school_abbrev || 'Team'} Logo`}
                 />
-                {teamB?.school_abbrev || 'Select Team'}
+                {seriesInfo?.team_b.school_abbrev || 'Select Team'}
               </button>
 
               {/* Dropdown for Team A Selection */}
@@ -248,16 +173,14 @@ export default function SeriesForm({
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 50 }}
                 >
-                  {teamsList.map((team, index) => (
+                  {teamList.map((team, index) => (
                     <button
                       className={`flex h-16 w-16 flex-col place-items-center justify-center gap-2 text-neutral-300 hover:text-white md:h-24 md:w-24 ${
-                        team.id === teamB?.id
-                          ? 'bg-neutral-800'
-                          : 'bg-[var(--background)]'
+                        team.id === seriesInfo.team_b?.id ? 'bg-neutral-800' : 'bg-[var(--background)]'
                       }`}
                       key={index}
                       onClick={() => {
-                        setTeamB(team);
+                        updateSeriesInfo('team_b', team);
                         toggleTeamBMenu(!teamBMenu);
                       }}
                     >
@@ -268,9 +191,7 @@ export default function SeriesForm({
                         height={128}
                         alt={`${team.school_abbrev} Logo`}
                       />
-                      <p className="w-24 break-words text-xs">
-                        {team.school_abbrev}
-                      </p>
+                      <p className="w-24 break-words text-xs">{team.school_abbrev}</p>
                     </button>
                   ))}
                 </motion.div>
@@ -289,9 +210,7 @@ export default function SeriesForm({
               className="flex h-10 w-full items-center gap-2 rounded-md border-2 border-neutral-600 bg-neutral-900 px-4 text-white transition-colors duration-150 ease-linear hover:border-neutral-500 hover:bg-neutral-800"
               onClick={() => toggleStatusMenu(!statusMenu)}
             >
-              <p className="text-xs md:text-base">
-                {seriesStatus || 'Select Status'}
-              </p>
+              <p className="text-xs md:text-base">{seriesInfo.status || 'Select Status'}</p>
             </button>
 
             {/* Dropdown for Game Platform Selection */}
@@ -304,13 +223,11 @@ export default function SeriesForm({
                 {seriesStatusOptions.map((status, index) => (
                   <button
                     className={`justify-left flex h-10 w-full place-items-center gap-2 px-4 text-neutral-300 hover:text-white ${
-                      status === seriesStatus
-                        ? 'bg-neutral-800'
-                        : 'bg-[var(--background)]'
+                      status === seriesInfo.status ? 'bg-neutral-800' : 'bg-[var(--background)]'
                     }`}
                     key={index}
                     onClick={() => {
-                      setSeriesStatus(status);
+                      updateSeriesInfo('status', status);
                       toggleStatusMenu(!statusMenu);
                     }}
                   >
@@ -335,15 +252,13 @@ export default function SeriesForm({
                 onClick={() => togglePlatformMenu(!platformMenu)}
               >
                 <Image
-                  src={selectedPlatform.logo_url || '/placeholder.png'}
+                  src={seriesInfo.platform.logo_url}
                   className="h-auto w-4"
                   width={128}
                   height={128}
-                  alt={`${selectedPlatform.platform_abbrev || 'Platform'} Logo`}
+                  alt={`${seriesInfo.platform.platform_abbrev || 'Platform'} Logo`}
                 />
-                <p className="text-xs md:text-base">
-                  {selectedPlatform.platform_title || 'Select Platform'}
-                </p>
+                <p className="text-xs md:text-base">{seriesInfo.platform.platform_title || 'Select Platform'}</p>
               </button>
 
               {/* Dropdown for Game Platform Selection */}
@@ -353,16 +268,14 @@ export default function SeriesForm({
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
-                  {platforms.map((platform, index) => (
+                  {platformList.map((platform, index) => (
                     <button
                       className={`justify-left flex h-10 w-full place-items-center gap-2 px-4 text-neutral-300 hover:text-white ${
-                        platform.id === selectedPlatform.id
-                          ? 'bg-neutral-800'
-                          : 'bg-[var(--background)]'
+                        platform.id === seriesInfo.platform.id ? 'bg-neutral-800' : 'bg-[var(--background)]'
                       }`}
                       key={index}
                       onClick={() => {
-                        setSelectedPlatform(platform);
+                        updateSeriesInfo('platform', platform);
                         togglePlatformMenu(!platformMenu);
                       }}
                     >
@@ -391,7 +304,7 @@ export default function SeriesForm({
                 className="flex h-10 w-full items-center gap-2 rounded-md border-2 border-neutral-600 bg-neutral-900 px-4 text-white transition-colors duration-150 ease-linear hover:border-neutral-500 hover:bg-neutral-800"
                 onClick={() => toggleTypeMenu(!typeMenu)}
               >
-                <p className="text-xs md:text-base">{selectedType || '--'}</p>
+                <p className="text-xs md:text-base">{seriesInfo.series_type || '--'}</p>
               </button>
 
               {/* Dropdown for Series type Selection */}
@@ -405,13 +318,11 @@ export default function SeriesForm({
                     <button
                       type="button"
                       className={`justify-left flex h-10 w-full place-items-center gap-2 px-4 text-neutral-300 hover:text-white ${
-                        type === selectedType
-                          ? 'bg-neutral-800'
-                          : 'bg-[var(--background)]'
+                        type === seriesInfo.series_type ? 'bg-neutral-800' : 'bg-[var(--background)]'
                       }`}
                       key={index}
                       onClick={() => {
-                        setSelectedType(type);
+                        updateSeriesInfo('series_type', type);
                         toggleTypeMenu(!typeMenu);
                       }}
                     >
@@ -438,11 +349,11 @@ export default function SeriesForm({
                 onClick={() => toggleScheduleMenu(!scheduleMenu)}
               >
                 <p className="text-xs md:text-base">
-                  {selectedSchedule.season_type +
+                  {seriesInfo.league_schedule.season_type +
                     ` ` +
-                    selectedSchedule.season_number +
+                    seriesInfo.league_schedule.season_number +
                     ` - ` +
-                    selectedSchedule.league_stage || 'Select Schedule'}
+                    seriesInfo.league_schedule.league_stage || 'Select Schedule'}
                 </p>
               </button>
 
@@ -453,25 +364,19 @@ export default function SeriesForm({
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
-                  {scheduleList.map((schedule, index) => (
+                  {leagueScheduleList.map((schedule, index) => (
                     <button
                       className={`justify-left flex h-10 w-full place-items-center gap-2 px-4 text-neutral-300 hover:text-white ${
-                        schedule.id === selectedSchedule.id
-                          ? 'bg-neutral-800'
-                          : 'bg-[var(--background)]'
+                        schedule.id === seriesInfo.league_schedule.id ? 'bg-neutral-800' : 'bg-[var(--background)]'
                       }`}
                       key={index}
                       onClick={() => {
-                        setSelectedSchedule(schedule);
+                        updateSeriesInfo('league_schedule', schedule);
                         toggleScheduleMenu(!scheduleMenu);
                       }}
                     >
                       <p className="text-xs">
-                        {schedule.season_type +
-                          ` ` +
-                          schedule.season_number +
-                          ` - ` +
-                          schedule.league_stage}
+                        {schedule.season_type + ` ` + schedule.season_number + ` - ` + schedule.league_stage}
                       </p>
                     </button>
                   ))}
@@ -489,8 +394,8 @@ export default function SeriesForm({
                 min="0"
                 max="20"
                 className="h-10 w-16 rounded-md border-2 border-neutral-700 bg-neutral-900"
-                value={seriesWeek || ''}
-                onChange={(e) => setSeriesWeek(e.target?.valueAsNumber || 0)}
+                value={seriesInfo.week}
+                onChange={(e) => updateSeriesInfo('week', e.target.valueAsNumber)}
               />
             </div>
           </div>
@@ -505,9 +410,9 @@ export default function SeriesForm({
               <input
                 type="date"
                 className="flex h-10 items-center gap-2 rounded-md border-2 border-neutral-600 bg-neutral-900 px-2 text-base text-white transition-colors duration-150 ease-linear hover:border-neutral-500 hover:bg-neutral-800 dark:[color-scheme:dark]"
-                value={seriesDate}
+                value={seriesInfo.date}
                 onChange={(e) => {
-                  setSeriesDate(e.target.value);
+                  updateSeriesInfo('date', e.target.value);
                 }}
               />
             </div>
@@ -520,9 +425,9 @@ export default function SeriesForm({
               <input
                 type="time"
                 className="flex h-10 items-center gap-2 rounded-md border-2 border-neutral-600 bg-neutral-900 px-2 text-xs text-white transition-colors duration-150 ease-linear hover:border-neutral-500 hover:bg-neutral-800 dark:[color-scheme:dark]"
-                value={startTime}
+                value={seriesInfo.start_time}
                 onChange={(e) => {
-                  setStartTime(e.target.value);
+                  updateSeriesInfo('start_time', e.target.value);
                 }}
               />
             </div>
@@ -535,9 +440,9 @@ export default function SeriesForm({
               <input
                 type="time"
                 className="flex h-10 items-center gap-2 rounded-md border-2 border-neutral-600 bg-neutral-900 px-2 text-xs text-white transition-colors duration-150 ease-linear hover:border-neutral-500 hover:bg-neutral-800 dark:[color-scheme:dark]"
-                value={endTime}
+                value={seriesInfo.end_time}
                 onChange={(e) => {
-                  setEndTime(e.target.value);
+                  updateSeriesInfo('end_time', e.target.value);
                 }}
               />
             </div>

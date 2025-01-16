@@ -58,6 +58,23 @@ export type Series = {
   end_time: Date;
 };
 
+export type SeriesFormType = {
+  league_schedule: LeagueSchedule /* FK */;
+  series_type: string;
+  team_a: Team /* FK */;
+  team_a_score: number;
+  team_a_status: string;
+  team_b: Team /* FK */;
+  team_b_score: number;
+  team_b_status: string;
+  week: number;
+  status: string;
+  platform: GamePlatform /* FK */;
+  date: string;
+  start_time: string;
+  end_time: string;
+};
+
 export type Player = {
   id: string /* PK */;
   first_name: string;
@@ -73,8 +90,8 @@ export type PlayerFormType = {
   first_name: string;
   last_name: string;
   ingame_name: string;
-  team_id: string;
-  game_platform_id: string;
+  team: Team;
+  game_platform: GamePlatform;
   roles: string[];
   picture: File | null;
 };

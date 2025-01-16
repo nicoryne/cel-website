@@ -1,15 +1,10 @@
-import {
-  createGamePlatform,
-  deleteGamePlatformById,
-  getGamePlatformById,
-  getGamePlatformsByIndexRange,
-  updateGamePlatformById
-} from '@/api/game-platform';
+import { createGamePlatform, deleteGamePlatformById, updateGamePlatformById } from '@/api/game-platform';
 import { ModalProps } from '@/components/modal';
 import { GamePlatform, GamePlatformFormType } from '@/lib/types';
 import React from 'react';
 import GamePlatformForm from '@/components/admin/clients/platforms/form';
 import { deleteFile } from '@/api/utils/storage';
+import { callModalTemplate } from '@/components/admin/clients/utils';
 
 export const sortByName = (a: GamePlatform, b: GamePlatform): number => {
   if (a.platform_abbrev < b.platform_abbrev) return -1;
@@ -67,29 +62,16 @@ export const handleInsert = async (
   setCachedPlatforms: React.Dispatch<React.SetStateAction<GamePlatform[]>>
 ) => {
   const addNewPlatform = async () => {
-    const successModal: ModalProps = {
-      title: 'Success',
-      message: 'Schedule has been successfully added!',
-      type: 'success'
-    };
-
-    const failedModal: ModalProps = {
-      title: 'Error',
-      message: 'Failed to add Schedule. Please try again.',
-      type: 'error',
-      onCancel: () => setModalProps(null)
-    };
-
     try {
       const createdPlatform: GamePlatform | null = await createGamePlatform(formData.current as GamePlatformFormType);
 
-      setModalProps(successModal);
+      setModalProps(callModalTemplate('Game Platform', 'success', 'add', setModalProps));
       setTimeout(() => {
         addPlatformToCache(createdPlatform as GamePlatform, setCachedPlatforms);
         setModalProps(null);
       }, 500);
     } catch (error) {
-      setModalProps(failedModal);
+      setModalProps(callModalTemplate('Game Platform', 'error', 'add', setModalProps));
     }
   };
 
@@ -113,30 +95,17 @@ export const handleDelete = (
   setCachedPlatforms: React.Dispatch<React.SetStateAction<GamePlatform[]>>
 ) => {
   const deletePlatform = async (schedule: GamePlatform) => {
-    const successModal: ModalProps = {
-      title: 'Success',
-      message: `Game Platform has been successfully deleted.`,
-      type: 'success'
-    };
-
-    const failedModal: ModalProps = {
-      title: 'Error',
-      message: `Failed to delete Game Platform. Please try again.`,
-      type: 'error',
-      onCancel: () => setModalProps(null)
-    };
-
     try {
       await deleteGamePlatformById(platform.id as string);
 
-      setModalProps(successModal);
+      setModalProps(callModalTemplate('Game Platform', 'success', 'delete', setModalProps));
 
       setTimeout(() => {
         deletePlatformFromCache(platform, setCachedPlatforms);
         setModalProps(null);
       }, 500);
     } catch (error) {
-      setModalProps(failedModal);
+      setModalProps(callModalTemplate('Game Platform', 'error', 'add', setModalProps));
     }
   };
 
@@ -160,33 +129,22 @@ export const handleUpdate = async (
   setCachedPlatforms: React.Dispatch<React.SetStateAction<GamePlatform[]>>
 ) => {
   const updateExistingPlatform = async () => {
-    const successModal: ModalProps = {
-      title: 'Success',
-      message: 'Game Platform has been successfully updated!',
-      type: 'success'
-    };
-
-    const failedModal: ModalProps = {
-      title: 'Error',
-      message: 'Failed to update Game Platform. Please try again.',
-      type: 'error',
-      onCancel: () => setModalProps(null)
-    };
-
     try {
       const updatedPlatform = await updateGamePlatformById(platform.id, formData.current as GamePlatformFormType);
 
-      setModalProps(successModal);
+      setModalProps(callModalTemplate('Game Platform', 'success', 'update', setModalProps));
 
       setTimeout(() => {
-        const url = new URL(platform.logo_url);
-        const fileName = url.pathname.replace('/storage/v1/object/sign/images/', '');
-        deleteFile('images', [fileName]);
+        if (platform.logo_url) {
+          const url = new URL(platform.logo_url);
+          const fileName = url.pathname.replace('/storage/v1/object/sign/images/', '');
+          deleteFile('images', [fileName]);
+        }
         updatePlatformFromCache(updatedPlatform as GamePlatform, setCachedPlatforms);
         setModalProps(null);
       }, 500);
     } catch (error) {
-      setModalProps(failedModal);
+      setModalProps(callModalTemplate('Game Platform', 'error', 'update', setModalProps));
     }
   };
 

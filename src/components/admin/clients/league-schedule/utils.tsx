@@ -1,9 +1,9 @@
-import { createLeagueSchedule, deleteLeagueSchedule, updateLeagueScheduleById } from '@/api/league-schedule';
-import { getAllGamePlatforms } from '@/api/game-platform';
+import { createLeagueSchedule, deleteLeagueScheduleById, updateLeagueScheduleById } from '@/api/league-schedule';
 import { ModalProps } from '@/components/modal';
 import { LeagueSchedule } from '@/lib/types';
 import React from 'react';
 import LeagueScheduleForm from '@/components/admin/clients/league-schedule/form';
+import { callModalTemplate } from '@/components/admin/clients/utils';
 
 export const sortByStartDate = (a: LeagueSchedule, b: LeagueSchedule): number => {
   if (a.start_date < b.start_date) return -1;
@@ -61,29 +61,16 @@ export const handleInsert = async (
   setCachedSchedules: React.Dispatch<React.SetStateAction<LeagueSchedule[]>>
 ) => {
   const addNewSchedule = async () => {
-    const successModal: ModalProps = {
-      title: 'Success',
-      message: 'Schedule has been successfully added!',
-      type: 'success'
-    };
-
-    const failedModal: ModalProps = {
-      title: 'Error',
-      message: 'Failed to add Schedule. Please try again.',
-      type: 'error',
-      onCancel: () => setModalProps(null)
-    };
-
     try {
       const createdSchedule: LeagueSchedule | null = await createLeagueSchedule(formData.current as {});
 
-      setModalProps(successModal);
+      setModalProps(callModalTemplate('League Schedule', 'success', 'add', setModalProps));
       setTimeout(() => {
         addScheduleToCache(createdSchedule as LeagueSchedule, setCachedSchedules);
         setModalProps(null);
       }, 500);
     } catch (error) {
-      setModalProps(failedModal);
+      setModalProps(callModalTemplate('League Schedule', 'error', 'add', setModalProps));
     }
   };
 
@@ -107,30 +94,17 @@ export const handleDelete = (
   setCachedSchedules: React.Dispatch<React.SetStateAction<LeagueSchedule[]>>
 ) => {
   const deleteSchedule = async (schedule: LeagueSchedule) => {
-    const successModal: ModalProps = {
-      title: 'Success',
-      message: `League Schedule has been successfully deleted.`,
-      type: 'success'
-    };
-
-    const failedModal: ModalProps = {
-      title: 'Error',
-      message: `Failed to delete League Schedule. Please try again.`,
-      type: 'error',
-      onCancel: () => setModalProps(null)
-    };
-
     try {
-      await deleteLeagueSchedule(schedule.id as string);
+      await deleteLeagueScheduleById(schedule.id as string);
 
-      setModalProps(successModal);
+      setModalProps(callModalTemplate('League Schedule', 'success', 'delete', setModalProps));
 
       setTimeout(() => {
         deleteScheduleFromCache(Schedule, setCachedSchedules);
         setModalProps(null);
       }, 500);
     } catch (error) {
-      setModalProps(failedModal);
+      setModalProps(callModalTemplate('League Schedule', 'error', 'delete', setModalProps));
     }
   };
 
@@ -154,30 +128,17 @@ export const handleUpdate = async (
   setCachedSchedules: React.Dispatch<React.SetStateAction<LeagueSchedule[]>>
 ) => {
   const updateExistingSchedule = async () => {
-    const successModal: ModalProps = {
-      title: 'Success',
-      message: 'Schedule has been successfully updated!',
-      type: 'success'
-    };
-
-    const failedModal: ModalProps = {
-      title: 'Error',
-      message: 'Failed to update Schedule. Please try again.',
-      type: 'error',
-      onCancel: () => setModalProps(null)
-    };
-
     try {
       const updatedSchedule = await updateLeagueScheduleById(schedule.id, formData.current as {});
 
-      setModalProps(successModal);
+      setModalProps(callModalTemplate('League Schedule', 'success', 'update', setModalProps));
 
       setTimeout(() => {
         updateScheduleFromCache(updatedSchedule as LeagueSchedule, setCachedSchedules);
         setModalProps(null);
       }, 500);
     } catch (error) {
-      setModalProps(failedModal);
+      setModalProps(callModalTemplate('League Schedule', 'error', 'update', setModalProps));
     }
   };
 

@@ -1,23 +1,27 @@
 import { getAllLeagueSchedules } from '@/api/league-schedule';
 import { getAllGamePlatforms } from '@/api/game-platform';
-import { getAllSeriesWithDetails } from '@/api/series';
 import { getAllTeams } from '@/api/team';
-import AdminSeriesClient from '@/components/admin/clients/series';
+import { getSeriesCount } from '@/api/series';
+import { Suspense } from 'react';
+import SeriesClientBase from '@/components/admin/clients/series/base';
+import Loading from '@/components/loading';
 
-export default async function AdminSeries() {
-  const seriesList = await getAllSeriesWithDetails();
-  const teamsList = await getAllTeams();
-  const scheduleList = await getAllLeagueSchedules();
-  const platforms = await getAllGamePlatforms();
+export default function AdminSeries() {
+  const seriesCount = getSeriesCount();
+  const teamsList = getAllTeams();
+  const scheduleList = getAllLeagueSchedules();
+  const platforms = getAllGamePlatforms();
 
   return (
     <>
-      <AdminSeriesClient
-        seriesList={seriesList}
-        teamsList={teamsList}
-        scheduleList={scheduleList}
-        platforms={platforms}
-      />
+      <Suspense fallback={<Loading />}>
+        <SeriesClientBase
+          seriesCount={seriesCount}
+          teamList={teamsList}
+          leagueScheduleList={scheduleList}
+          platformList={platforms}
+        />
+      </Suspense>
     </>
   );
 }

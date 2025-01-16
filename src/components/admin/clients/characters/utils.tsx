@@ -4,32 +4,16 @@ import {
   deleteCharacterById,
   getCharacterByName,
   getCharactersByIndexRange,
-  updateCharacter
+  updateCharacterById
 } from '@/api/characters';
 import { getAllGamePlatforms } from '@/api/game-platform';
 import { ModalProps } from '@/components/modal';
 import { Character, CharacterWithDetails, GamePlatform } from '@/lib/types';
 import CharactersForm from '@/components/admin/clients/characters/form';
 import React from 'react';
+import { callModalTemplate } from '@/components/admin/clients/utils';
 
-export const fetchCharactersByIndexRange = async (min: number, max: number) => {
-  const list: CharacterWithDetails[] = [];
-
-  const platforms = await getAllGamePlatforms();
-  const characters = await getCharactersByIndexRange(min, max);
-
-  characters.map((character) => {
-    list.push({
-      ...character,
-      platform: platforms.find((platform) => platform.id === character.platform_id) as GamePlatform
-    });
-  });
-
-  return list;
-};
-
-export const fetchCharacterByStringFilter = async (searchFilter: string) => {
-  const platforms = await getAllGamePlatforms();
+export const fetchCharacterByStringFilter = async (searchFilter: string, platforms: GamePlatform[]) => {
   const character = await getCharacterByName(searchFilter);
 
   if (character) {
@@ -41,8 +25,12 @@ export const fetchCharacterByStringFilter = async (searchFilter: string) => {
 };
 
 export const getFilteredCharacters = (cachedCharacters: CharacterWithDetails[], searchFilter: string) => {
+  if (!searchFilter) return cachedCharacters;
+
+  const lowerCaseFilter = searchFilter.toLowerCase();
+
   const filtered = searchFilter
-    ? cachedCharacters.filter((character) => character.name.toLowerCase().includes(searchFilter.toLowerCase()))
+    ? cachedCharacters.filter((character) => character.name.toLowerCase().includes(lowerCaseFilter))
     : cachedCharacters;
 
   return filtered;
@@ -111,22 +99,9 @@ export const handleInsert = async (
   const platforms = await getAllGamePlatforms();
 
   const addNewCharacter = async () => {
-    const successModal: ModalProps = {
-      title: 'Success',
-      message: 'Character has been successfully added!',
-      type: 'success'
-    };
-
-    const failedModal: ModalProps = {
-      title: 'Error',
-      message: 'Failed to add character. Please try again.',
-      type: 'error',
-      onCancel: () => setModalProps(null)
-    };
-
     try {
       const createdCharacter: Character | null = await createCharacter(formData.current as {});
-      setModalProps(successModal);
+      setModalProps(callModalTemplate(`${createCharacter.name}`, 'success', 'add', setModalProps));
 
       setTimeout(() => {
         const characterWithDetails = appendCharacterDetails(platforms, createdCharacter as Character);
@@ -134,7 +109,7 @@ export const handleInsert = async (
         setModalProps(null);
       }, 500);
     } catch (error) {
-      setModalProps(failedModal);
+      setModalProps(callModalTemplate('Character', 'error', 'add', setModalProps));
     }
   };
 
@@ -158,31 +133,18 @@ export const handleDelete = (
   setCachedCharacters: React.Dispatch<React.SetStateAction<CharacterWithDetails[]>>
 ) => {
   const deleteCharacter = async (character: CharacterWithDetails) => {
-    const successModal: ModalProps = {
-      title: 'Success',
-      message: `${character.name} has been successfully deleted.`,
-      type: 'success'
-    };
-
-    const failedModal: ModalProps = {
-      title: 'Error',
-      message: `Failed to delete ${character.name}. Please try again.`,
-      type: 'error',
-      onCancel: () => setModalProps(null)
-    };
-
     try {
       const fullCharacterDetails = await getCharacterByName(character.name);
       await deleteCharacterById(fullCharacterDetails?.id as string);
 
-      setModalProps(successModal);
+      setModalProps(callModalTemplate(`${character.name}`, 'success', 'delete', setModalProps));
 
       setTimeout(() => {
         deleteCharacterFromCache(character, setCachedCharacters);
         setModalProps(null);
       }, 500);
     } catch (error) {
-      setModalProps(failedModal);
+      setModalProps(callModalTemplate(`${character.name}`, 'error', 'delete', setModalProps));
     }
   };
 
@@ -208,23 +170,10 @@ export const handleUpdate = async (
   const platforms = await getAllGamePlatforms();
 
   const updateExistingCharacter = async () => {
-    const successModal: ModalProps = {
-      title: 'Success',
-      message: 'Character has been successfully updated!',
-      type: 'success'
-    };
-
-    const failedModal: ModalProps = {
-      title: 'Error',
-      message: 'Failed to update character. Please try again.',
-      type: 'error',
-      onCancel: () => setModalProps(null)
-    };
-
     try {
-      const updatedCharacter = await updateCharacter(character.id as string, formData.current as {});
+      const updatedCharacter = await updateCharacterById(character.id as string, formData.current as {});
 
-      setModalProps(successModal);
+      setModalProps(callModalTemplate(`${character.name}`, 'success', 'update', setModalProps));
 
       setTimeout(() => {
         const updatedCharacterWithDetails = appendCharacterDetails(platforms, updatedCharacter as Character);
@@ -232,7 +181,7 @@ export const handleUpdate = async (
         setModalProps(null);
       }, 500);
     } catch (error) {
-      setModalProps(failedModal);
+      setModalProps(callModalTemplate(`${character.name}`, 'error', 'update', setModalProps));
     }
   };
 

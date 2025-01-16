@@ -1,9 +1,10 @@
-import { createTeam, deleteTeamById, getTeamById, getTeamsByIndexRange, updateTeam } from '@/api/team';
+import { createTeam, deleteTeamById, updateTeamById } from '@/api/team';
 import { ModalProps } from '@/components/modal';
 import { Team, TeamFormType } from '@/lib/types';
 import React from 'react';
 import TeamForm from '@/components/admin/clients/teams/form';
 import { deleteFile } from '@/api/utils/storage';
+import { callModalTemplate } from '@/components/admin/clients/utils';
 
 export const sortByName = (a: Team, b: Team): number => {
   if (a.school_abbrev < b.school_abbrev) return -1;
@@ -52,29 +53,16 @@ export const handleInsert = async (
   setCachedTeams: React.Dispatch<React.SetStateAction<Team[]>>
 ) => {
   const addNewTeam = async () => {
-    const successModal: ModalProps = {
-      title: 'Success',
-      message: 'Team has been successfully added!',
-      type: 'success'
-    };
-
-    const failedModal: ModalProps = {
-      title: 'Error',
-      message: 'Failed to add Team. Please try again.',
-      type: 'error',
-      onCancel: () => setModalProps(null)
-    };
-
     try {
       const createdTeam: Team | null = await createTeam(formData.current as TeamFormType);
 
-      setModalProps(successModal);
+      setModalProps(callModalTemplate('Team', 'success', 'add', setModalProps));
       setTimeout(() => {
         addTeamToCache(createdTeam as Team, setCachedTeams);
         setModalProps(null);
       }, 500);
     } catch (error) {
-      setModalProps(failedModal);
+      setModalProps(callModalTemplate('Team', 'error', 'add', setModalProps));
     }
   };
 
@@ -98,30 +86,17 @@ export const handleDelete = (
   setCachedTeams: React.Dispatch<React.SetStateAction<Team[]>>
 ) => {
   const deleteTeam = async (team: Team) => {
-    const successModal: ModalProps = {
-      title: 'Success',
-      message: `Team has been successfully deleted.`,
-      type: 'success'
-    };
-
-    const failedModal: ModalProps = {
-      title: 'Error',
-      message: `Failed to delete Team. Please try again.`,
-      type: 'error',
-      onCancel: () => setModalProps(null)
-    };
-
     try {
       await deleteTeamById(team.id as string);
 
-      setModalProps(successModal);
+      setModalProps(callModalTemplate('Team', 'success', 'delete', setModalProps));
 
       setTimeout(() => {
         deleteTeamFromCache(team, setCachedTeams);
         setModalProps(null);
       }, 500);
     } catch (error) {
-      setModalProps(failedModal);
+      setModalProps(callModalTemplate('Team', 'error', 'delete', setModalProps));
     }
   };
 
@@ -145,23 +120,10 @@ export const handleUpdate = async (
   setCachedTeams: React.Dispatch<React.SetStateAction<Team[]>>
 ) => {
   const updateExistingTeam = async () => {
-    const successModal: ModalProps = {
-      title: 'Success',
-      message: 'Team has been successfully updated!',
-      type: 'success'
-    };
-
-    const failedModal: ModalProps = {
-      title: 'Error',
-      message: 'Failed to update Team. Please try again.',
-      type: 'error',
-      onCancel: () => setModalProps(null)
-    };
-
     try {
-      const updatedTeam = await updateTeam(team.id, formData.current as TeamFormType);
+      const updatedTeam = await updateTeamById(team.id, formData.current as TeamFormType);
 
-      setModalProps(successModal);
+      setModalProps(callModalTemplate('Team', 'success', 'update', setModalProps));
 
       setTimeout(() => {
         const url = new URL(team.logo_url);
@@ -171,7 +133,7 @@ export const handleUpdate = async (
         setModalProps(null);
       }, 500);
     } catch (error) {
-      setModalProps(failedModal);
+      setModalProps(callModalTemplate('Team', 'error', 'update', setModalProps));
     }
   };
 

@@ -1,20 +1,19 @@
 import { getAllGamePlatforms } from '@/api/game-platform';
+import { getPlayerCount } from '@/api/player';
 import { getAllTeams } from '@/api/team';
-import { getAllPlayersWithDetails } from '@/api/player';
-import AdminPlayersClient from '@/components/admin/clients/players';
+import PlayersClientBase from '@/components/admin/clients/players/base';
+import { Suspense } from 'react';
 
-export default async function AdminPlayers() {
-  const playersList = await getAllPlayersWithDetails();
-  const teamsList = await getAllTeams();
-  const platforms = await getAllGamePlatforms();
+export default function AdminPlayers() {
+  const playerCount = getPlayerCount();
+  const platformList = getAllGamePlatforms();
+  const teamList = getAllTeams();
 
   return (
     <>
-      <AdminPlayersClient
-        playersList={playersList}
-        teamsList={teamsList}
-        platforms={platforms}
-      />
+      <Suspense>
+        <PlayersClientBase playerCount={playerCount} platformList={platformList} teamList={teamList} />
+      </Suspense>
     </>
   );
 }

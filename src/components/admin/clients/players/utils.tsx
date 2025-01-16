@@ -1,10 +1,10 @@
 import { ModalProps } from '@/components/modal';
-import { Player, PlayerFormType, PlayerWithDetails } from '@/lib/types';
+import { GamePlatform, Player, PlayerFormType, PlayerWithDetails, Team } from '@/lib/types';
 import React from 'react';
 import PlayerForm from '@/components/admin/clients/players/form';
 import { deleteFile } from '@/api/utils/storage';
-import { callModalTemplate } from '../util';
-import { appendPlayerDetails, createPlayer, deletePlayerById, updatePlayerById } from '@/api/player';
+import { callModalTemplate } from '@/components/admin/clients/utils';
+import { appendPlayerDetails, createPlayer, deletePlayerById, getPlayerByName, updatePlayerById } from '@/api/player';
 import { getAllGamePlatforms } from '@/api/game-platform';
 import { getAllTeams } from '@/api/team';
 
@@ -15,14 +15,37 @@ export const sortBySchoolPlayerName = (a: PlayerWithDetails, b: PlayerWithDetail
   }
 
   if (a.platform?.id && b.platform?.id && a.platform.id !== b.platform.id) {
-    if (a.platform.id < b.platform.id) return -1;
-    if (a.platform.id > b.platform.id) return 1;
+    if (a.platform.id < b.platform.id) return 1;
+    if (a.platform.id > b.platform.id) return -1;
   }
 
   if (a.ingame_name.toLowerCase() < b.ingame_name.toLowerCase()) return -1;
   if (a.ingame_name.toLowerCase() > b.ingame_name.toLowerCase()) return 1;
 
   return 0;
+};
+
+export const fetchPlayersByStringFilter = async (searchFilter: string, platforms: GamePlatform[], teams: Team[]) => {
+  const player = await getPlayerByName(searchFilter);
+
+  if (player) {
+    const playerWithDetails = appendPlayerDetails(platforms, teams, player);
+    return playerWithDetails;
+  }
+
+  return null;
+};
+
+export const getFilteredPlayers = (cachedPlayers: PlayerWithDetails[], searchFilter: string) => {
+  if (!searchFilter) return cachedPlayers;
+
+  const lowerCaseFilter = searchFilter.toLowerCase();
+
+  return cachedPlayers.filter((player) =>
+    [player.ingame_name, player.first_name, player.last_name].some((field) =>
+      field.toLowerCase().includes(lowerCaseFilter)
+    )
+  );
 };
 
 export const addPlayerToCache = (
@@ -75,6 +98,7 @@ export const handleInsert = async (
 ) => {
   const platformList = await getAllGamePlatforms();
   const teamList = await getAllTeams();
+  const processedTeamList = teamList.filter((team) => team.school_abbrev !== 'TBD');
 
   const addNewPlayer = async () => {
     try {
@@ -98,7 +122,7 @@ export const handleInsert = async (
     onConfirm: async () => {
       await addNewPlayer();
     },
-    children: <PlayerForm formData={formData} player={null} />
+    children: <PlayerForm formData={formData} player={null} platformList={platformList} teamList={processedTeamList} />
   };
 
   setModalProps(props);
@@ -145,6 +169,7 @@ export const handleUpdate = async (
 ) => {
   const platformList = await getAllGamePlatforms();
   const teamList = await getAllTeams();
+  const processedTeamList = teamList.filter((team) => team.school_abbrev !== 'TBD');
 
   const updateExistingPlayer = async () => {
     try {
@@ -154,9 +179,11 @@ export const handleUpdate = async (
       setModalProps(callModalTemplate('Player', 'success', 'update', setModalProps));
 
       setTimeout(() => {
-        const url = new URL(player.picture_url);
-        const fileName = url.pathname.replace('/storage/v1/object/sign/images/', '');
-        deleteFile('images', [fileName]);
+        if (player.picture_url) {
+          const url = new URL(player.picture_url);
+          const fileName = url.pathname.replace('/storage/v1/object/sign/images/', '');
+          deleteFile('images', [fileName]);
+        }
         updatePlayerFromCache(processedPlayer, setCachedPlayers);
         setModalProps(null);
       }, 500);
@@ -173,7 +200,9 @@ export const handleUpdate = async (
     onConfirm: async () => {
       await updateExistingPlayer();
     },
-    children: <PlayerForm formData={formData} player={player} />
+    children: (
+      <PlayerForm formData={formData} player={player} platformList={platformList} teamList={processedTeamList} />
+    )
   };
 
   setModalProps(props);

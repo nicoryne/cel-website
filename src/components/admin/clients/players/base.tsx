@@ -1,28 +1,40 @@
 'use client';
 
-import { Player, PlayerFormType, PlayerWithDetails } from '@/lib/types';
+import { GamePlatform, PlayerFormType, PlayerWithDetails, Team } from '@/lib/types';
 import React from 'react';
 import Modal, { ModalProps } from '@/components/modal';
 import PaginationControls from '@/components/admin/pagination';
 import ButtonInsert from '@/components/admin/buttons/button-insert';
-import { addPlatformToCache, handleInsert } from '@/components/admin/clients/players/utils';
-import GamePlatformsCard from '@/components/admin/clients/players/card';
-import { getGamePlatformsByIndexRange } from '@/api/game-platform';
+import {
+  addPlayerToCache,
+  fetchPlayersByStringFilter,
+  getFilteredPlayers,
+  handleInsert
+} from '@/components/admin/clients/players/utils';
+import { appendPlayerDetails, getPlayersByIndexRange } from '@/api/player';
+import InputSearch from '@/components/admin/input-search';
+import PlayerCard from '@/components/admin/clients/players/card';
 
 type PlayersClientBaseProps = {
   playerCount: Promise<number | null>;
+  platformList: Promise<GamePlatform[]>;
+  teamList: Promise<Team[]>;
 };
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 9;
 
-export default function PlayersClientBase({ playerCount }: PlayersClientBaseProps) {
+export default function PlayersClientBase({ playerCount, platformList, teamList }: PlayersClientBaseProps) {
   const processedPlayerCount = React.use(playerCount);
+  const processedPlatformList = React.use(platformList);
+  const processedTeamList = React.use(teamList);
+
   const formData = React.useRef<PlayerFormType>();
 
   const [totalItems, setTotalItems] = React.useState<number>(0);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const [cachedPlayers, setCachedPlayers] = React.useState<PlayerWithDetails[]>([]);
   const [modalProps, setModalProps] = React.useState<ModalProps | null>(null);
+  const [searchFilter, setSearchFilter] = React.useState<string>('');
 
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
@@ -37,20 +49,21 @@ export default function PlayersClientBase({ playerCount }: PlayersClientBaseProp
     }
   }, [processedPlayerCount, cachedPlayers]);
 
-  const fetchGamePlatformsByPage = async (page: number) => {
+  const fetchPlayersByRange = async (page: number) => {
     const min = (page - 1) * ITEMS_PER_PAGE;
     const max = min + ITEMS_PER_PAGE;
-    const platformList = await getGamePlatformsByIndexRange(min, max);
+    const playerList = await getPlayersByIndexRange(min, max);
 
-    platformList.forEach((platform) => {
-      addPlatformToCache(platform, setCachedPlayers);
+    playerList.forEach((player) => {
+      const playerWithDetails = appendPlayerDetails(processedPlatformList, processedTeamList, player);
+      addPlayerToCache(playerWithDetails, setCachedPlayers);
     });
   };
 
   // Fetch Schedule
   React.useEffect(() => {
     const loadCurrentAndPrefetchNext = async (page: number) => {
-      await fetchGamePlatformsByPage(page);
+      await fetchPlayersByRange(page);
 
       if (page < totalPages) {
         setTimeout(() => {
@@ -62,12 +75,27 @@ export default function PlayersClientBase({ playerCount }: PlayersClientBaseProp
     loadCurrentAndPrefetchNext(1);
   }, [totalPages]);
 
-  const paginatedPlatforms = React.useMemo(() => {
+  // Filter if not in cache
+  const fetchPlayersByName = async () => {
+    const player = await fetchPlayersByStringFilter(searchFilter, processedPlatformList, processedTeamList);
+
+    if (player) {
+      addPlayerToCache(player, setCachedPlayers);
+    }
+  };
+
+  const paginatedPlayers = React.useMemo(() => {
+    const filtered = getFilteredPlayers(cachedPlayers, searchFilter);
+
+    if (searchFilter.length > 0) {
+      fetchPlayersByName();
+    }
+
     const min = (currentPage - 1) * ITEMS_PER_PAGE;
     const max = min + ITEMS_PER_PAGE;
 
-    return cachedPlayers.slice(min, max);
-  }, [cachedPlayers, currentPage]);
+    return filtered.slice(min, max);
+  }, [cachedPlayers, currentPage, searchFilter]);
 
   return (
     <>
@@ -95,12 +123,12 @@ export default function PlayersClientBase({ playerCount }: PlayersClientBaseProp
         <div className="relative overflow-x-auto border-2 border-neutral-800 sm:rounded-lg">
           {/* Platform Cards */}
           <ul className="grid grid-cols-1 gap-8 p-8 sm:grid-cols-2 md:grid-cols-3">
-            {paginatedPlatforms.map((platform, index) => (
+            {paginatedPlayers.map((player, index) => (
               <li key={index}>
-                <GamePlatformsCard
-                  platform={platform}
+                <PlayerCard
+                  player={player}
                   setModalProps={setModalProps}
-                  setCachedPlatforms={setCachedPlayers}
+                  setCachedPlayers={setCachedPlayers}
                   formData={formData}
                 />
               </li>

@@ -14,9 +14,13 @@ import { deleteFile, uploadFile } from '@/api/utils/storage';
 export const createPlayer = async (player: PlayerFormType): Promise<Player | null> => {
   const supabase = createClient();
   let processedPlayer = {
-    school_name: player.school_name,
-    school_abbrev: player.school_abbrev,
-    logo_url: ''
+    first_name: player.first_name,
+    last_name: player.last_name,
+    ingame_name: player.ingame_name,
+    team_id: player.team.id,
+    game_platform_id: player.game_platform.id,
+    roles: player.roles,
+    picture_url: ''
   };
 
   if (player.picture) {
@@ -25,7 +29,7 @@ export const createPlayer = async (player: PlayerFormType): Promise<Player | nul
     const signedLogoUrl = await uploadFile(filePath, fileName, player.picture, true);
 
     if (signedLogoUrl) {
-      processedPlayer.logo_url = signedLogoUrl;
+      processedPlayer.picture_url = signedLogoUrl;
     }
   }
 
@@ -79,6 +83,18 @@ export const getPlayerById = async (id: string): Promise<Player | null> => {
   return data;
 };
 
+export const getPlayerByName = async (name: string): Promise<Player | null> => {
+  const supabase = createClient();
+  const { data, error } = await supabase.from('players').select('*').textSearch('ingame_name', name).single();
+
+  if (error) {
+    handleError(error, `fetching player by ingame name: ${name}`);
+    return null;
+  }
+
+  return data as Player;
+};
+
 export const getPlayersByIndexRange = async (min: number, max: number): Promise<Player[]> => {
   const supabase = createClient();
 
@@ -111,18 +127,22 @@ export const appendPlayerDetails = (platformList: GamePlatform[], teamList: Team
 export const updatePlayerById = async (id: string, updates: PlayerFormType): Promise<Player | null> => {
   const supabase = createClient();
   let processedPlayer = {
-    school_name: updates.school_name,
-    school_abbrev: updates.school_abbrev,
-    logo_url: ''
+    first_name: updates.first_name,
+    last_name: updates.last_name,
+    ingame_name: updates.ingame_name,
+    team_id: updates.team.id,
+    game_platform_id: updates.game_platform.id,
+    roles: updates.roles,
+    picture_url: ''
   };
 
-  if (updates.logo) {
+  if (updates.picture) {
     const filePath = 'images/icons/players';
-    const fileName = `${updates.school_abbrev}_${Date.now()}.${updates.logo.type.split('/')[1]}`;
-    const signedLogoUrl = await uploadFile(filePath, fileName, updates.logo, true);
+    const fileName = `${updates.ingame_name}_${Date.now()}.${updates.picture.type.split('/')[1]}`;
+    const signedLogoUrl = await uploadFile(filePath, fileName, updates.picture, true);
 
     if (signedLogoUrl) {
-      processedPlayer.logo_url = signedLogoUrl;
+      processedPlayer.picture_url = signedLogoUrl;
     }
   }
 
