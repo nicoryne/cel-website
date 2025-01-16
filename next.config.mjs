@@ -7,7 +7,7 @@ const nextConfig = {
     return process.env.NEXT_PUBLIC_MAINTENANCE_MODE === '1'
       ? [
           {
-            source: '/((?!maintenance|dashboard).*)', // Allow `/maintenance` and `/dashboard`
+            source: '/((?!maintenance|dashboard|login).*)', // Allow `/maintenance` and `/dashboard` and `/login`
             destination: '/maintenance',
             permanent: false
           }
