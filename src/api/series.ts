@@ -4,7 +4,7 @@ import { handleError } from '@/api/utils/errorHandler';
 import { deleteFile, uploadFile } from '@/api/utils/storage';
 
 //====================
-// Game Platforms API
+// Series API
 //====================
 
 //========
@@ -109,6 +109,10 @@ export const appendSeriesDetails = (
     team_b: teamList.find((team) => team.id === series.team_b_id),
     league_schedule: leagueScheduleList.find((schedule) => schedule.id === series.league_schedule_id)
   } as SeriesWithDetails;
+};
+
+export const shortenSeriesName = (series: SeriesWithDetails | Series) => {
+  return `${series.start_time}`;
 };
 
 //========

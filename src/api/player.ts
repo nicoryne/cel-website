@@ -4,7 +4,7 @@ import { handleError } from '@/api/utils/errorHandler';
 import { deleteFile, uploadFile } from '@/api/utils/storage';
 
 //====================
-// Game Platforms API
+// Player API
 //====================
 
 //========

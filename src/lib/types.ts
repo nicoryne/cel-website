@@ -96,6 +96,36 @@ export type PlayerFormType = {
   picture: File | null;
 };
 
+export type ValorantMap = {
+  id: string /* PK */;
+  name: string;
+  is_active: boolean;
+  splash_image_url: string;
+};
+
+export type ValorantMapFormType = {
+  name: string;
+  is_active: boolean;
+  splash_image: File | null;
+};
+
+export type ValorantMatch = {
+  id: string /* PK */;
+  series_id: string /* FK */;
+  map_id: string /* FK */;
+  match_duration: string;
+  match_number: number;
+  team_a_status: string;
+  team_a_rounds: number;
+  team_b_status: string;
+  team_b_rounds: number;
+};
+
+export type ValorantMatchWithDetails = Omit<ValorantMatch, 'series_id' | 'map_id'> & {
+  series: Series;
+  map: ValorantMap;
+};
+
 export type PlayerWithDetails = Omit<Player, 'team_id' | 'game_platform_id'> & {
   team: Team | null;
   platform: GamePlatform | null;

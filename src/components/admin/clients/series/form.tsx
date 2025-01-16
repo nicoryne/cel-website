@@ -59,6 +59,17 @@ export default function SeriesForm({ formData, series, platformList, teamList, l
     }));
   };
 
+  React.useEffect(() => {
+    const teamAScore = seriesInfo.team_a_score;
+    const teamBScore = seriesInfo.team_b_score;
+
+    const statusMapping =
+      teamAScore > teamBScore ? ['Win', 'Loss'] : teamAScore < teamBScore ? ['Loss', 'Win'] : ['Draw', 'Draw'];
+
+    updateSeriesInfo('team_a_status', statusMapping[0]);
+    updateSeriesInfo('team_b_status', statusMapping[1]);
+  }, [seriesInfo.team_a_score, seriesInfo.team_b_score]);
+
   // Insert New Series
   React.useEffect(() => {
     formData.current = seriesInfo;

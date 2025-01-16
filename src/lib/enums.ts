@@ -7,7 +7,7 @@ export enum SeriesType {
 
 export enum SeasonType {
   Preseason = 'Preseason',
-  RegularSeason = 'Regular Season'
+  RegularSeason = 'Season'
 }
 
 export namespace Roles {

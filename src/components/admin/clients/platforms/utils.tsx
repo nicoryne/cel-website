@@ -149,9 +149,9 @@ export const handleUpdate = async (
   };
 
   const props: ModalProps = {
-    title: 'Updating Schedule',
+    title: 'Updating Game Platform',
     type: 'info',
-    message: 'Fill out the details to update game Schedule.',
+    message: 'Fill out the details to update game platform.',
     onCancel: () => setModalProps(null),
     onConfirm: async () => {
       await updateExistingPlatform();

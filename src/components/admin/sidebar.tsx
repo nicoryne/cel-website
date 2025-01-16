@@ -11,6 +11,7 @@ import {
   UsersIcon,
   BoltIcon,
   TvIcon,
+  MapIcon,
   CalendarDateRangeIcon,
   CalendarDaysIcon
 } from '@heroicons/react/24/outline';
@@ -28,14 +29,14 @@ const defaultSideLinks: SidebarLink[] = [
   { text: 'Teams', href: '/dashboard/teams', icon: UsersIcon },
   { text: 'Players', href: '/dashboard/players', icon: UserIcon },
   { text: 'Platforms', href: '/dashboard/platforms', icon: TvIcon },
-  { text: 'Characters', href: '/dashboard/characters', icon: BoltIcon }
+  { text: 'Characters', href: '/dashboard/characters', icon: BoltIcon },
+  { text: 'Valorant Maps', href: '/dashboard/maps', icon: MapIcon }
 ];
 
 export default function Sidebar() {
   const handleLogout = async () => {
     await logout();
   };
-  const [isMaximized, setIsMaximized] = React.useState(true);
 
   return (
     <aside className="inset-y-0 left-0 z-50 h-full min-h-screen w-60 border-r-2 border-[#212121] bg-[#131313] shadow-md duration-200">
@@ -45,11 +46,7 @@ export default function Sidebar() {
         <Link href="/dashboard" className="ml-3 mt-4 flex place-items-center">
           <Image className="h-auto w-10" src={cel_logo} alt="CEL Logo" />
 
-          <h1
-            className={`duration-400 ease ml-2 transform font-semibold text-neutral-300 transition-opacity ${isMaximized ? 'hidden opacity-0 md:block md:opacity-100' : 'hidden opacity-0'}`}
-          >
-            Dashboard
-          </h1>
+          <h1 className="duration-400 ease ml-2 transform font-semibold text-neutral-300">Dashboard</h1>
         </Link>
 
         {/* Pages Section */}
@@ -63,11 +60,7 @@ export default function Sidebar() {
                   <Link href={sideLink.href} className="flex items-center">
                     <IconComponent className="h-auto w-6" aria-hidden="true" />
 
-                    <span
-                      className={`duration-400 ease ml-2 transform text-xs transition-opacity ${isMaximized ? 'hidden opacity-0 md:block md:opacity-100' : 'hidden opacity-0'}`}
-                    >
-                      {sideLink.text}
-                    </span>
+                    <span className="duration-400 ease ml-2 transform text-xs transition-opacity">{sideLink.text}</span>
                   </Link>
                 </li>
               );
@@ -80,11 +73,7 @@ export default function Sidebar() {
           className="mt-auto flex min-w-full place-items-center rounded-sm border-t-2 border-neutral-800 px-6 py-4 text-neutral-500 hover:text-neutral-300"
         >
           <ArrowRightStartOnRectangleIcon className="h-auto w-6" />
-          <span
-            className={`duration-400 ease ml-2 transform text-xs transition-opacity ${isMaximized ? 'hidden opacity-0 md:block md:opacity-100' : 'hidden opacity-0'}`}
-          >
-            Logout
-          </span>
+          <span className="duration-400 ease ml-2 transform text-xs transition-opacity">Logout</span>
         </button>
       </nav>
     </aside>

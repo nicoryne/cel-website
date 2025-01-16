@@ -5,7 +5,7 @@ import { callModalTemplate } from '@/components/admin/clients/utils';
 import { appendSeriesDetails, createSeries, deleteSeriesById, updateSeriesById } from '@/api/series';
 import SeriesForm from '@/components/admin/clients/series/form';
 
-export const sortByStartTime = (a: SeriesWithDetails, b: SeriesWithDetails): number => {
+export const sortByStartTime = (a: SeriesWithDetails | Series, b: SeriesWithDetails | Series): number => {
   if (a.start_time < b.start_time) return 1;
   if (a.start_time > b.start_time) return -1;
 
