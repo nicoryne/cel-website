@@ -16,7 +16,8 @@
     "cel-tracker": "file:",
     "framer-motion": "^11.11.17",
     "next-themes": "^0.4.3",
-    "react-dom": "^19.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "react-use-measure": "^2.1.1",
     "sharp": "^0.33.5",
     "supabase": "^1.203.0"
@@ -30,7 +31,7 @@
     "postcss": "^8",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.8",
-    "react": "^19.0.0",
+    "react": "^18.3.1",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
