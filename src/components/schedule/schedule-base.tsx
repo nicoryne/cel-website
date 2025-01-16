@@ -5,14 +5,16 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import ControlPanel from '@/components/schedule/control-panel';
 import SeriesGroup from '@/components/schedule/series-group';
-import { GamePlatform, SeriesWithDetails } from '@/lib/types';
+import { GamePlatform, LeagueSchedule, Series, SeriesWithDetails, Team } from '@/lib/types';
 import { FilterState } from '@/components/schedule/types';
-import { getActiveSeries, scrollToDate } from '@/components/schedule/util';
+import { addSeriesToCache, getActiveSeries, scrollToDate } from '@/components/schedule/util';
 import cel_logo from '@/../public/logos/cel.webp';
 
 type ScheduleBaseProps = {
-  series: Promise<SeriesWithDetails[]>;
-  gamePlatforms: Promise<GamePlatform[]>;
+  series: Promise<Series[]>;
+  teamList: Promise<Team[]>;
+  platformList: Promise<GamePlatform[]>;
+  leagueScheduleList: Promise<LeagueSchedule[]>;
 };
 
 const fetchPlatformOptions = (platforms: Promise<GamePlatform[]>) => {
@@ -34,20 +36,26 @@ const fetchPlatformOptions = (platforms: Promise<GamePlatform[]>) => {
   return platformOptions;
 };
 
-export default function ScheduleBase({
-  series,
-  gamePlatforms
-}: ScheduleBaseProps) {
+export default function ScheduleBase({ series, teamList, platformList, leagueScheduleList }: ScheduleBaseProps) {
   const dateToday = new Date();
-  const platformOptions = fetchPlatformOptions(gamePlatforms);
-  const seriesList: SeriesWithDetails[] = React.use(series);
+  const processedTeamList = React.use(teamList);
+  const processedPlatformList = React.use(platformList);
+  const processedLeagueScheduleList = React.use(leagueScheduleList);
+  const platformOptions = fetchPlatformOptions(platformList);
+  const seriesList: Series[] = React.use(series);
 
+  const [seriesCache, setSeriesCache] = React.useState<SeriesWithDetails[]>([]);
   const [menuFilterState, toggleMenuFilter] = React.useState(false);
   const [filterState, setFilterState] = React.useState(platformOptions[0]);
 
+  React.useEffect(() => {
+    seriesList.forEach((series) => {
+      addSeriesToCache(series, setSeriesCache, processedPlatformList, processedTeamList, processedLeagueScheduleList);
+    });
+  }, [seriesList]);
   const activeSeries = React.useMemo(
-    () => getActiveSeries(seriesList, filterState, dateToday),
-    [filterState, seriesList, dateToday]
+    () => getActiveSeries(seriesCache, filterState, dateToday),
+    [filterState, seriesCache, dateToday]
   );
 
   const sortedDates = Object.keys(activeSeries).sort((a, b) => {
@@ -59,9 +67,7 @@ export default function ScheduleBase({
   const [currentDate, setCurrentDate] = React.useState(dateToday);
 
   const handleDateButtonPress = (type: 'prev' | 'today' | 'next') => {
-    const currentIndex = sortedDates.indexOf(
-      currentDate.toLocaleDateString('en-CA')
-    );
+    const currentIndex = sortedDates.indexOf(currentDate.toLocaleDateString('en-CA'));
 
     const setDateAndScroll = (date: Date) => {
       setCurrentDate(date);
@@ -96,7 +102,6 @@ export default function ScheduleBase({
 
   const sectionRefs = React.useRef<(HTMLElement | null)[]>([]);
 
-  // Scrolling Effect
   React.useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
