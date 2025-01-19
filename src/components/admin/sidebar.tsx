@@ -39,7 +39,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="inset-y-0 left-0 z-50 h-full min-h-screen w-60 border-r-2 border-[#212121] bg-[#131313] shadow-md duration-200">
+    <aside className="inset-y-0 left-0 z-50 h-full min-h-screen w-52 border-r-2 border-[#212121] bg-[#131313] shadow-md duration-200">
       {/* Wrapper */}
       <nav className="flex h-screen flex-col justify-between py-4">
         {/* Header */}

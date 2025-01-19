@@ -160,7 +160,7 @@ export default function SeriesForm({ formData, series, platformList, teamList, l
               />
             </div>
             {/* Team B */}
-            <div className="flex flex-col items-end space-y-12">
+            <div className="flex flex-col items-start space-y-12">
               {/* Button to select Team B */}
               <button
                 type="button"
@@ -214,7 +214,7 @@ export default function SeriesForm({ formData, series, platformList, teamList, l
         {/* Series Status */}
         <div className="flex flex-1 flex-col gap-2">
           <span className="text-xs">Series Status</span>
-          <div className="flex flex-col items-end space-y-12">
+          <div className="relative flex flex-col items-end space-y-12">
             {/* Button to select Series Status */}
             <button
               type="button"
@@ -227,7 +227,7 @@ export default function SeriesForm({ formData, series, platformList, teamList, l
             {/* Dropdown for Game Platform Selection */}
             {statusMenu && (
               <motion.div
-                className="absolute flex w-80 flex-col place-self-center rounded-md border-2 border-neutral-600 shadow-lg"
+                className="absolute flex w-full flex-col place-self-center rounded-md border-2 border-neutral-600 shadow-lg"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
@@ -255,7 +255,7 @@ export default function SeriesForm({ formData, series, platformList, teamList, l
           {/* Game Platform */}
           <div className="flex flex-1 flex-col gap-2">
             <span className="text-xs">Game</span>
-            <div className="flex flex-col items-end space-y-12">
+            <div className="relative flex flex-col items-end space-y-12">
               {/* Button to select Game Platform */}
               <button
                 type="button"
@@ -275,7 +275,7 @@ export default function SeriesForm({ formData, series, platformList, teamList, l
               {/* Dropdown for Game Platform Selection */}
               {platformMenu && (
                 <motion.div
-                  className="absolute flex w-80 flex-col place-self-center rounded-md border-2 border-neutral-600 shadow-lg"
+                  className="absolute flex w-full flex-col place-self-center rounded-md border-2 border-neutral-600 shadow-lg"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
@@ -308,7 +308,7 @@ export default function SeriesForm({ formData, series, platformList, teamList, l
           {/* Series Type */}
           <div>
             <span className="text-xs">Series Type</span>
-            <div className="flex flex-col items-end space-y-12">
+            <div className="relative flex flex-col items-end space-y-12">
               {/* Button to select Series Type */}
               <button
                 type="button"
@@ -321,7 +321,7 @@ export default function SeriesForm({ formData, series, platformList, teamList, l
               {/* Dropdown for Series type Selection */}
               {typeMenu && (
                 <motion.div
-                  className="absolute flex w-16 flex-col place-self-center rounded-md border-2 border-neutral-600 shadow-lg"
+                  className="absolute flex w-full flex-col place-self-center rounded-md border-2 border-neutral-600 shadow-lg"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
@@ -350,7 +350,7 @@ export default function SeriesForm({ formData, series, platformList, teamList, l
         {/* League Schedule and Week */}
         <div className="flex gap-4">
           {/* League Schedule */}
-          <div className="flex flex-1 flex-col gap-2">
+          <div className="relative flex flex-1 flex-col gap-2">
             <span className="text-xs">League Schedule</span>
             <div className="flex flex-col items-end space-y-12">
               {/* Button to select League Schedule */}

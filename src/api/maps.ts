@@ -57,7 +57,7 @@ export const getMapCount = async (): Promise<number | null> => {
 
 export const getAllMaps = async (): Promise<ValorantMap[]> => {
   const supabase = createClient();
-  const { data, error } = await supabase.from('valorant_maps').select('*');
+  const { data, error } = await supabase.from('valorant_maps').select('*').order('name', { ascending: true });
 
   if (error) {
     handleError(error, 'fetching valorant maps');

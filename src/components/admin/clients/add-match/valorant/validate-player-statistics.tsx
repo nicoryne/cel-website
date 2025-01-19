@@ -2,34 +2,34 @@
 
 import React, { useEffect, useState } from 'react';
 import Tesseract from 'tesseract.js';
-import cv from '@techstark/opencv-js';
+import { preprocessImageAndExtractRows } from '@/components/admin/clients/add-match/valorant/utils';
 
 type ValidatePlayerStatisticsProps = {
   imageData: React.MutableRefObject<string | undefined>;
 };
 
+type RowData = {
+  image: string;
+  text: string;
+};
+
 export default function ValidatePlayerStatistics({ imageData }: ValidatePlayerStatisticsProps) {
-  const [extractedText, setExtractedText] = useState<string>('');
+  const [rowsData, setRowsData] = useState<RowData[]>([]);
+  const [processedImage, setProcessedImage] = useState<string | null>(null);
   const [progress, setProgress] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
 
+  React.useEffect(() => {
+    console.log(rowsData);
+  }, [rowsData]);
+
   useEffect(() => {
     if (imageData.current) {
-      const processImage = async () => {
+      const processImageData = async () => {
         try {
-          const processedImage = await preprocessImage(imageData.current!);
-
-          const {
-            data: { text }
-          } = await Tesseract.recognize(processedImage, 'eng', {
-            logger: (info) => {
-              if (info.status === 'recognizing text') {
-                setProgress(Math.round(info.progress * 100));
-              }
-            }
-          });
-
-          setExtractedText(text);
+          const { rowsData, processedImageUrl } = await processImage(imageData.current!);
+          setRowsData(rowsData);
+          setProcessedImage(processedImageUrl);
           setError(null);
         } catch (err) {
           setError('Failed to extract text from image. Please try again.');
@@ -37,70 +37,79 @@ export default function ValidatePlayerStatistics({ imageData }: ValidatePlayerSt
         }
       };
 
-      processImage();
+      processImageData();
     }
   }, [imageData]);
 
-  const preprocessImage = async (imagePath: string) => {
-    return new Promise<string>((resolve, reject) => {
-      const imgElement = document.createElement('img');
-      imgElement.src = imagePath;
+  const processRows = async (rowDataUrls: string[][]) => {
+    const results: RowData[] = [];
+    const totalCells = rowDataUrls.flat().length;
+    let processedCells = 0;
 
-      imgElement.onload = () => {
-        try {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-
-          canvas.width = imgElement.width;
-          canvas.height = imgElement.height;
-
-          if (ctx) {
-            ctx.drawImage(imgElement, 0, 0);
-
-            const src = cv.imread(canvas);
-
-            cv.cvtColor(src, src, cv.COLOR_RGBA2GRAY);
-
-            cv.GaussianBlur(src, src, new cv.Size(5, 5), 0);
-
-            cv.adaptiveThreshold(src, src, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2);
-
-            const kernel = cv.Mat.eye(3, 3, cv.CV_32F);
-            kernel.data32F[4] = 5.0;
-            kernel.data32F[1] = kernel.data32F[3] = kernel.data32F[5] = kernel.data32F[7] = -1.0;
-            cv.filter2D(src, src, cv.CV_8U, kernel);
-
-            cv.imshow(canvas, src);
-            const processedDataUrl = canvas.toDataURL();
-
-            src.delete();
-
-            resolve(processedDataUrl);
-          } else {
-            reject(new Error('Failed to get 2D context from canvas.'));
+    for (const rowDataUrl of rowDataUrls) {
+      const rowResult: RowData[] = [];
+      for (const cellDataUrl of rowDataUrl) {
+        const {
+          data: { text }
+        } = await Tesseract.recognize(cellDataUrl, 'eng', {
+          logger: (info) => {
+            if (info.status === 'recognizing text') {
+              // Update progress based on individual cell progress
+              const cellProgress = info.progress / totalCells;
+              setProgress((prevProgress) => Math.min(100, prevProgress + Math.round(cellProgress * 100)));
+            }
           }
-        } catch (err) {
-          reject(err);
-        }
-      };
+        });
+        rowResult.push({ image: cellDataUrl, text });
 
-      imgElement.onerror = (err) => {
-        reject(new Error('Failed to load the image for preprocessing.'));
-      };
-    });
+        processedCells += 1;
+        setProgress(Math.round((processedCells / totalCells) * 100));
+      }
+      results.push(...rowResult); // Flatten the nested results
+    }
+    return results;
+  };
+
+  const processImage = async (imagePath: string) => {
+    try {
+      const { rowDataUrls, processedImageUrl } = await preprocessImageAndExtractRows(imagePath);
+      const rowResults = await processRows(rowDataUrls);
+      return { rowsData: rowResults, processedImageUrl };
+    } catch (err) {
+      console.error('Error processing image:', err);
+      throw err;
+    }
   };
 
   return (
     <div className="w-full rounded-md border-2 border-neutral-700 bg-neutral-900 p-4 text-neutral-600">
       {error ? (
         <p className="text-red-500">{error}</p>
-      ) : extractedText ? (
-        <div>
-          <h2 className="text-lg font-semibold text-neutral-200">Extracted Player Statistics</h2>
-          <pre className="mt-4 whitespace-pre-wrap text-neutral-400">{extractedText}</pre>
-        </div>
       ) : (
-        <p>Processing... {progress > 0 && `${progress}%`}</p>
+        <div>
+          {processedImage && (
+            <div>
+              <h2 className="text-lg font-semibold text-neutral-200">Processed Image</h2>
+              <img src={processedImage} alt="Processed Image" className="w-full rounded-md border border-neutral-700" />
+            </div>
+          )}
+          {rowsData.length > 0 ? (
+            <div className="mt-4">
+              <h2 className="text-lg font-semibold text-neutral-200">Extracted Player Statistics</h2>
+              <div className="mt-4 grid grid-cols-9 gap-4">
+                {rowsData.map((row, index) => (
+                  <div key={index} className="flex flex-col items-start space-x-4">
+                    <img src={row.image} alt={`Row ${index + 1}`} className="rounded-md border border-neutral-700" />
+                    <pre className="whitespace-pre-wrap text-neutral-400">{row.text}</pre>
+                  </div>
+                ))}
+              </div>
+              <div></div>
+            </div>
+          ) : (
+            <p>Processing... {progress > 0 && `${progress}%`}</p>
+          )}
+        </div>
       )}
     </div>
   );

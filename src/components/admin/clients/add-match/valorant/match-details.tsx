@@ -1,204 +1,242 @@
 'use client';
-import { Series, ValorantMap, ValorantMatchWithDetails } from '@/lib/types';
-import { motion } from 'framer-motion';
-import { shortenSeriesName } from '@/api/series';
+import { Series, Team, ValorantMap, ValorantMatchWithDetails } from '@/lib/types';
 import React from 'react';
+import { getTeamById } from '@/api/team';
+import Image from 'next/image';
+import { CalendarIcon, ClockIcon } from '@heroicons/react/16/solid';
+import not_found from '@/../../public/images/not-found.webp';
+import PaginationControls from '@/components/admin/pagination';
 
 type MatchDetailsFormProps = {
   seriesList: Series[];
   mapList: ValorantMap[];
-  match: ValorantMatchWithDetails | null;
-  formData: React.MutableRefObject<{} | undefined>;
+  matchInfo: Partial<ValorantMatchWithDetails>;
+  updateMatchInfo: (field: keyof ValorantMatchWithDetails, value: string | number | Series | ValorantMap) => void;
 };
-export default function MatchDetailsForm({ seriesList, mapList, match, formData }: MatchDetailsFormProps) {
-  const [matchInfo, setMatchInfo] = React.useState<Partial<ValorantMatchWithDetails>>({
-    series: match?.series || seriesList[0],
-    map: match?.map || mapList[0],
-    match_duration: match?.match_duration || '00:00',
-    match_number: match?.match_number || 0,
-    team_a_status: match?.team_a_status || 'Draw',
-    team_a_rounds: match?.team_a_rounds || 0,
-    team_b_status: match?.team_b_status || 'Draw',
-    team_b_rounds: match?.team_b_rounds || 0
+export default function MatchDetailsForm({ seriesList, mapList, matchInfo, updateMatchInfo }: MatchDetailsFormProps) {
+  const mapIndex = matchInfo.map ? mapList.findIndex((map) => map.id === matchInfo.map?.id) + 1 : 1;
+  const secondsInitial = matchInfo.match_duration?.split(':')[1];
+  const minutesInitial = matchInfo.match_duration?.split(':')[0];
+
+  const [currentPage, setCurrentPage] = React.useState(mapIndex);
+
+  const [seconds, setSeconds] = React.useState(secondsInitial);
+  const [minutes, setMinutes] = React.useState(minutesInitial);
+
+  const [teams, setTeams] = React.useState<{
+    team_a: Team | null;
+    team_b: Team | null;
+  }>({
+    team_a: null,
+    team_b: null
   });
 
-  const updateMatchInfo = (field: keyof ValorantMatchWithDetails, value: string | number | Series | ValorantMap) => {
-    setMatchInfo((matchInfo) => ({
-      ...matchInfo,
-      [field]: value
-    }));
-  };
+  React.useEffect(() => {
+    const fetchTeams = async () => {
+      if (matchInfo.series?.team_a_id && matchInfo.series?.team_b_id) {
+        const teamA = await getTeamById(matchInfo.series.team_a_id);
+        const teamB = await getTeamById(matchInfo.series.team_b_id);
+
+        setTeams({
+          team_a: teamA,
+          team_b: teamB
+        });
+      }
+    };
+
+    fetchTeams();
+  }, [matchInfo.series]);
 
   React.useEffect(() => {
-    formData.current = matchInfo;
-  }, [matchInfo]);
+    updateMatchInfo('map', mapList[currentPage - 1]);
+  }, [currentPage]);
 
-  const [seriesMenu, toggleSeriesMenu] = React.useState(false);
-  const [mapMenu, toggleMapMenu] = React.useState(false);
+  React.useEffect(() => {
+    updateMatchInfo('match_duration', `${minutes}:${seconds}`);
+  }, [minutes, seconds]);
 
   return (
-    <form className="w-full rounded-md border-2 border-neutral-700 bg-neutral-900 p-4">
-      <div className="flex flex-col gap-4">
-        <div className="flex gap-4">
-          <div className="relative flex w-full flex-1 flex-col items-end space-y-12">
-            <div className="w-full">
-              <label htmlFor="series" className="text-xs">
-                Series
-              </label>
-              <button
-                type="button"
-                id="series"
-                name="series"
-                className="flex h-10 w-full items-center gap-2 rounded-md border-2 border-neutral-600 bg-neutral-900 px-4 text-white transition-colors duration-150 ease-linear hover:border-neutral-500 hover:bg-neutral-800"
-                onClick={() => toggleSeriesMenu(!seriesMenu)}
-              >
-                <p className="text-xs md:text-base">{shortenSeriesName(matchInfo.series!) || 'Select Series'}</p>
-              </button>
+    <div className="w-full rounded-md border-2 border-neutral-700 bg-neutral-900 p-4">
+      <div className="flex flex-col gap-8">
+        <div className="flex w-full justify-between">
+          <h1 className="text-xs font-bold text-neutral-500">Match Details</h1>
+          {matchInfo?.series && (
+            <div className="flex items-center gap-4">
+              <time className="flex gap-2 text-xs font-bold text-neutral-500">
+                <CalendarIcon className="h-auto w-4" />
+                {new Date(matchInfo.series?.start_time).toLocaleDateString('en-CA', {
+                  month: 'short',
+                  day: '2-digit',
+                  year: 'numeric'
+                })}
+              </time>
+
+              <time className="flex gap-2 text-xs font-bold text-neutral-500">
+                <ClockIcon className="h-auto w-4" />
+                {new Date(matchInfo.series?.start_time).toLocaleTimeString('en-CA', {
+                  hour12: true,
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+                {' - '}
+                {new Date(matchInfo.series?.end_time).toLocaleTimeString('en-CA', {
+                  hour12: true,
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </time>
             </div>
-
-            {seriesMenu && (
-              <motion.div
-                className="absolute flex w-full flex-col rounded-md border-2 border-neutral-600 shadow-lg"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 20 }}
-              >
-                {seriesList.map((series, index) => (
-                  <button
-                    className={`justify-left flex h-10 w-full place-items-center gap-2 px-4 text-neutral-300 hover:text-white ${
-                      series.id === matchInfo.series?.id ? 'bg-neutral-800' : 'bg-[var(--background)]'
-                    }`}
-                    key={index}
-                    onClick={() => {
-                      updateMatchInfo('series', series);
-                      toggleSeriesMenu(!seriesMenu);
-                    }}
-                  >
-                    <p className="text-xs">{shortenSeriesName(series)}</p>
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </div>
-
-          <div className="relative flex w-full flex-1 flex-col items-end space-y-12">
-            <div className="w-full">
-              <label htmlFor="map" className="text-xs">
-                Map
-              </label>
-              <button
-                type="button"
-                id="map"
-                name="map"
-                className="flex h-10 w-full items-center gap-2 rounded-md border-2 border-neutral-600 bg-neutral-900 px-4 text-white transition-colors duration-150 ease-linear hover:border-neutral-500 hover:bg-neutral-800"
-                onClick={() => toggleMapMenu(!mapMenu)}
-              >
-                <p className="text-xs md:text-base">{matchInfo.map?.name || 'Select Map'}</p>
-              </button>
+          )}
+        </div>
+        <div className="flex">
+          <div className="flex flex-col gap-4">
+            <div className="flex h-fit w-fit flex-col gap-4 border-2 border-neutral-600 p-1 text-center">
+              {matchInfo.map?.splash_image_url ? (
+                <Image
+                  src={matchInfo.map?.splash_image_url!}
+                  alt={`${matchInfo.map?.name} Picture`}
+                  height={400}
+                  width={400}
+                />
+              ) : (
+                <Image src={not_found} alt={'Not Found Picture'} height={400} width={400} />
+              )}
+              <div className="flex items-center justify-center gap-4">
+                <span className="text-xs font-semibold text-neutral-200">Current Map:</span>
+                <span
+                  className={`rounded-lg px-4 py-1 text-xs font-semibold ${matchInfo.map?.is_active ? 'bg-green-800' : 'bg-red-800'}`}
+                >
+                  {matchInfo?.map?.name}
+                </span>
+              </div>
+              <PaginationControls
+                currentPage={currentPage}
+                totalPages={mapList.length}
+                setCurrentPage={setCurrentPage}
+              />
             </div>
-
-            {mapMenu && (
-              <motion.div
-                className="absolute flex w-full flex-col place-self-center rounded-md border-2 border-neutral-600 shadow-lg"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 20 }}
-              >
-                {mapList.map((map, index) => (
-                  <button
-                    className={`justify-left flex h-10 w-full place-items-center gap-2 px-4 text-neutral-300 hover:text-white ${
-                      map.id === matchInfo.map?.id ? 'bg-neutral-800' : 'bg-[var(--background)]'
-                    }`}
-                    key={index}
-                    onClick={() => {
-                      updateMatchInfo('map', map);
-                      toggleMapMenu(!mapMenu);
+          </div>
+          <div className="flex flex-1 px-8">
+            <div className="flex w-full place-items-center justify-between">
+              {/* Team A */}
+              <div className="flex flex-col place-items-center justify-center gap-4">
+                <figure className="flex flex-col place-items-center gap-2">
+                  <Image
+                    src={teams.team_a?.logo_url!}
+                    alt={`${teams.team_a?.school_abbrev} Logo`}
+                    width={100}
+                    height={100}
+                  />
+                  <figcaption className="rounded bg-neutral-800 px-4 py-1 text-xs font-semibold text-neutral-300">
+                    {teams.team_a?.school_abbrev}
+                  </figcaption>
+                </figure>
+                <div className="relative flex flex-col gap-2">
+                  <label htmlFor="teamARounds" className="text-xs font-semibold text-neutral-400">
+                    {teams.team_a?.school_abbrev} Rounds Won
+                  </label>
+                  <input
+                    type="number"
+                    id="teamARounds"
+                    name="teamARounds"
+                    min="0"
+                    max="100"
+                    value={matchInfo?.team_a_rounds}
+                    onChange={(e) => {
+                      updateMatchInfo('team_a_rounds', e.target.valueAsNumber);
                     }}
-                  >
-                    <p className="text-xs">{map.name}</p>
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <div className="w-full flex-1">
-            <label htmlFor="duration" className="text-xs">
-              Match Duration
-            </label>
-            <input
-              type="text"
-              id="duration"
-              name="duration"
-              className="flex h-10 w-full items-center gap-2 rounded-md border-2 border-neutral-600 bg-neutral-900 px-4 text-white transition-colors duration-150 ease-linear hover:border-neutral-500 hover:bg-neutral-800"
-            />
-          </div>
-          <div className="w-32">
-            <label htmlFor="matchNumber" className="text-xs">
-              Match Number
-            </label>
-            <input
-              type="number"
-              id="matchNumber"
-              name="matchNumber"
-              min={1}
-              max={5}
-              className="flex h-10 w-full items-center gap-2 rounded-md border-2 border-neutral-600 bg-neutral-900 px-4 text-white transition-colors duration-150 ease-linear hover:border-neutral-500 hover:bg-neutral-800"
-            />
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <div className="w-full">
-            <label htmlFor="duration" className="text-xs">
-              Team A Status
-            </label>
-            <input
-              type="text"
-              id="duration"
-              name="duration"
-              className="flex h-10 w-full items-center gap-2 rounded-md border-2 border-neutral-600 bg-neutral-900 px-4 text-white transition-colors duration-150 ease-linear hover:border-neutral-500 hover:bg-neutral-800"
-            />
-          </div>
-          <div className="w-full">
-            <label htmlFor="matchNumber" className="text-xs">
-              Team A Rounds
-            </label>
-            <input
-              type="number"
-              id="matchNumber"
-              name="matchNumber"
-              min={0}
-              max={13}
-              className="flex h-10 w-full items-center gap-2 rounded-md border-2 border-neutral-600 bg-neutral-900 px-4 text-white transition-colors duration-150 ease-linear hover:border-neutral-500 hover:bg-neutral-800"
-            />
-          </div>
-        </div>
-        <div className="flex gap-4">
-          <div className="w-full">
-            <label htmlFor="duration" className="text-xs">
-              Team B Status
-            </label>
-            <input
-              type="text"
-              id="duration"
-              name="duration"
-              className="flex h-10 w-full items-center gap-2 rounded-md border-2 border-neutral-600 bg-neutral-900 px-4 text-white transition-colors duration-150 ease-linear hover:border-neutral-500 hover:bg-neutral-800"
-            />
-          </div>
-          <div className="w-full">
-            <label htmlFor="matchNumber" className="text-xs">
-              Team B Rounds
-            </label>
-            <input
-              type="number"
-              id="matchNumber"
-              name="matchNumber"
-              min={0}
-              max={13}
-              className="flex h-10 w-full items-center gap-2 rounded-md border-2 border-neutral-600 bg-neutral-900 px-4 text-white transition-colors duration-150 ease-linear hover:border-neutral-500 hover:bg-neutral-800"
-            />
+                    className="w-full rounded-md border-2 border-neutral-700 bg-neutral-900 text-center text-2xl"
+                  />
+                </div>
+              </div>
+              {/* End of Team A */}
+
+              {/* Middle */}
+              <div className="flex h-full flex-col gap-2 pt-16">
+                <div className="relative mx-auto flex w-fit flex-col gap-2 text-center">
+                  <span className="text-xs font-semibold text-neutral-400">Match Number</span>
+                  <input
+                    type="number"
+                    id="matchNumber"
+                    name="matchNumber"
+                    placeholder="1"
+                    min="0"
+                    max="5"
+                    value={matchInfo.match_number}
+                    onChange={(e) => {
+                      updateMatchInfo('match_number', e.target.valueAsNumber);
+                    }}
+                    className="w-full rounded-md border-2 border-neutral-700 bg-neutral-900 text-center text-2xl"
+                  />
+                </div>
+                <div className="flex flex-col place-items-center gap-4">
+                  <span className="font-bold text-neutral-600">Match Duration</span>
+                  <div className="flex gap-4">
+                    <div className="relative flex w-16 flex-col gap-2 text-center">
+                      <span className="text-xs font-semibold text-neutral-400">Minutes</span>
+                      <input
+                        type="text"
+                        id="minutes"
+                        name="minutes"
+                        placeholder="00"
+                        value={minutes}
+                        onChange={(e) => setMinutes(e.target.value)}
+                        className="w-full rounded-md border-2 border-neutral-700 bg-neutral-900 text-center text-2xl"
+                      />
+                    </div>
+                    <span className="my-8 text-2xl text-neutral-400">:</span>
+                    <div className="relative flex w-16 flex-col gap-2 text-center">
+                      <span className="text-xs font-semibold text-neutral-400">Seconds</span>
+                      <input
+                        type="text"
+                        id="seconds"
+                        name="seconds"
+                        placeholder="00"
+                        value={seconds}
+                        onChange={(e) => setSeconds(e.target.value)}
+                        className="w-full rounded-md border-2 border-neutral-700 bg-neutral-900 text-center text-2xl"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* End of Middle */}
+
+              {/* Team B */}
+              <div className="flex flex-col place-items-center justify-center gap-4">
+                <figure className="flex flex-col place-items-center gap-2">
+                  <Image
+                    src={teams.team_b?.logo_url!}
+                    alt={`${teams.team_b?.school_abbrev} Logo`}
+                    width={100}
+                    height={100}
+                  />
+                  <figcaption className="rounded bg-neutral-800 px-4 py-1 text-xs font-semibold text-neutral-300">
+                    {teams.team_b?.school_abbrev}
+                  </figcaption>
+                </figure>
+                <div className="relative flex flex-col gap-2">
+                  <label htmlFor="teamBRounds" className="text-xs font-semibold text-neutral-400">
+                    {teams.team_b?.school_abbrev} Rounds Won
+                  </label>
+                  <input
+                    type="number"
+                    id="teamBRounds"
+                    name="teamBRounds"
+                    min="0"
+                    max="100"
+                    value={matchInfo?.team_b_rounds}
+                    onChange={(e) => {
+                      updateMatchInfo('team_b_rounds', e.target.valueAsNumber);
+                    }}
+                    className="w-full rounded-md border-2 border-neutral-700 bg-neutral-900 text-center text-2xl"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </form>
+    </div>
   );
 }
