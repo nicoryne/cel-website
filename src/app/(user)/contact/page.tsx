@@ -1,4 +1,4 @@
-import ContactSection from '@/components/landing/contact-section';
+import ContactSection from '@/app/(user)/(landing)/_sections/contact-section';
 
 export default function ContactPage() {
   return (

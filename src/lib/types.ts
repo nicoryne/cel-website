@@ -1,47 +1,54 @@
-export type Team = {
+export interface Team {
   id: string /* PK */;
   school_abbrev: string;
   school_name: string;
   logo_url: string;
-};
+}
 
-export type TeamFormType = {
+export interface TeamFormType {
   school_abbrev: string;
   school_name: string;
   logo: File | null;
-};
+}
 
-export type LeagueSchedule = {
+export interface LeagueSchedule {
   id: string /* PK */;
   start_date: Date;
   end_date: Date;
   league_stage: string;
   season_number: number;
   season_type: string;
-};
+}
 
-export type GamePlatform = {
+export interface SeasonInfo {
+  start_date: Date;
+  end_date: Date;
+  season_type: string;
+  season_number: number;
+}
+
+export interface GamePlatform {
   id: string /* PK */;
   created_at: string;
   platform_title: string;
   platform_abbrev: string;
   logo_url: string;
-};
+}
 
-export type GamePlatformFormType = {
+export interface GamePlatformFormType {
   platform_title: string;
   platform_abbrev: string;
   logo: File | null;
-};
+}
 
-export type Character = {
+export interface Character {
   id: string /* PK */;
   name: string;
   role: string;
   platform_id: string;
-};
+}
 
-export type Series = {
+export interface Series {
   id: string /* PK */;
   league_schedule_id: string /* FK */;
   series_type: string;
@@ -56,9 +63,9 @@ export type Series = {
   platform_id: string /* FK */;
   start_time: Date;
   end_time: Date;
-};
+}
 
-export type SeriesFormType = {
+export interface SeriesFormType {
   league_schedule: LeagueSchedule /* FK */;
   series_type: string;
   team_a: Team /* FK */;
@@ -73,9 +80,9 @@ export type SeriesFormType = {
   date: string;
   start_time: string;
   end_time: string;
-};
+}
 
-export type Player = {
+export interface Player {
   id: string /* PK */;
   first_name: string;
   last_name: string;
@@ -84,9 +91,9 @@ export type Player = {
   game_platform_id: string;
   roles: string[];
   picture_url: string;
-};
+}
 
-export type PlayerFormType = {
+export interface PlayerFormType {
   first_name: string;
   last_name: string;
   ingame_name: string;
@@ -94,22 +101,22 @@ export type PlayerFormType = {
   game_platform: GamePlatform;
   roles: string[];
   picture: File | null;
-};
+}
 
-export type ValorantMap = {
+export interface ValorantMap {
   id: string /* PK */;
   name: string;
   is_active: boolean;
   splash_image_url: string;
-};
+}
 
-export type ValorantMapFormType = {
+export interface ValorantMapFormType {
   name: string;
   is_active: boolean;
   splash_image: File | null;
-};
+}
 
-export type ValorantMatch = {
+export interface ValorantMatch {
   id: string /* PK */;
   series_id: string /* FK */;
   map_id: string /* FK */;
@@ -119,6 +126,30 @@ export type ValorantMatch = {
   team_a_rounds: number;
   team_b_status: string;
   team_b_rounds: number;
+}
+
+export interface ValorantMatchesPlayerStats {
+  id: string /* PK */;
+  player_id: string /* FK */;
+  match_id: string /* FK */;
+  agent_id: string /* FK */;
+  acs: number;
+  kills: number;
+  deaths: number;
+  assists: number;
+  econ_rating: number;
+  first_bloods: number;
+  plants: number;
+  defuses: number;
+}
+
+export type ValorantMatchesPlayerStatsWithDetails = Omit<
+  ValorantMatchesPlayerStats,
+  'player_id' | 'match_id' | 'agent_id'
+> & {
+  player: Player;
+  match: ValorantMatch;
+  agent: Character;
 };
 
 export type ValorantMatchWithDetails = Omit<ValorantMatch, 'series_id' | 'map_id'> & {

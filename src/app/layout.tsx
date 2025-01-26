@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { rem } from '@/lib/fonts';
+import { manrope, delagothic } from '@/lib/fonts';
+import { Providers } from '@/app/providers';
 import '@/app/globals.css';
 
 export const metadata: Metadata = {
@@ -21,8 +22,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={rem.variable}>
-      <body>{children}</body>
+    <html lang="en" className={`${manrope.variable} ${delagothic.variable}`} suppressHydrationWarning>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

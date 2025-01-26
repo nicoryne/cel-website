@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import ScheduleBase from '@/components/schedule/schedule-base';
+import ScheduleBase from '@/app/(user)/schedule/_ui/schedule-base';
 import Loading from '@/components/loading';
 import { getAllGamePlatforms } from '@/api/game-platform';
 import { getSeriesByIndexRange } from '@/api/series';
@@ -13,7 +13,7 @@ export default function SchedulePage() {
   const leagueScheduleList = getAllLeagueSchedules();
 
   return (
-    <main className="mx-auto px-8 pb-8 md:w-[800px] lg:w-[1100px]">
+    <div className="mx-auto px-8 pb-8 md:w-[800px] lg:w-[1100px]">
       <Suspense fallback={<Loading />}>
         <ScheduleBase
           series={series}
@@ -22,6 +22,6 @@ export default function SchedulePage() {
           leagueScheduleList={leagueScheduleList}
         />
       </Suspense>
-    </main>
+    </div>
   );
 }

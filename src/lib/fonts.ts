@@ -1,7 +1,19 @@
-import { REM } from 'next/font/google';
+import localFont from 'next/font/local';
 
-export const rem = REM({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-rem'
+export const manrope = localFont({
+  src: [
+    {
+      path: '../../public/fonts/Manrope-VariableFont_wght.ttf'
+    }
+  ],
+  variable: '--font-manrope'
+});
+
+export const delagothic = localFont({
+  src: [
+    {
+      path: '../../public/fonts/DelaGothicOne-Regular.ttf'
+    }
+  ],
+  variable: '--font-delagothic'
 });

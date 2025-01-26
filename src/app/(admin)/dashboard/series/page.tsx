@@ -3,7 +3,7 @@ import { getAllGamePlatforms } from '@/api/game-platform';
 import { getAllTeams } from '@/api/team';
 import { getSeriesCount } from '@/api/series';
 import { Suspense } from 'react';
-import SeriesClientBase from '@/components/admin/clients/series/base';
+import SeriesClientBase from '@/app/(admin)/_ui/clients/series/base';
 import Loading from '@/components/loading';
 
 export default function AdminSeries() {

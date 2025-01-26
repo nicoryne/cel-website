@@ -1,5 +1,5 @@
 import { getMapCount } from '@/api/maps';
-import MapsClientBase from '@/components/admin/clients/maps/base';
+import MapsClientBase from '@/app/(admin)/_ui/clients/maps/base';
 import Loading from '@/components/loading';
 import { Suspense } from 'react';
 

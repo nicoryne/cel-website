@@ -1,7 +1,7 @@
 import { getAllGamePlatforms } from '@/api/game-platform';
 import { getPlayerCount } from '@/api/player';
 import { getAllTeams } from '@/api/team';
-import PlayersClientBase from '@/components/admin/clients/players/base';
+import PlayersClientBase from '@/app/(admin)/_ui/clients/players/base';
 import { Suspense } from 'react';
 
 export default function AdminPlayers() {

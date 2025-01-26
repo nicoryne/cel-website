@@ -122,17 +122,17 @@ export const shortenSeriesName = (series: SeriesWithDetails | Series) => {
 export const updateSeriesById = async (id: string, updates: SeriesFormType): Promise<Series | null> => {
   const supabase = createClient();
   let processedSeries = {
-    league_schedule: updates.league_schedule,
+    league_schedule_id: updates.league_schedule.id,
     series_type: updates.series_type,
-    team_a: updates.team_a,
+    team_a_id: updates.team_a.id,
     team_a_score: updates.team_a_score,
     team_a_status: updates.team_a_status,
-    team_b: updates.team_b,
+    team_b_id: updates.team_b.id,
     team_b_score: updates.team_b_score,
     team_b_status: updates.team_b_status,
     week: updates.week,
     status: updates.status,
-    platform: updates.platform,
+    platform_id: updates.platform.id,
     start_time: `${updates.date} ${updates.start_time}:00`,
     end_time: `${updates.date} ${updates.end_time}:00`
   };

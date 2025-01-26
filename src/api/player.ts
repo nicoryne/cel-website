@@ -108,6 +108,54 @@ export const getPlayersByIndexRange = async (min: number, max: number): Promise<
   return data as Player[];
 };
 
+export const getPlayerByTeamAndName = async (team_id: string, ingame_name: string): Promise<Player | null> => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('players')
+    .select('*')
+    .eq('team_id', team_id)
+    .ilike('ingame_name', ingame_name)
+    .single();
+
+  if (error) {
+    handleError(error, 'fetching player by team and ingame name');
+    return null;
+  }
+
+  return data as Player;
+};
+
+export const getPlayersByTeam = async (team_id: string): Promise<Player[]> => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase.from('players').select('*').eq('team_id', team_id);
+
+  if (error) {
+    handleError(error, 'fetching player by team');
+    return [];
+  }
+
+  return data as Player[];
+};
+
+export const getPlayersByTeamAndPlatform = async (team_id: string, platform_id: string): Promise<Player[]> => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('players')
+    .select('*')
+    .eq('team_id', team_id)
+    .eq('platform_id', platform_id);
+
+  if (error) {
+    handleError(error, 'fetching player by team and platform');
+    return [];
+  }
+
+  return data as Player[];
+};
+
 //========
 // UTILITY
 //========

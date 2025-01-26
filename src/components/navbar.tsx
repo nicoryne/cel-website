@@ -1,35 +1,23 @@
 'use client';
 
-import React from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { defaultNavLinks } from '@/components/navlink';
 import Image from 'next/image';
 import cel_logo from '@/../public/logos/cel.webp';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Bars4Icon } from '@heroicons/react/20/solid';
-
-export type NavigationLink = {
-  text: string;
-  href: string;
-};
-
-export const defaultNavLinks: NavigationLink[] = [
-  { text: 'Home', href: '/' },
-  { text: 'News', href: '/news' },
-  { text: 'Schedule', href: '/schedule' },
-  { text: 'Statistics', href: '/statistics' },
-  { text: 'Standing', href: '/standing' },
-  { text: 'Contact', href: '/contact' }
-];
+import ThemeSwitcher from '@/components/theme-switcher';
 
 export default function Navbar() {
   const pathname = usePathname();
 
   const isLanding = pathname == '/';
 
-  const [isMobileMenuOpen, toggleMobileMenu] = React.useState(false);
-  const [isScrolling, setScrolling] = React.useState(false);
+  const [isMobileMenuOpen, toggleMobileMenu] = useState(false);
+  const [isScrolling, setScrolling] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleScroll = () => {
       const thresholdY = 50;
       setScrolling(window.scrollY > thresholdY);
@@ -46,65 +34,54 @@ export default function Navbar() {
     };
   }, []);
 
-  const isColored = React.useMemo(
-    () => !isLanding || isScrolling,
-    [isLanding, isScrolling]
-  );
+  const isColored = useMemo(() => !isLanding || isScrolling, [isLanding, isScrolling]);
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 h-20 min-w-full transition-all duration-300 ease-in-out ${
-        isColored ? 'bg-[var(--background)]' : `bg-transparent`
-      }`}
+      className={`ease fixed inset-x-0 top-0 z-50 h-20 min-w-full text-white transition-colors duration-300 ${isColored ? 'bg-neutral-900' : `bg-transparent`}`}
     >
       {/* Wrapper */}
-      <div className="mx-auto flex h-full items-center justify-between gap-16 p-8 md:w-[700px] lg:w-[1000px]">
+      <div className="mx-auto flex h-full items-center justify-between p-8 md:w-[700px] lg:w-[900px] xl:w-[1100px]">
         {/* Logo */}
         <Link href="/" aria-label="Go to homepage">
-          <Image
-            className="h-auto w-12"
-            src={cel_logo}
-            alt="CEL Logo"
-            priority
-            width={64}
-            height={64}
-          />
+          <Image className="h-auto w-12" src={cel_logo} alt="CEL Logo" priority width={64} height={64} />
         </Link>
         {/* End of Logo */}
 
-        {/* Desktop Navigation Links */}
-        <nav className="hidden md:block" aria-label="Desktop navigation">
-          <ul className="flex gap-8">
-            {defaultNavLinks.map((navLink, index) => (
-              <li key={index}>
-                <Link
-                  className="font-medium text-[var(--text-light)] duration-150 ease-linear hover:text-[var(--cel-red)] md:text-sm lg:text-base"
-                  href={navLink.href}
-                  prefetch
-                >
-                  {navLink.text}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-        {/* End of Desktop Navigation Links */}
+        <div className="flex gap-8">
+          {/* Desktop Navigation Links */}
+          <nav className="hidden md:block" aria-label="Desktop navigation">
+            <ul className="flex md:gap-1 lg:gap-6">
+              {defaultNavLinks.map((navLink, index) => (
+                <li key={index}>
+                  <Link
+                    className="rounded-x-md rounded-t-md border-b-2 border-transparent px-2 py-1 font-medium duration-150 ease-linear hover:border-chili md:text-sm lg:text-base"
+                    href={navLink.href}
+                    prefetch
+                  >
+                    {navLink.text}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          {/* End of Desktop Navigation Links */}
 
-        {/* Mobile Menu Icon */}
-        <Bars4Icon
-          className="h-auto w-8 cursor-pointer fill-[var(--foreground)] md:hidden"
-          onClick={() => toggleMobileMenu(!isMobileMenuOpen)}
-          aria-label="Toggle navigation menu"
-          aria-expanded={isMobileMenuOpen}
-        />
-        {/* End of Mobile Menu Icon */}
+          {/* Mobile Menu Icon */}
+          <Bars4Icon
+            className="h-auto w-8 cursor-pointer md:hidden"
+            onClick={() => toggleMobileMenu(!isMobileMenuOpen)}
+            aria-label="Toggle navigation menu"
+            aria-expanded={isMobileMenuOpen}
+          />
+          {/* End of Mobile Menu Icon */}
 
+          <ThemeSwitcher />
+        </div>
         {/* Mobile Dropdown Menu */}
         <nav
           className={`fixed inset-0 -z-10 w-full pt-24 transition-all duration-300 md:hidden ${
-            isMobileMenuOpen
-              ? 'bg-[var(--background)] opacity-100'
-              : 'pointer-events-none bg-transparent opacity-0'
+            isMobileMenuOpen ? 'bg-background opacity-100' : 'pointer-events-none bg-transparent opacity-0'
           }`}
           aria-label="Mobile navigation"
         >
@@ -112,7 +89,7 @@ export default function Navbar() {
             {defaultNavLinks.map((navLink, index) => (
               <li key={index}>
                 <Link
-                  className="text-2xl font-medium text-[var(--text-light)] hover:text-[var(--cel-red)]"
+                  className="text-2xl font-medium"
                   href={navLink.href}
                   onClick={() => toggleMobileMenu(false)}
                   prefetch

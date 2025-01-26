@@ -3,35 +3,40 @@
 @tailwind utilities;
 
 :root {
-  /* CEL Colors */
-  --cel-red: #df4c42;
-  --cel-blue: #0f5390;
-  --cel-navy: #000f24;
-  --cel-white: #f0f5f8;
+  /* CESAFI ESPORTS LEAGUE Colors */
+  /* Reds */
+  --pale: #df4c42;
+  --chili: #e62e22;
 
-  /* Hero Gradient */
-  --hero-blue-mid: #031d43;
-  --hero-blue-end: #052c62;
+  /* Blue */
+  --yale: #0f5390;
+  --pearl: #000f24;
+  --navy: #031d43;
+  --marine: #052c62;
+  --ultramarine: #001197;
+  --federal: #16166b;
 
-  /* Custom Colors */
-  --foreground: #f2f2f2;
+  /* White */
+  --antiflash: #f0f3f5;
+  --platinum: #d7d9db;
+}
+
+.light {
+  --background: #ffffff;
+  --foreground: #121212;
+}
+
+.dark {
   --background: #121212;
+  --foreground: #f2f2f2;
 }
 
-html {
-  height: 100%;
-  box-sizing: border-box;
-  touch-action: manipulation;
-  font-feature-settings:
-    'case' 1,
-    'rlig' 1,
-    'calt' 0;
-}
-
-html,
 body {
-  @apply bg-background text-foreground antialiased;
-  text-rendering: optimizeLegibility;
-  -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: smooth;
+  @apply bg-background font-manrope text-foreground antialiased;
+}
+
+h1,
+h2,
+h3 {
+  @apply font-delagothic;
 }

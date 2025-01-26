@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/client';
-import { LeagueSchedule } from '@/lib/types';
+import { LeagueSchedule, SeasonInfo } from '@/lib/types';
 import { handleError } from '@/api/utils/errorHandler';
 
 //====================
@@ -78,6 +78,42 @@ export const getLeagueSchedulesByIndexRange = async (min: number, max: number): 
   }
 
   return data as LeagueSchedule[];
+};
+
+export const getLatestLeagueSchedule = async (): Promise<LeagueSchedule | null> => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('league_schedule')
+    .select('*')
+    .order('end_date', { ascending: false })
+    .limit(1)
+    .single();
+
+  if (error) {
+    handleError(error, 'fetching latest league schedule');
+    return null;
+  }
+
+  return data;
+};
+
+export const getLeagueStageByTypeAndNumber = async (season_type: string, season_number: number): Promise<string[]> => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('league_schedule')
+    .select('league_stage')
+    .eq('season_type', season_type)
+    .eq('season_number', season_number)
+    .order('end_date', { ascending: true });
+
+  if (error) {
+    handleError(error, 'fetching league schedule by type and number');
+    return [];
+  }
+
+  return (data || []).map((item) => item.league_stage);
 };
 
 //========
