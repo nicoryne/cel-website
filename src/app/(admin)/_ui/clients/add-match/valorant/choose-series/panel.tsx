@@ -24,19 +24,17 @@ export default function ChooseSeriesPanel({ seriesList, setSeries }: ChooseSerie
   }, [seriesList, currentPage]);
 
   return (
-    <div className="flex flex-col gap-16">
+    <div className="flex flex-col">
       {/* Content */}
-      <div className="h-fit w-full px-8">
-        <div className="relative overflow-x-auto border-2 border-neutral-800 sm:rounded-lg">
-          {/* Platform Cards */}
-          <ul className="grid grid-cols-1 gap-8 p-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
-            {paginatedSeries.map((series, index) => (
-              <li key={index}>
-                <SeriesCard series={series} setSeries={setSeries} />
-              </li>
-            ))}
-          </ul>
-        </div>
+      <div className="px-8">
+        {/* Platform Cards */}
+        <ul className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
+          {paginatedSeries.map((series, index) => (
+            <li key={index}>
+              <SeriesCard series={series} setSeries={setSeries} />
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* End of Content */}

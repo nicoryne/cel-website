@@ -92,6 +92,19 @@ export const getGamePlatformsByIndexRange = async (min: number, max: number): Pr
   return data as GamePlatform[];
 };
 
+export const getGamePlatformByAbbrev = async (abbrev: string): Promise<GamePlatform | null> => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase.from('game_platforms').select('*').eq('platform_abbrev', abbrev).single();
+
+  if (error) {
+    handleError(error, 'fetching game platforms by abbrev');
+    return null;
+  }
+
+  return data as GamePlatform;
+};
+
 //========
 // UPDATE
 //========

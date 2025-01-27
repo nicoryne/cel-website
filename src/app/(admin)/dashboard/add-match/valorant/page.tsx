@@ -12,7 +12,6 @@ export default function AddMatchValorantPage() {
   const platformList = getAllGamePlatforms();
   const teamList = getAllTeams();
   const scheduleList = getAllLeagueSchedules();
-  const characterList = getAllCharacters();
 
   return (
     <>
@@ -22,7 +21,6 @@ export default function AddMatchValorantPage() {
         platformList={platformList}
         teamsList={teamList}
         scheduleList={scheduleList}
-        characterList={characterList}
       />
     </>
   );

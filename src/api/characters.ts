@@ -99,7 +99,11 @@ export const getCharacterByName = async (name: string): Promise<Character | null
 
 export const getCharactersByGamePlatform = async (platform_id: string): Promise<Character[] | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase.from('game_characters').select('*').eq('platform_id', platform_id);
+  const { data, error } = await supabase
+    .from('game_characters')
+    .select('*')
+    .eq('platform_id', platform_id)
+    .order('name', { ascending: true });
 
   if (error) {
     handleError(error, 'fetching characters by platform ID');

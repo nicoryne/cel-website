@@ -38,7 +38,7 @@ export default function Navbar() {
 
   return (
     <header
-      className={`ease fixed inset-x-0 top-0 z-50 h-20 min-w-full text-white transition-colors duration-300 ${isColored ? 'bg-neutral-900' : `bg-transparent`}`}
+      className={`ease fixed inset-x-0 top-0 z-50 h-20 min-w-full text-white transition-colors duration-300 ${isColored || isMobileMenuOpen ? 'bg-neutral-900' : `bg-transparent`}`}
     >
       {/* Wrapper */}
       <div className="mx-auto flex h-full items-center justify-between p-8 md:w-[700px] lg:w-[900px] xl:w-[1100px]">
@@ -80,12 +80,12 @@ export default function Navbar() {
         </div>
         {/* Mobile Dropdown Menu */}
         <nav
-          className={`fixed inset-0 -z-10 w-full pt-24 transition-all duration-300 md:hidden ${
+          className={`fixed inset-0 top-20 -z-10 w-full transition-all duration-300 md:hidden ${
             isMobileMenuOpen ? 'bg-background opacity-100' : 'pointer-events-none bg-transparent opacity-0'
           }`}
           aria-label="Mobile navigation"
         >
-          <ul className="flex flex-col items-center gap-16 p-8">
+          <ul className="flex flex-col items-center gap-16 p-8 text-foreground">
             {defaultNavLinks.map((navLink, index) => (
               <li key={index}>
                 <Link

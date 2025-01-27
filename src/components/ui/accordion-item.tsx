@@ -2,17 +2,16 @@
 
 import MotionComponent from '@/components/ui/motion-component';
 
-interface DropdownItemProps {
+interface AccordionItemProps {
   children?: React.ReactNode;
   onClick?: () => void;
-  selected?: boolean;
 }
 
-export default function DropdownItem({ children, onClick, selected }: DropdownItemProps) {
+export default function AccordionItem({ children, onClick }: AccordionItemProps) {
   return (
     <MotionComponent
       type="button"
-      className={`relative z-30 w-full border-l-2 bg-background p-4 transition-colors duration-300 ease-in-out hover:border-chili ${selected ? 'border-neutral-400' : 'border-neutral-600'}`}
+      className={`relative w-full bg-background`}
       initial={{ opacity: 0, y: -5 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -5 }}

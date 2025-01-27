@@ -126,6 +126,19 @@ export const getPlayerByTeamAndName = async (team_id: string, ingame_name: strin
   return data as Player;
 };
 
+export const getPlayersByPlatform = async (platform_id: string): Promise<Player[]> => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase.from('players').select('*').eq('platform_id', platform_id);
+
+  if (error) {
+    handleError(error, 'fetching player by platform');
+    return [];
+  }
+
+  return data as Player[];
+};
+
 export const getPlayersByTeam = async (team_id: string): Promise<Player[]> => {
   const supabase = createClient();
 

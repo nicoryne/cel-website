@@ -5,6 +5,7 @@ import cel_logo from '@/../public/logos/cel.webp';
 import Link from 'next/link';
 import { login } from '@/api/auth';
 import { motion } from 'framer-motion';
+import Loading from '@/components/loading';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -33,24 +34,15 @@ export default function LoginPage() {
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <Link href="/">
-          <Image
-            alt="Your Company"
-            src={cel_logo}
-            className="mx-auto h-16 w-auto"
-          />
+          <Image alt="Your Company" src={cel_logo} className="mx-auto h-16 w-auto" />
         </Link>
-        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight">
-          Admin Dashboard
-        </h2>
+        <h2 className="mt-10 text-center text-2xl leading-9 tracking-tight">Admin Dashboard</h2>
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form className="space-y-8">
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium leading-6"
-            >
+            <label htmlFor="email" className="block text-sm font-medium leading-6">
               Email address
             </label>
             <div className="mt-2">
@@ -69,10 +61,7 @@ export default function LoginPage() {
 
           <div>
             <div className="flex items-center justify-between">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium leading-6"
-              >
+              <label htmlFor="password" className="block text-sm font-medium leading-6">
                 Password
               </label>
             </div>
@@ -91,20 +80,22 @@ export default function LoginPage() {
           </div>
 
           <div className="flex flex-col items-center justify-center gap-2">
-            <motion.button
-              type="button"
-              className="w-full rounded-md bg-[var(--cel-red)] px-8 py-1 font-bold uppercase text-white"
-              onClick={handleLogin}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              disabled={isLoading}
-            >
-              {isLoading ? 'Logging in...' : 'Login'}
-            </motion.button>
+            {isLoading ? (
+              <Loading />
+            ) : (
+              <motion.button
+                type="button"
+                className="w-full rounded-md bg-pale px-8 py-1 font-bold uppercase text-white transition-colors duration-300 ease-in-out hover:bg-chili"
+                onClick={handleLogin}
+                disabled={isLoading}
+              >
+                {isLoading ? 'Logging in...' : 'Login'}
+              </motion.button>
+            )}
 
             <Link
               href="/"
-              className="w-fit text-center text-sm font-semibold leading-6 text-gray-500 hover:text-[var(--cel-blue)]"
+              className="w-fit text-center text-sm font-semibold leading-6 text-gray-500 transition-colors duration-300 ease-in-out hover:text-yale"
             >
               Go back home
             </Link>

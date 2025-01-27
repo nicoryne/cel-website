@@ -1,42 +1,25 @@
 'use client';
 
 import React from 'react';
-import { ValorantMatchesPlayerStatsWithDetails, Player } from '@/lib/types';
+import { ValorantMatchesPlayerStatsWithDetails, Player, Character } from '@/lib/types';
 import PlayerStatsRow from './row';
 import { header } from 'framer-motion/client';
 
 type ValidatePlayerStatisticsProps = {
   playerStatsList: Partial<ValorantMatchesPlayerStatsWithDetails>[];
   onSubmit: (updatedStats: Partial<ValorantMatchesPlayerStatsWithDetails>[]) => void;
+  onChange: (index: number, field: keyof ValorantMatchesPlayerStatsWithDetails, value: any) => void;
   availablePlayers: Record<string, Player[] | null>;
+  valorantCharacters: Character[];
 };
 
 export default function PlayerStatsTable({
   playerStatsList,
+  onChange,
   onSubmit,
-  availablePlayers
+  availablePlayers,
+  valorantCharacters
 }: ValidatePlayerStatisticsProps) {
-  const [editableStatsList, setEditableStatsList] = React.useState(playerStatsList);
-
-  const handleCellChange = (index: number, field: keyof ValorantMatchesPlayerStatsWithDetails, value: string) => {
-    const updatedStats = [...editableStatsList];
-    const numericFields = ['acs', 'kills', 'deaths', 'assists', 'econ_rating', 'first_bloods', 'plants', 'defuses'];
-
-    updatedStats[index] = {
-      ...updatedStats[index],
-      [field]: numericFields.includes(field) ? parseInt(value, 10) || 0 : value
-    };
-    setEditableStatsList(updatedStats);
-  };
-
-  const isValueInvalid = (field: keyof ValorantMatchesPlayerStatsWithDetails, value: any): boolean => {
-    const numericFields = ['acs', 'kills', 'deaths', 'assists', 'econ_rating', 'first_bloods', 'plants', 'defuses'];
-    if (numericFields.includes(field)) {
-      return isNaN(value) || value < 0;
-    }
-    return false;
-  };
-
   const headers = [
     'Agent',
     'Player',
@@ -50,7 +33,6 @@ export default function PlayerStatsTable({
     'Defuses'
   ];
 
-  console.log(playerStatsList);
   return (
     <div className="w-full rounded-md border border-neutral-700 bg-neutral-900 p-4 text-neutral-600">
       <h2 className="text-lg font-semibold text-neutral-200">Editable Player Statistics</h2>
@@ -65,9 +47,19 @@ export default function PlayerStatsTable({
           </tr>
         </thead>
         <tbody>
-          {editableStatsList.map((playerStat, index) => {
-            const players = availablePlayers[playerStat.player?.team_id as string] || [];
-            return <PlayerStatsRow key={index} playerStats={playerStat} availablePlayers={players} />;
+          {playerStatsList.map((playerStat, index) => {
+            const key = index;
+            const players = Object.values(availablePlayers).flat().filter(Boolean) as Player[];
+            return (
+              <PlayerStatsRow
+                key={key}
+                index={key}
+                playerStats={playerStat}
+                availablePlayers={players}
+                valorantCharacters={valorantCharacters}
+                onChange={onChange}
+              />
+            );
           })}
         </tbody>
       </table>

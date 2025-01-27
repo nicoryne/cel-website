@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { manrope, delagothic } from '@/lib/fonts';
 import { Providers } from '@/app/providers';
+import NextTopLoader from 'nextjs-toploader';
 import '@/app/globals.css';
 
 export const metadata: Metadata = {
@@ -24,7 +25,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${manrope.variable} ${delagothic.variable}`} suppressHydrationWarning>
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <NextTopLoader color="#0f5390" />
+          {children}
+        </Providers>
       </body>
     </html>
   );

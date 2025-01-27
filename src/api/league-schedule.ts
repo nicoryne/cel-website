@@ -116,6 +116,29 @@ export const getLeagueStageByTypeAndNumber = async (season_type: string, season_
   return (data || []).map((item) => item.league_stage);
 };
 
+export const getLeagueScheduleByTypeNumberStage = async (
+  season_type: string,
+  season_number: number,
+  league_stage: string
+): Promise<LeagueSchedule | null> => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('league_schedule')
+    .select('*')
+    .eq('season_type', season_type)
+    .eq('season_number', season_number)
+    .eq('league_stage', league_stage)
+    .single();
+
+  if (error) {
+    handleError(error, 'fetching league schedule by type, number & stage');
+    return null;
+  }
+
+  return data;
+};
+
 //========
 // UPDATE
 //========

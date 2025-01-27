@@ -8,6 +8,7 @@ import {
   SeriesWithDetails,
   Team,
   ValorantMap,
+  ValorantMatchesPlayerStatsWithDetails,
   ValorantMatchWithDetails
 } from '@/lib/types';
 import React from 'react';
@@ -32,7 +33,6 @@ type ValorantMultiStepBaseProps = {
   platformList: Promise<GamePlatform[]>;
   teamsList: Promise<Team[]>;
   scheduleList: Promise<LeagueSchedule[]>;
-  characterList: Promise<Character[]>;
 };
 
 export default function ValorantMultiStepBase({
@@ -40,15 +40,13 @@ export default function ValorantMultiStepBase({
   mapList,
   platformList,
   teamsList,
-  scheduleList,
-  characterList
+  scheduleList
 }: ValorantMultiStepBaseProps) {
   const processedSeriesList = React.use(seriesList);
   const processedMapList = React.use(mapList);
   const processedPlatformList = React.use(platformList);
   const processedTeamsList = React.use(teamsList);
   const processedScheduleList = React.use(scheduleList);
-  const processedCharacterList = React.use(characterList);
 
   const valorantPlatformId = processedPlatformList.find((platform) => platform.platform_abbrev === 'VALO');
   const valorantSeriesList = processedSeriesList
@@ -57,10 +55,6 @@ export default function ValorantMultiStepBase({
 
   const detailedSeries: SeriesWithDetails[] = valorantSeriesList.map((series) =>
     appendSeriesDetails(processedPlatformList, processedTeamsList, processedScheduleList, series)
-  );
-
-  const valorantCharacter = processedCharacterList.filter(
-    (character) => character.platform_id === valorantPlatformId?.id
   );
 
   const [currentStep, setCurrentStep] = React.useState<number>(1);
@@ -126,7 +120,7 @@ export default function ValorantMultiStepBase({
       </aside>
 
       {valorantSeriesList && (
-        <section className="mx-auto my-4 flex w-[80%] items-center gap-8 py-16">
+        <section className="mx-auto flex h-full w-full justify-center gap-8 overflow-y-scroll">
           <button
             type="button"
             disabled={currentStep === 1}
@@ -136,26 +130,29 @@ export default function ValorantMultiStepBase({
             <ArrowLeftCircleIcon className="h-auto w-16" />
           </button>
 
-          {currentStep === 1 && <ChooseSeries seriesList={detailedSeries} setSeries={setSeries} />}
+          <div className="mt-12 h-[40vh] w-[60vw]">
+            {currentStep === 1 && <ChooseSeries seriesList={detailedSeries} setSeries={setSeries} />}
 
-          {currentStep === 2 && (
-            <MatchDetailsForm
-              seriesList={valorantSeriesList}
-              mapList={processedMapList}
-              matchInfo={matchInfo}
-              updateMatchInfo={updateMatchInfo}
-            />
-          )}
+            {currentStep === 2 && (
+              <MatchDetailsForm
+                seriesList={valorantSeriesList}
+                mapList={processedMapList}
+                matchInfo={matchInfo}
+                updateMatchInfo={updateMatchInfo}
+              />
+            )}
 
-          {currentStep === 3 && <UploadPlayerStatisticsPanel imageData={matchResultImage} />}
+            {currentStep === 3 && <UploadPlayerStatisticsPanel imageData={matchResultImage} />}
 
-          {currentStep === 4 && (
-            <ValidatePlayerStatisticsPanel
-              teamsList={processedTeamsList}
-              imageData={matchResultImage}
-              valorantPlatformId={valorantPlatformId?.id!}
-            />
-          )}
+            {currentStep === 4 && (
+              <ValidatePlayerStatisticsPanel
+                teamsList={processedTeamsList}
+                imageData={matchResultImage}
+                valorantPlatformId={valorantPlatformId?.id!}
+                matchInfo={matchInfo}
+              />
+            )}
+          </div>
 
           <button
             type="button"

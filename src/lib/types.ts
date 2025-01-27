@@ -143,6 +143,20 @@ export interface ValorantMatchesPlayerStats {
   defuses: number;
 }
 
+export interface ValorantCompiledStats {
+  player_id: string /* PK */;
+  agent_id: string /* FK */;
+  games: number;
+  rounds: number;
+  acs: number;
+  kills: number;
+  deaths: number;
+  assists: number;
+  first_bloods: number;
+  plants: number;
+  defuses: number;
+}
+
 export type ValorantMatchesPlayerStatsWithDetails = Omit<
   ValorantMatchesPlayerStats,
   'player_id' | 'match_id' | 'agent_id'

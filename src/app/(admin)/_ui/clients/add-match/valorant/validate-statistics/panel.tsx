@@ -3,14 +3,18 @@
 import React, { useState, useEffect } from 'react';
 import Tesseract from 'tesseract.js';
 import { preprocessImageAndExtractRows } from '@/app/(admin)/_ui/clients/add-match/valorant/utils';
-import { Player, Team, ValorantMatchesPlayerStats, ValorantMatchesPlayerStatsWithDetails } from '@/lib/types';
+import { Character, Player, Team, ValorantMatchesPlayerStatsWithDetails, ValorantMatchWithDetails } from '@/lib/types';
 import { getPlayerByTeamAndName, getPlayersByTeam, getPlayersByTeamAndPlatform } from '@/api/player'; // Assume this API exists
 import PlayerStatsTable from '@/app/(admin)/_ui/clients/add-match/valorant/validate-statistics/table';
+import { getCharactersByGamePlatform } from '@/api/characters';
+import { createValorantMatch } from '@/api/valorant-match';
+import { createValorantMatchPlayerStat } from '@/api/valorant-match-player-stat';
 
 type ValidatePlayerStatisticsProps = {
   imageData: React.MutableRefObject<string | undefined>;
   teamsList: Team[];
   valorantPlatformId: string;
+  matchInfo: Partial<ValorantMatchWithDetails>;
 };
 
 type RowData = {
@@ -21,7 +25,8 @@ type RowData = {
 export default function ValidatePlayerStatisticsPanel({
   imageData,
   teamsList,
-  valorantPlatformId
+  valorantPlatformId,
+  matchInfo
 }: ValidatePlayerStatisticsProps) {
   const [rowsData, setRowsData] = useState<RowData[]>([]);
   const [playingTeams, setPlayingTeams] = useState<Team[]>([]);
@@ -30,10 +35,39 @@ export default function ValidatePlayerStatisticsPanel({
   const [progress, setProgress] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
   const [teamPlayers, setTeamPlayers] = useState<Record<string, Player[] | null>>({});
+  const [valorantCharacters, setValorantCharacters] = useState<Character[]>([]);
+
+  console.log(matchInfo);
+
+  const updatePlayerStats = (index: number, field: keyof ValorantMatchesPlayerStatsWithDetails, value: any) => {
+    setPlayerStatsList((prevPlayerStats) => {
+      const updatedPlayerStats = [...prevPlayerStats];
+
+      const updatedStats = { ...updatedPlayerStats[index] };
+
+      updatedStats[field] = value;
+
+      updatedPlayerStats[index] = updatedStats;
+
+      return updatedPlayerStats;
+    });
+  };
 
   useEffect(() => {
-    console.log(playerStatsList);
-  }, [playerStatsList]);
+    const fetchCharacters = async () => {
+      const valorantCharacters = await getCharactersByGamePlatform(valorantPlatformId);
+
+      if (valorantCharacters) {
+        setValorantCharacters(
+          valorantCharacters.sort((a, b) => {
+            return a.name < b.name ? -1 : 1;
+          })
+        );
+      }
+    };
+
+    fetchCharacters();
+  }, []);
 
   const extractTeam = (data: string) => {
     const matchedTeam = teamsList.find((team) => data.includes(team.school_abbrev));
@@ -186,32 +220,72 @@ export default function ValidatePlayerStatisticsPanel({
     }
   };
 
-  const handleStatsSubmit = (updatedStats: Partial<ValorantMatchesPlayerStats>[]) => {
-    console.log('Updated Stats:', updatedStats);
+  const handleStatsSubmit = async () => {
+    console.log(matchInfo);
+    const processedMatchInfo = {
+      series_id: matchInfo.series?.id,
+      map_id: matchInfo.map?.id,
+      match_duration: matchInfo.match_duration,
+      match_number: matchInfo.match_number,
+      team_a_status: matchInfo.team_a_status,
+      team_a_rounds: matchInfo.team_a_rounds,
+      team_b_status: matchInfo.team_b_status,
+      team_b_rounds: matchInfo.team_b_rounds
+    };
+    const data = await createValorantMatch(processedMatchInfo);
+
+    if (data) {
+      playerStatsList.forEach(async (playerStat) => {
+        const processedStat = {
+          player_id: playerStat.player?.id,
+          match_id: data?.id,
+          agent_id: playerStat.agent?.id,
+          acs: playerStat.acs,
+          kills: playerStat.kills,
+          deaths: playerStat.deaths,
+          assists: playerStat.assists,
+          econ_rating: playerStat.econ_rating,
+          first_bloods: playerStat.first_bloods,
+          plants: playerStat.plants,
+          defuses: playerStat.defuses
+        };
+
+        await createValorantMatchPlayerStat(processedStat);
+      });
+    }
   };
 
   return (
-    <div className="w-full rounded-md border-2 border-neutral-700 bg-neutral-900 p-4 text-neutral-600">
+    <div className="w-full items-center justify-center rounded-md p-4">
       {error ? (
         <p className="text-red-500">{error}</p>
       ) : (
         <div>
           {processedImage && (
             <div>
-              <h2 className="text-lg font-semibold text-neutral-200">Processed Image</h2>
-              <img src={processedImage} alt="Processed Image" className="w-full rounded-md border border-neutral-700" />
+              <h4 className="text-lg font-semibold text-neutral-200">Processed Image</h4>
+              <img
+                src={imageData.current}
+                alt="Processed Image"
+                className="w-full rounded-md border border-neutral-700"
+              />
             </div>
           )}
           {teamPlayers && playerStatsList.length > 0 ? (
-            <div className="mt-4">
+            <div className="mt-4 flex h-full flex-col gap-4 pb-32 pt-8">
               <PlayerStatsTable
                 playerStatsList={playerStatsList}
                 onSubmit={handleStatsSubmit}
                 availablePlayers={teamPlayers}
+                valorantCharacters={valorantCharacters}
+                onChange={updatePlayerStats}
               />
+              <button type="button" className="ml-auto w-fit bg-green-800 px-4 py-1" onClick={handleStatsSubmit}>
+                Submit
+              </button>
             </div>
           ) : (
-            <p>Processing... {progress > 0 && `${progress}%`}</p>
+            <p className="text-xl">Processing... {progress > 0 && `${progress}%`}</p>
           )}
         </div>
       )}

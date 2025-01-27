@@ -1,11 +1,10 @@
 import { getAllLeagueSchedules } from '@/api/league-schedule';
 import { SeasonInfo } from '@/lib/types';
-import IconCel from '@/../../public/icons/icon_cel.svg';
-import Link from 'next/link';
+import SeasonItem from '@/app/(user)/standings/_ui/season-item';
+import SeasonAccordion from './season-accordion';
 
 export default async function StandingSidebar() {
   const scheduleList = await getAllLeagueSchedules();
-
   const seasonsMap = new Map<string, SeasonInfo>();
 
   scheduleList.forEach((schedule) => {
@@ -33,45 +32,25 @@ export default async function StandingSidebar() {
     }
   });
 
-  const seasonsList = Array.from(seasonsMap.values());
+  const seasonsList = Array.from(seasonsMap.values()).sort((a, b) => {
+    return a.start_date < b.start_date ? 1 : -1;
+  });
 
   return (
-    <aside className="h-screen min-w-80 border-r-2 border-neutral-200 bg-background shadow-md dark:border-neutral-700">
-      <div className="pt-4">
-        <header className="border-b-2 border-neutral-200 px-4 py-8 dark:border-neutral-700">
-          <h2>ALL SEASONS</h2>
-        </header>
+    <aside className="h-24 w-full border-r-2 border-neutral-200 bg-background shadow-md dark:border-neutral-700 md:h-screen md:w-80">
+      <div className="hidden pt-4 md:block">
+        <header className="hidden h-24 border-b-2 border-neutral-200 px-4 dark:border-neutral-700 md:block"></header>
         <ul>
-          {seasonsList.map((schedule, index) => (
+          {seasonsList.map((season, index) => (
             <li key={index}>
-              <Link href={`/standings/${schedule.season_type.toLowerCase()}/${schedule.season_number}/groupstage`}>
-                <div className="border-b-2 border-r-4 border-r-neutral-200 px-4 py-8 opacity-80 hover:border-r-chili hover:bg-neutral-50 hover:opacity-100 active:bg-neutral-100 dark:border-b-neutral-700 dark:border-r-neutral-600 dark:opacity-60 dark:hover:border-r-chili hover:dark:bg-neutral-900 active:dark:bg-neutral-950">
-                  <div className="flex flex-col gap-6">
-                    <div className="flex items-center gap-4">
-                      <IconCel className="h-auto w-12 fill-foreground" />
-                      <h4 className="text-3xl font-bold uppercase">
-                        {schedule.season_type} {schedule.season_number}
-                      </h4>
-                    </div>
-                    <time className="text-xs font-normal dark:font-thin md:text-sm">
-                      {new Date(schedule.start_date).toLocaleDateString('en-US', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric'
-                      })}{' '}
-                      -{' '}
-                      {new Date(schedule.end_date).toLocaleDateString('en-US', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric'
-                      })}
-                    </time>
-                  </div>
-                </div>
-              </Link>
+              <SeasonItem season={season} />
             </li>
           ))}
         </ul>
+      </div>
+
+      <div className="flex h-full w-full md:hidden">
+        <SeasonAccordion seasonsList={seasonsList} />
       </div>
     </aside>
   );

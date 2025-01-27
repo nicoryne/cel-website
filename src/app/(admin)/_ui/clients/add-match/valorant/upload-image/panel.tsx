@@ -28,21 +28,21 @@ export default function UploadPlayerStatisticsPanel({ imageData }: UploadPlayerS
   }, [imageData]);
   return (
     <>
-      <div className="w-full rounded-md border-2 border-neutral-700 bg-neutral-900 p-4">
+      <div className="h-full w-full items-center justify-center">
         <label
           htmlFor="file-upload"
-          className="flex cursor-pointer flex-col gap-4 text-center text-neutral-600 duration-150 ease-linear hover:text-neutral-200"
+          className="relative h-full w-full cursor-pointer flex-col gap-4 text-center text-neutral-600 duration-150 ease-linear hover:text-neutral-200 hover:opacity-40"
         >
           {selectedImagePreview ? (
             <Image
               src={selectedImagePreview}
               alt={`Valorant Match Record Picture`}
-              className="object-cover"
               width={1920}
               height={1080}
+              className="scale-90"
             />
           ) : (
-            <div>
+            <div className="py-32">
               <ArrowUpOnSquareIcon className="mx-auto h-auto w-24" />
               <span>Upload Match Results</span>
             </div>

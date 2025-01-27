@@ -16,7 +16,7 @@ export default function Dropdown({ children, value, image }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="relative inline-block">
+    <div className="relative inline-block w-full">
       <button
         className="flex items-center gap-4 rounded-sm border-l-2 border-neutral-200 px-6 py-3 shadow-sm transition-all duration-300 ease-in-out hover:border-pale"
         onClick={() => setIsOpen(!isOpen)}
@@ -29,7 +29,7 @@ export default function Dropdown({ children, value, image }: DropdownProps) {
         {isOpen && (
           <MotionComponent
             type="div"
-            className="absolute left-0 mt-4 rounded shadow-lg"
+            className="absolute left-0 mt-4 h-screen scroll-m-1 overflow-y-scroll rounded shadow-lg"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

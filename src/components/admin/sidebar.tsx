@@ -39,18 +39,18 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="inset-y-0 left-0 z-50 h-full min-h-screen w-52 border-r-2 border-[#212121] bg-[#131313] shadow-md duration-200">
+    <aside className="inset-y-0 left-0 z-50 h-full min-h-screen w-52 border-r-2 shadow-md dark:border-neutral-700">
       {/* Wrapper */}
       <nav className="flex h-screen flex-col justify-between py-4">
         {/* Header */}
         <Link href="/dashboard" className="ml-3 mt-4 flex place-items-center">
           <Image className="h-auto w-10" src={cel_logo} alt="CEL Logo" />
 
-          <h1 className="duration-400 ease ml-2 transform font-semibold text-neutral-300">Dashboard</h1>
+          <h1 className="ml-2 text-neutral-300">Dashboard</h1>
         </Link>
 
         {/* Pages Section */}
-        <section className="min-w-full border-b-2 border-[#212121] py-8">
+        <section className="min-w-full border-b-2 py-8 dark:border-neutral-700">
           <ul className="space-y-4">
             {defaultSideLinks.map((sideLink, index) => {
               const IconComponent = sideLink.icon;
@@ -60,7 +60,7 @@ export default function Sidebar() {
                   <Link href={sideLink.href} className="flex items-center">
                     <IconComponent className="h-auto w-6" aria-hidden="true" />
 
-                    <span className="duration-400 ease ml-2 transform text-xs transition-opacity">{sideLink.text}</span>
+                    <span className="ml-4 text-xs">{sideLink.text}</span>
                   </Link>
                 </li>
               );
@@ -70,10 +70,10 @@ export default function Sidebar() {
 
         <button
           onClick={handleLogout}
-          className="mt-auto flex min-w-full place-items-center rounded-sm border-t-2 border-neutral-800 px-6 py-4 text-neutral-500 hover:text-neutral-300"
+          className="mt-auto flex min-w-full place-items-center rounded-sm border-t-2 px-6 py-4 text-neutral-500 hover:text-neutral-300 dark:border-neutral-700"
         >
           <ArrowRightStartOnRectangleIcon className="h-auto w-6" />
-          <span className="duration-400 ease ml-2 transform text-xs transition-opacity">Logout</span>
+          <span className="ml-2 text-xs">Logout</span>
         </button>
       </nav>
     </aside>
