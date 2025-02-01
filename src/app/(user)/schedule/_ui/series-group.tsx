@@ -7,10 +7,9 @@ import SeriesContainer from '@/app/(user)/schedule/_ui/series-container';
 type SeriesGroupProps = {
   date: Date;
   seriesList: SeriesWithDetails[];
-  sectionRef?: React.Ref<HTMLElement>;
 };
 
-export default function SeriesGroup({ date, seriesList, sectionRef }: SeriesGroupProps) {
+export default function SeriesGroup({ date, seriesList }: SeriesGroupProps) {
   const dateLong = date.toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
@@ -30,7 +29,6 @@ export default function SeriesGroup({ date, seriesList, sectionRef }: SeriesGrou
       data-today={isToday}
       data-date={dateLong}
       data-weekday={dateWeekday}
-      ref={sectionRef}
       className="grid items-center rounded-lg border-2 p-4 shadow-md dark:border-neutral-800 dark:bg-neutral-900"
     >
       <h4 className="col-span-1 text-lg font-bold uppercase md:col-span-2 md:text-2xl">

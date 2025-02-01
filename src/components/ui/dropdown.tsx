@@ -31,7 +31,7 @@ export default function Dropdown({ children, value, image }: DropdownProps) {
         {isOpen && (
           <MotionComponent
             type="div"
-            className="absolute left-0 mt-4 h-fit scroll-m-1 overflow-y-scroll rounded bg-background shadow-lg"
+            className="no-scrollbar absolute left-0 mt-4 h-fit scroll-m-1 overflow-y-scroll rounded bg-background shadow-lg"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilites {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
 :root {
   /* CESAFI ESPORTS LEAGUE Colors */
   /* Reds */
@@ -29,10 +40,6 @@
 .dark {
   --background: #121212;
   --foreground: #f2f2f2;
-}
-
-body {
-  @apply bg-background font-manrope text-foreground antialiased;
 }
 
 h1,

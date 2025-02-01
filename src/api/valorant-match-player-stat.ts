@@ -18,18 +18,23 @@ import { handleError } from '@/api/utils/errorHandler';
 // CREATE
 //========
 
-export const createValorantMatchPlayerStat = async (stat: {}): Promise<ValorantMatchesPlayerStats | null> => {
-  const supabase = createClient();
+export const createValorantMatchPlayerStat =
+  async (stat: {}): Promise<ValorantMatchesPlayerStats | null> => {
+    const supabase = createClient();
 
-  const { data, error } = await supabase.from('valorant_matches_player_stats').insert([stat]).select().single();
+    const { data, error } = await supabase
+      .from('valorant_matches_player_stats')
+      .insert([stat])
+      .select()
+      .single();
 
-  if (error) {
-    handleError(error, 'creating Valorant Match player stat');
-    return null;
-  }
+    if (error) {
+      handleError(error, 'creating Valorant Match player stat');
+      return null;
+    }
 
-  return data;
-};
+    return data;
+  };
 
 //========
 // READ
@@ -61,7 +66,9 @@ export const getAllValorantMatchPlayerStats = async (): Promise<ValorantMatchesP
   return data || [];
 };
 
-export const getValorantMatchPlayerStatById = async (id: string): Promise<ValorantMatchesPlayerStats | null> => {
+export const getValorantMatchPlayerStatById = async (
+  id: string
+): Promise<ValorantMatchesPlayerStats | null> => {
   const supabase = createClient();
   const { data, error } = await supabase
     .from('valorant_matches_player_stats')
@@ -84,7 +91,10 @@ export const getValorantMatchPlayerStatByIndexRange = async (
 ): Promise<ValorantMatchesPlayerStats[]> => {
   const supabase = createClient();
 
-  const { data, error } = await supabase.from('valorant_matches_player_stats').select('*').range(min, max);
+  const { data, error } = await supabase
+    .from('valorant_matches_player_stats')
+    .select('*')
+    .range(min, max);
 
   if (error) {
     handleError(error, 'fetching Valorant Matches by index range');
@@ -94,15 +104,11 @@ export const getValorantMatchPlayerStatByIndexRange = async (
   return data;
 };
 
-export const getValorantCompiledStatsByPlayer = async (player_id: string): Promise<ValorantCompiledStats | null> => {
+export const getValorantCompiledStatsByPlayer = async (
+  player_id: string
+): Promise<ValorantCompiledStats | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase
-    .from('valorant_matches_player_stats')
-    .select(
-      'player_id,  agent_id, games:player_id.count(), rounds:kills.max(), acs:acs.sum(), kills:kills.sum(), deaths:deaths.sum(), assists:assists.sum(), first_bloods:first_bloods.sum(), plants:plants.sum(), defuses:defuses.sum()'
-    )
-    .eq('player_id', player_id)
-    .single();
+  const { data, error } = await supabase.rpc('get_valorant_stats', { query_player_id: player_id });
 
   if (error) {
     handleError(error, 'fetching compiled data stats');
@@ -159,7 +165,11 @@ export const updateValorantMatchPlayerStat = async (
 
 export const deleteValorantMatchPlayerStatById = async (id: string): Promise<boolean> => {
   const supabase = createClient();
-  const { error } = await supabase.from('valorant_matches_player_stats').delete().eq('id', id).single();
+  const { error } = await supabase
+    .from('valorant_matches_player_stats')
+    .delete()
+    .eq('id', id)
+    .single();
 
   if (error) {
     handleError(error, `deleting Valorant Match by ID: ${id}`);

@@ -10,7 +10,7 @@ import cel_logo from '@/../public/logos/cel.webp';
 import DropdownItem from '@/components/ui/dropdown-item';
 import Dropdown from '@/components/ui/dropdown';
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/16/solid';
-import { useInView } from 'react-intersection-observer';
+import { InView, useInView } from 'react-intersection-observer';
 
 interface ScheduleBaseProps {
   series: Promise<Series[]>;
@@ -113,17 +113,6 @@ export default function ScheduleBase({
     }
   };
 
-  const { ref, inView, entry } = useInView({
-    threshold: 0.8,
-    rootMargin: '0px 0px -30% 0px'
-  });
-
-  useEffect(() => {
-    if (inView) {
-      console.log(entry);
-    }
-  }, [inView]);
-
   return (
     <>
       <aside className="fixed left-0 right-0 top-20 z-40 mx-auto h-24 border-t-2 border-neutral-800">
@@ -205,14 +194,21 @@ export default function ScheduleBase({
         </div>
       </aside>
 
-      <main className="min-h-[90vh] space-y-16 overflow-y-scroll pt-64">
+      <main className="no-scrollbar min-h-[90vh] space-y-16 overflow-y-scroll pt-64">
         {sortedDates.map((date, index) => (
-          <SeriesGroup
-            date={new Date(date)}
+          <InView
             key={index}
-            seriesList={activeSeries[date]}
-            sectionRef={ref}
-          />
+            threshold={1}
+            onChange={(inView) => {
+              const dateObj = new Date(date);
+
+              if (inView && dateObj !== currentDate) {
+                setCurrentDate(dateObj);
+              }
+            }}
+          >
+            <SeriesGroup date={new Date(date)} seriesList={activeSeries[date]} />
+          </InView>
         ))}
       </main>
     </>

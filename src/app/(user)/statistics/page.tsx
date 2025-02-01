@@ -1,50 +1,17 @@
-import { getGamePlatformByAbbrev } from '@/api/game-platform';
+import { getAllGamePlatforms, getGamePlatformByAbbrev } from '@/api/game-platform';
 import { getPlayerById, getPlayersByPlatform } from '@/api/player';
 import { getValorantCompiledStatsByPlayer } from '@/api/valorant-match-player-stat';
+import Dropdown from '@/components/ui/dropdown';
+import DropdownItem from '@/components/ui/dropdown-item';
 import { Player } from '@/lib/types';
-import TestComponent from './_ui/test';
+import StatisticsBase from './_ui/statistics-base';
 
-export default async function StatisticsPage() {
-  const valorantPlatform = await getGamePlatformByAbbrev('VALO');
-  let valorantPlayers: Player[] = [];
-  let compiledStats: any[] = [];
-
-  if (valorantPlatform) {
-    valorantPlayers = await getPlayersByPlatform(valorantPlatform.id);
-  }
-
-  if (valorantPlayers.length > 0) {
-    const fetchPlayerStats = async (player: Player) => {
-      const data = await getValorantCompiledStatsByPlayer(player.id);
-
-      if (data && Object.keys(data).length > 0) {
-        const stats = {
-          ...data,
-          player: await getPlayerById(data.player_id),
-          acs: data.acs / data.games
-        };
-        compiledStats.push(stats);
-      }
-    };
-
-    await Promise.all(valorantPlayers.map(fetchPlayerStats));
-  }
+export default function StatisticsPage() {
+  const gamePlatforms = getAllGamePlatforms();
 
   return (
-    <div className="mt-40">
-      <aside></aside>
-      <main>
-        {compiledStats && (
-          <ul>
-            <TestComponent data={compiledStats} />
-            {compiledStats.map((stat, index) => (
-              <li key={index}>
-                <div className="font-bold"></div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </main>
+    <div className="mx-auto mt-24 px-8 pb-8 md:w-[800px] lg:w-[1100px]">
+      <StatisticsBase platforms={gamePlatforms} />
     </div>
   );
 }
