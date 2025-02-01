@@ -1,6 +1,8 @@
 import cv from '@techstark/opencv-js';
 
 // Image Processing
+// VALORANT is pretty simple when it comes to processing with OCR, since it's like a table, you
+// just retrieve the height of each row then read per column
 
 export const preprocessImageAndExtractRows = async (imagePath: string) => {
   return new Promise<{ rowDataUrls: string[][]; processedImageUrl: string }>((resolve, reject) => {
@@ -15,10 +17,23 @@ export const preprocessImageAndExtractRows = async (imagePath: string) => {
         const naturalWidth = imgElement.naturalWidth;
         const naturalHeight = imgElement.naturalHeight;
 
+        // NOTE: alot of the configuration is done through trial and error
+        // there aren't any shortcuts, you just gotta adjust and see if it works
+        // until it works.
+
         // Adjusted Position to zoom into scoreboard
+        // Numbers are taken by manually adusting until the screenshot
+        // fits just right
         const naturalXPosition = 220;
         const naturalYPosition = 230;
 
+        // We are cropping the entire image to make sure only the scoreboard is shown,
+        // width multiplier and height multiplier are taken by manually cropping
+        // the scoreboard and dividing the original width and height by the values
+        // after cropping
+        //
+        // i.e. 1920 / 1230 (width of scoreboard) = width_multiplier
+        // and 1080 / 510 (height of scoreboard) = height_multiplier
         const WIDTH_MULTIPLIER = 0.640625;
         const HEIGHT_MULTIPLIER = 0.4722222222222222;
         const POS_MULTIPLIER = imgElement.naturalWidth / 1280;

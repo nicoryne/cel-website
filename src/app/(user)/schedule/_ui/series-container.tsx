@@ -32,7 +32,9 @@ export default function SeriesContainer({ series }: SeriesContainerProps) {
         <div className="col-span-2 grid grid-flow-col place-items-center space-x-4 md:col-span-1 md:space-x-8">
           {/* Team A */}
           <div className="grid grid-cols-2 place-items-center gap-4">
-            <p className="text-nowrap p-1 text-xs font-bold md:text-sm">{series.team_a?.school_abbrev}</p>
+            <p className="text-nowrap p-1 text-xs font-bold md:text-sm">
+              {series.team_a?.school_abbrev}
+            </p>
             <Image
               className="h-auto w-8 md:w-12"
               src={series.team_a?.logo_url || cel_logo}
@@ -44,11 +46,15 @@ export default function SeriesContainer({ series }: SeriesContainerProps) {
 
           {/* Vs and Score */}
           <div className="space-x-2 text-base md:space-x-3 md:text-lg">
-            <span className={`${series.team_a_status === 'Win' ? 'font-bold opacity-100' : 'opacity-40'}`}>
+            <span
+              className={`${series.team_a_status === 'Win' ? 'font-bold opacity-100' : 'opacity-40'}`}
+            >
               {series.team_a_score}
             </span>
             <span className="text-gray-700">/</span>
-            <span className={`${series.team_b_status === 'Win' ? 'font-bold opacity-100' : 'opacity-40'}`}>
+            <span
+              className={`${series.team_b_status === 'Win' ? 'font-bold opacity-100' : 'opacity-40'}`}
+            >
               {series.team_b_score}
             </span>
           </div>
@@ -62,7 +68,9 @@ export default function SeriesContainer({ series }: SeriesContainerProps) {
               width={256}
               height={256}
             />
-            <p className="text-nowrap p-1 text-xs font-bold md:text-sm">{series.team_b?.school_abbrev}</p>
+            <p className="text-nowrap p-1 text-xs font-bold md:text-sm">
+              {series.team_b?.school_abbrev}
+            </p>
           </div>
         </div>
       </div>
@@ -80,12 +88,14 @@ export default function SeriesContainer({ series }: SeriesContainerProps) {
 
         {/* League Schedule Information */}
         <span className="text-xs font-semibold text-white dark:text-neutral-400">
-          {series.league_schedule?.season_type} {series.league_schedule?.season_number} &nbsp; • &nbsp; W{series.week}{' '}
-          &nbsp; • &nbsp; {series.league_schedule?.league_stage}
+          {series.league_schedule?.season_type} {series.league_schedule?.season_number} &nbsp; •
+          &nbsp; W{series.week} &nbsp; • &nbsp; {series.league_schedule?.league_stage}
         </span>
 
         {/* Series Type */}
-        <span className="text-xs font-semibold text-white dark:text-neutral-400">{series.series_type}</span>
+        <span className="text-xs font-semibold text-white dark:text-neutral-400">
+          {series.series_type}
+        </span>
       </div>
     </div>
   );

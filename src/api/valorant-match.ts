@@ -1,5 +1,11 @@
 import { createClient } from '@/lib/supabase/client';
-import { SeriesWithDetails, ValorantMatch, ValorantMap, ValorantMatchWithDetails, Series } from '@/lib/types';
+import {
+  SeriesWithDetails,
+  ValorantMatch,
+  ValorantMap,
+  ValorantMatchWithDetails,
+  Series
+} from '@/lib/types';
 import { handleError } from '@/api/utils/errorHandler';
 
 //====================
@@ -27,9 +33,31 @@ export const createValorantMatch = async (match: {}): Promise<ValorantMatch | nu
 // READ
 //========
 
+export const doesValorantMatchExist = async (
+  series_id: string,
+  match_number: number
+): Promise<boolean | null> => {
+  const supabase = createClient();
+
+  const { count, error } = await supabase
+    .from('valorant_matches')
+    .select('*', { count: 'exact', head: true })
+    .eq('series_id', series_id)
+    .eq('match_number', match_number);
+
+  if (error) {
+    handleError(error, 'fetching Valorant Match exist');
+    return null;
+  }
+
+  return count ? count > 0 : false;
+};
+
 export const getValorantMatchCount = async (): Promise<number | null> => {
   const supabase = createClient();
-  const { count, error } = await supabase.from('valorant_matches').select('*', { count: 'exact', head: true });
+  const { count, error } = await supabase
+    .from('valorant_matches')
+    .select('*', { count: 'exact', head: true });
 
   if (error) {
     handleError(error, 'fetching Valorant Matches count');
@@ -53,7 +81,12 @@ export const getAllValorantMatches = async (): Promise<ValorantMatch[]> => {
 
 export const getValorantMatchById = async (id: string): Promise<ValorantMatch | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase.from('valorant_matches').select('*').eq('id', id).select().single();
+  const { data, error } = await supabase
+    .from('valorant_matches')
+    .select('*')
+    .eq('id', id)
+    .select()
+    .single();
 
   if (error) {
     handleError(error, `fetching Valorant Match by ID: ${id}`);
@@ -63,7 +96,10 @@ export const getValorantMatchById = async (id: string): Promise<ValorantMatch | 
   return data;
 };
 
-export const getValorantMatchByIndexRange = async (min: number, max: number): Promise<ValorantMatch[]> => {
+export const getValorantMatchByIndexRange = async (
+  min: number,
+  max: number
+): Promise<ValorantMatch[]> => {
   const supabase = createClient();
 
   const { data, error } = await supabase.from('valorant_matches').select('*').range(min, max);
@@ -96,10 +132,18 @@ export const appendValorantMatchDetails = (
 // UPDATE
 //========
 
-export const updateValorantMatch = async (id: string, updates: {}): Promise<ValorantMatch | null> => {
+export const updateValorantMatch = async (
+  id: string,
+  updates: {}
+): Promise<ValorantMatch | null> => {
   const supabase = createClient();
 
-  const { data, error } = await supabase.from('valorant_matches').update(updates).eq('id', id).select().single();
+  const { data, error } = await supabase
+    .from('valorant_matches')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
 
   if (error) {
     handleError(error, `updating Valorant Match by ID: ${id}`);

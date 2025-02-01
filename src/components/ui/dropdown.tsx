@@ -21,7 +21,9 @@ export default function Dropdown({ children, value, image }: DropdownProps) {
         className="flex items-center gap-4 rounded-sm border-l-2 border-neutral-200 px-6 py-3 shadow-sm transition-all duration-300 ease-in-out hover:border-pale"
         onClick={() => setIsOpen(!isOpen)}
       >
-        {image && <Image src={image} className="h-auto w-6" alt={`${value} Logo`} width={32} height={32} />}
+        {image && (
+          <Image src={image} className="h-auto w-6" alt={`${value} Logo`} width={32} height={32} />
+        )}
         {value}
         <Bars3BottomLeftIcon className="h-auto w-4 fill-neutral-400" />
       </button>
@@ -29,7 +31,7 @@ export default function Dropdown({ children, value, image }: DropdownProps) {
         {isOpen && (
           <MotionComponent
             type="div"
-            className="absolute left-0 mt-4 h-screen scroll-m-1 overflow-y-scroll rounded shadow-lg"
+            className="absolute left-0 mt-4 h-fit scroll-m-1 overflow-y-scroll rounded bg-background shadow-lg"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

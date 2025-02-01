@@ -4,6 +4,13 @@ interface TestProps {
 }
 
 export default function TestComponent({ data }: TestProps) {
-  console.log(data);
-  return <p>Test Component</p>;
+  return (
+    <ul>
+      {data.map((data) => (
+        <li key={data.id}>
+          {data.player.ingame_name}: {data.acs}
+        </li>
+      ))}
+    </ul>
+  );
 }

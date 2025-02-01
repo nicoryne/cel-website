@@ -11,14 +11,19 @@ import {
   ValorantMatchesPlayerStatsWithDetails,
   ValorantMatchWithDetails
 } from '@/lib/types';
-import React from 'react';
-import { CheckCircleIcon, ArrowRightCircleIcon, ArrowLeftCircleIcon } from '@heroicons/react/24/solid';
+import React, { useState } from 'react';
+import {
+  CheckCircleIcon,
+  ArrowRightCircleIcon,
+  ArrowLeftCircleIcon
+} from '@heroicons/react/24/solid';
 import { sortByStartTime } from '@/app/(admin)/_ui/clients/series/utils';
 import MatchDetailsForm from '@/app/(admin)/_ui/clients/add-match/valorant/add-match-details/form';
 import UploadPlayerStatisticsPanel from '@/app/(admin)/_ui/clients/add-match/valorant/upload-image/panel';
 import ValidatePlayerStatisticsPanel from '@/app/(admin)/_ui/clients/add-match/valorant/validate-statistics/panel';
 import ChooseSeries from '@/app/(admin)/_ui/clients/add-match/valorant/choose-series/panel';
 import { appendSeriesDetails } from '@/api/series';
+import { doesValorantMatchExist } from '@/api/valorant-match';
 
 const steps = [
   { id: 1, name: 'Choose Series' },
@@ -47,8 +52,11 @@ export default function ValorantMultiStepBase({
   const processedPlatformList = React.use(platformList);
   const processedTeamsList = React.use(teamsList);
   const processedScheduleList = React.use(scheduleList);
+  const [error, setError] = useState('');
 
-  const valorantPlatformId = processedPlatformList.find((platform) => platform.platform_abbrev === 'VALO');
+  const valorantPlatformId = processedPlatformList.find(
+    (platform) => platform.platform_abbrev === 'VALO'
+  );
   const valorantSeriesList = processedSeriesList
     .filter((series) => series.platform_id === valorantPlatformId?.id)
     .sort(sortByStartTime);
@@ -70,7 +78,10 @@ export default function ValorantMultiStepBase({
     team_b_rounds: 0
   });
 
-  const updateMatchInfo = (field: keyof ValorantMatchWithDetails, value: string | number | Series | ValorantMap) => {
+  const updateMatchInfo = (
+    field: keyof ValorantMatchWithDetails,
+    value: string | number | Series | ValorantMap
+  ) => {
     setMatchInfo((matchInfo) => ({
       ...matchInfo,
       [field]: value
@@ -94,13 +105,39 @@ export default function ValorantMultiStepBase({
       const teamBRounds = matchInfo.team_b_rounds;
 
       const statusMapping =
-        teamARounds > teamBRounds ? ['Win', 'Loss'] : teamARounds < teamBRounds ? ['Loss', 'Win'] : ['Draw', 'Draw'];
+        teamARounds > teamBRounds
+          ? ['Win', 'Loss']
+          : teamARounds < teamBRounds
+            ? ['Loss', 'Win']
+            : ['Draw', 'Draw'];
 
       updateMatchInfo('team_a_status', statusMapping[0]);
       updateMatchInfo('team_b_status', statusMapping[1]);
     }
   }, [matchInfo.team_a_rounds, matchInfo.team_b_rounds]);
 
+  const handleNext = async () => {
+    if (currentStep == 2) {
+      if (!matchInfo.match_number || !matchInfo.series || !matchInfo.match_duration) {
+        setError('Incomplete Match Info.');
+        return;
+      }
+      const doesMatchExist = await doesValorantMatchExist(
+        matchInfo.series?.id,
+        matchInfo.match_number
+      );
+
+      if (doesMatchExist) {
+        setError('Match already exists.');
+        return;
+      }
+    }
+
+    if (error.length > 0) {
+      setError('');
+    }
+    setCurrentStep(currentStep + 1);
+  };
   return (
     <>
       {/* Steps */}
@@ -131,7 +168,9 @@ export default function ValorantMultiStepBase({
           </button>
 
           <div className="mt-12 h-[40vh] w-[60vw]">
-            {currentStep === 1 && <ChooseSeries seriesList={detailedSeries} setSeries={setSeries} />}
+            {currentStep === 1 && (
+              <ChooseSeries seriesList={detailedSeries} setSeries={setSeries} />
+            )}
 
             {currentStep === 2 && (
               <MatchDetailsForm
@@ -152,13 +191,15 @@ export default function ValorantMultiStepBase({
                 matchInfo={matchInfo}
               />
             )}
+
+            <p className="mt-8 text-xs text-chili">{error}</p>
           </div>
 
           <button
             type="button"
             disabled={currentStep === 4}
             className={`w-fit rounded-lg p-4 duration-150 ease-linear ${currentStep === 4 ? 'text-neutral-800' : 'text-neutral-600 hover:text-neutral-200'}`}
-            onClick={() => setCurrentStep(currentStep + 1)}
+            onClick={() => handleNext()}
           >
             <ArrowRightCircleIcon className="h-auto w-16" />
           </button>

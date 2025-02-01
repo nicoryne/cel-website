@@ -92,6 +92,19 @@ export const getSeriesByIndexRange = async (min: number, max: number): Promise<S
   return data as Series[];
 };
 
+export const getSeriesByPlatformAbbrev = async (platform_abbrev: string): Promise<Series[]> => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase.from('series').select('*').eq(`platforms (platform_abbrev)`, platform_abbrev);
+
+  if (error) {
+    handleError(error, 'fetching series by platform abbrev');
+    return [];
+  }
+
+  return data as Series[];
+};
+
 //========
 // UTILITY
 //========

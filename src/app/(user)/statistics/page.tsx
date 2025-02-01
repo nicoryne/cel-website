@@ -1,5 +1,5 @@
 import { getGamePlatformByAbbrev } from '@/api/game-platform';
-import { getPlayersByPlatform } from '@/api/player';
+import { getPlayerById, getPlayersByPlatform } from '@/api/player';
 import { getValorantCompiledStatsByPlayer } from '@/api/valorant-match-player-stat';
 import { Player } from '@/lib/types';
 import TestComponent from './_ui/test';
@@ -18,7 +18,12 @@ export default async function StatisticsPage() {
       const data = await getValorantCompiledStatsByPlayer(player.id);
 
       if (data && Object.keys(data).length > 0) {
-        compiledStats.push(data);
+        const stats = {
+          ...data,
+          player: await getPlayerById(data.player_id),
+          acs: data.acs / data.games
+        };
+        compiledStats.push(stats);
       }
     };
 

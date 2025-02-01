@@ -9,6 +9,7 @@ import PlayerStatsTable from '@/app/(admin)/_ui/clients/add-match/valorant/valid
 import { getCharactersByGamePlatform } from '@/api/characters';
 import { createValorantMatch } from '@/api/valorant-match';
 import { createValorantMatchPlayerStat } from '@/api/valorant-match-player-stat';
+import { useRouter } from 'next/navigation';
 
 type ValidatePlayerStatisticsProps = {
   imageData: React.MutableRefObject<string | undefined>;
@@ -36,8 +37,7 @@ export default function ValidatePlayerStatisticsPanel({
   const [error, setError] = useState<string | null>(null);
   const [teamPlayers, setTeamPlayers] = useState<Record<string, Player[] | null>>({});
   const [valorantCharacters, setValorantCharacters] = useState<Character[]>([]);
-
-  console.log(matchInfo);
+  const router = useRouter();
 
   const updatePlayerStats = (index: number, field: keyof ValorantMatchesPlayerStatsWithDetails, value: any) => {
     setPlayerStatsList((prevPlayerStats) => {
@@ -52,6 +52,21 @@ export default function ValidatePlayerStatisticsPanel({
       return updatedPlayerStats;
     });
   };
+
+  useEffect(() => {
+    const teamA = teamsList.find((team) => team.id === matchInfo?.series?.team_a_id);
+    const teamB = teamsList.find((team) => team.id === matchInfo?.series?.team_b_id);
+    let teams = [];
+    if (teamA) {
+      teams.push(teamA);
+    }
+
+    if (teamB) {
+      teams.push(teamB);
+    }
+
+    setPlayingTeams(teams);
+  }, [matchInfo?.series]);
 
   useEffect(() => {
     const fetchCharacters = async () => {
@@ -221,37 +236,46 @@ export default function ValidatePlayerStatisticsPanel({
   };
 
   const handleStatsSubmit = async () => {
-    console.log(matchInfo);
-    const processedMatchInfo = {
-      series_id: matchInfo.series?.id,
-      map_id: matchInfo.map?.id,
-      match_duration: matchInfo.match_duration,
-      match_number: matchInfo.match_number,
-      team_a_status: matchInfo.team_a_status,
-      team_a_rounds: matchInfo.team_a_rounds,
-      team_b_status: matchInfo.team_b_status,
-      team_b_rounds: matchInfo.team_b_rounds
-    };
-    const data = await createValorantMatch(processedMatchInfo);
+    try {
+      const processedMatchInfo = {
+        series_id: matchInfo.series?.id,
+        map_id: matchInfo.map?.id,
+        match_duration: matchInfo.match_duration,
+        match_number: matchInfo.match_number,
+        team_a_status: matchInfo.team_a_status,
+        team_a_rounds: matchInfo.team_a_rounds,
+        team_b_status: matchInfo.team_b_status,
+        team_b_rounds: matchInfo.team_b_rounds
+      };
+      const data = await createValorantMatch(processedMatchInfo);
+      if (!data) throw new Error('Match creation failed');
 
-    if (data) {
       playerStatsList.forEach(async (playerStat) => {
-        const processedStat = {
-          player_id: playerStat.player?.id,
-          match_id: data?.id,
-          agent_id: playerStat.agent?.id,
-          acs: playerStat.acs,
-          kills: playerStat.kills,
-          deaths: playerStat.deaths,
-          assists: playerStat.assists,
-          econ_rating: playerStat.econ_rating,
-          first_bloods: playerStat.first_bloods,
-          plants: playerStat.plants,
-          defuses: playerStat.defuses
-        };
-
-        await createValorantMatchPlayerStat(processedStat);
+        try {
+          const processedStat = {
+            player_id: playerStat.player?.id,
+            match_id: data?.id,
+            agent_id: playerStat.agent?.id,
+            acs: playerStat.acs,
+            kills: playerStat.kills,
+            deaths: playerStat.deaths,
+            assists: playerStat.assists,
+            econ_rating: playerStat.econ_rating,
+            first_bloods: playerStat.first_bloods,
+            plants: playerStat.plants,
+            defuses: playerStat.defuses,
+            is_mvp: playerStat.is_mvp === true ? true : false
+          };
+          await createValorantMatchPlayerStat(processedStat);
+        } catch (error) {
+          console.error('Error creating player stat:', error);
+        }
       });
+
+      router.push('/dashboard');
+    } catch (error) {
+      setError('Failed to submit statistics.');
+      console.error('Error during submission:', error);
     }
   };
 

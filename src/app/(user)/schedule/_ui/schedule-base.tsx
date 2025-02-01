@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState, useMemo, useRef, use } from 'react';
-import { motion } from 'framer-motion';
 import Image from 'next/image';
 import SeriesGroup from '@/app/(user)/schedule/_ui/series-group';
 import { GamePlatform, LeagueSchedule, Series, SeriesWithDetails, Team } from '@/lib/types';
@@ -11,6 +10,7 @@ import cel_logo from '@/../public/logos/cel.webp';
 import DropdownItem from '@/components/ui/dropdown-item';
 import Dropdown from '@/components/ui/dropdown';
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/16/solid';
+import { useInView } from 'react-intersection-observer';
 
 interface ScheduleBaseProps {
   series: Promise<Series[]>;
@@ -38,7 +38,12 @@ const fetchPlatformOptions = (platforms: Promise<GamePlatform[]>) => {
   return platformOptions;
 };
 
-export default function ScheduleBase({ series, teamList, platformList, leagueScheduleList }: ScheduleBaseProps) {
+export default function ScheduleBase({
+  series,
+  teamList,
+  platformList,
+  leagueScheduleList
+}: ScheduleBaseProps) {
   const dateToday = new Date();
   const processedTeamList = use(teamList);
   const processedPlatformList = use(platformList);
@@ -51,9 +56,16 @@ export default function ScheduleBase({ series, teamList, platformList, leagueSch
 
   useEffect(() => {
     seriesList.forEach((series) => {
-      addSeriesToCache(series, setSeriesCache, processedPlatformList, processedTeamList, processedLeagueScheduleList);
+      addSeriesToCache(
+        series,
+        setSeriesCache,
+        processedPlatformList,
+        processedTeamList,
+        processedLeagueScheduleList
+      );
     });
   }, [seriesList]);
+
   const activeSeries = useMemo(
     () => getActiveSeries(seriesCache, filterState, dateToday),
     [filterState, seriesCache, dateToday]
@@ -65,15 +77,15 @@ export default function ScheduleBase({ series, teamList, platformList, leagueSch
     return dateB - dateA;
   });
 
+  const setDateAndScroll = (date: Date) => {
+    setCurrentDate(date);
+    scrollToDate(date);
+  };
+
   const [currentDate, setCurrentDate] = useState(dateToday);
 
   const handleDateButtonPress = (type: 'prev' | 'today' | 'next') => {
     const currentIndex = sortedDates.indexOf(currentDate.toLocaleDateString('en-CA'));
-
-    const setDateAndScroll = (date: Date) => {
-      setCurrentDate(date);
-      scrollToDate(date);
-    };
 
     switch (type) {
       case 'next':
@@ -101,34 +113,16 @@ export default function ScheduleBase({ series, teamList, platformList, leagueSch
     }
   };
 
-  const sectionRefs = useRef<(HTMLElement | null)[]>([]);
+  const { ref, inView, entry } = useInView({
+    threshold: 0.8,
+    rootMargin: '0px 0px -30% 0px'
+  });
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const targetElement = entry.target as HTMLElement;
-            const dateStr = targetElement.dataset.date;
-            console.log(entry);
-            if (dateStr) {
-              setCurrentDate(new Date(dateStr));
-            }
-          }
-        });
-      },
-      {
-        threshold: 0.8,
-        rootMargin: '0px 0px -30% 0px'
-      }
-    );
-
-    sectionRefs.current.forEach((ref) => {
-      if (ref) observer.observe(ref);
-    });
-
-    return () => observer.disconnect();
-  }, []);
+    if (inView) {
+      console.log(entry);
+    }
+  }, [inView]);
 
   return (
     <>
@@ -211,15 +205,13 @@ export default function ScheduleBase({ series, teamList, platformList, leagueSch
         </div>
       </aside>
 
-      <main className="min-h-[90vh] space-y-16 overflow-y-auto pt-64">
+      <main className="min-h-[90vh] space-y-16 overflow-y-scroll pt-64">
         {sortedDates.map((date, index) => (
           <SeriesGroup
             date={new Date(date)}
             key={index}
             seriesList={activeSeries[date]}
-            sectionRef={(el) => {
-              sectionRefs.current[index] = el;
-            }}
+            sectionRef={ref}
           />
         ))}
       </main>

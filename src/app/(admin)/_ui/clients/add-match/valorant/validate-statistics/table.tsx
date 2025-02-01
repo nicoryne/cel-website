@@ -30,7 +30,8 @@ export default function PlayerStatsTable({
     'Econ Rating',
     'First Bloods',
     'Plants',
-    'Defuses'
+    'Defuses',
+    'is MVP?'
   ];
 
   return (

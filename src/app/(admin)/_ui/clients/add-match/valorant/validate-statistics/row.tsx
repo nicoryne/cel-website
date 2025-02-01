@@ -106,6 +106,14 @@ export default function PlayerStatsRow({
           </td>
         );
       })}
+
+      <td>
+        <input
+          type="checkbox"
+          checked={!!playerStats?.is_mvp}
+          onChange={({ target: { checked } }) => onChange(index, 'is_mvp', checked ? true : false)}
+        />
+      </td>
     </tr>
   );
 }
