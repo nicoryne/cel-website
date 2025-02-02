@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import ScheduleBase from '@/app/(user)/schedule/_ui/schedule-base';
+import ScheduleBase from '@/app/(user)/schedule/_components/schedule-base';
 import Loading from '@/components/loading';
 import { getAllGamePlatforms } from '@/api/game-platform';
 import { getSeriesByIndexRange } from '@/api/series';
@@ -7,7 +7,7 @@ import { getAllTeams } from '@/api/team';
 import { getAllLeagueSchedules } from '@/api/league-schedule';
 
 export default function SchedulePage() {
-  const series = getSeriesByIndexRange(0, 100);
+  const series = getSeriesByIndexRange(0, 200);
   const platformList = getAllGamePlatforms();
   const teamList = getAllTeams();
   const leagueScheduleList = getAllLeagueSchedules();

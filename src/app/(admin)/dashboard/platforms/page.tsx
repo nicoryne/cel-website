@@ -1,5 +1,5 @@
 import { getAllGamePlatforms, getGamePlatformCount } from '@/api/game-platform';
-import GamePlatformsClientBase from '@/app/(admin)/_ui/clients/platforms/base';
+import GamePlatformsClientBase from '@/app/(admin)/dashboard/platforms/_components/base';
 import Loading from '@/components/loading';
 import { Suspense } from 'react';
 

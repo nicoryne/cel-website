@@ -1,4 +1,5 @@
 export enum SeriesType {
+  BO1 = 'BO1',
   BO2 = 'BO2',
   BO3 = 'BO3',
   BO5 = 'BO5',

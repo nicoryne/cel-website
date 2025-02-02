@@ -1,5 +1,12 @@
 import { createClient } from '@/lib/supabase/client';
-import { GamePlatform, Series, SeriesFormType, Team, LeagueSchedule, SeriesWithDetails } from '@/lib/types';
+import {
+  GamePlatform,
+  Series,
+  SeriesFormType,
+  Team,
+  LeagueSchedule,
+  SeriesWithDetails
+} from '@/lib/types';
 import { handleError } from '@/api/utils/errorHandler';
 import { deleteFile, uploadFile } from '@/api/utils/storage';
 
@@ -45,7 +52,9 @@ export const createSeries = async (series: SeriesFormType): Promise<Series | nul
 
 export const getSeriesCount = async (): Promise<number | null> => {
   const supabase = createClient();
-  const { count, error } = await supabase.from('series').select('*', { count: 'exact', head: true });
+  const { count, error } = await supabase
+    .from('series')
+    .select('*', { count: 'exact', head: true });
 
   if (error) {
     handleError(error, 'fetching series count');
@@ -92,13 +101,40 @@ export const getSeriesByIndexRange = async (min: number, max: number): Promise<S
   return data as Series[];
 };
 
-export const getSeriesByPlatformAbbrev = async (platform_abbrev: string): Promise<Series[]> => {
+export const getSeriesByLeagueScheduleId = async (
+  league_schedule_id: string
+): Promise<Series[]> => {
   const supabase = createClient();
 
-  const { data, error } = await supabase.from('series').select('*').eq(`platforms (platform_abbrev)`, platform_abbrev);
+  const { data, error } = await supabase
+    .from('series')
+    .select('*')
+    .eq('league_schedule_id', league_schedule_id)
+    .order('start_time');
 
   if (error) {
-    handleError(error, 'fetching series by platform abbrev');
+    handleError(error, 'fetching series by league schedule ID');
+    return [];
+  }
+
+  return data as Series[];
+};
+
+export const getSeriesByLeagueScheduleIdAndGamePlatform = async (
+  league_schedule_id: string,
+  platform_id: string
+): Promise<Series[]> => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('series')
+    .select('*')
+    .eq('league_schedule_id', league_schedule_id)
+    .eq('platform_id', platform_id)
+    .order('start_time');
+
+  if (error) {
+    handleError(error, 'fetching series by league schedule ID and game platform abbrev');
     return [];
   }
 
@@ -120,7 +156,9 @@ export const appendSeriesDetails = (
     platform: platformList.find((platform) => platform.id === series.platform_id),
     team_a: teamList.find((team) => team.id === series.team_a_id),
     team_b: teamList.find((team) => team.id === series.team_b_id),
-    league_schedule: leagueScheduleList.find((schedule) => schedule.id === series.league_schedule_id)
+    league_schedule: leagueScheduleList.find(
+      (schedule) => schedule.id === series.league_schedule_id
+    )
   } as SeriesWithDetails;
 };
 
@@ -132,7 +170,10 @@ export const shortenSeriesName = (series: SeriesWithDetails | Series) => {
 // UPDATE
 //========
 
-export const updateSeriesById = async (id: string, updates: SeriesFormType): Promise<Series | null> => {
+export const updateSeriesById = async (
+  id: string,
+  updates: SeriesFormType
+): Promise<Series | null> => {
   const supabase = createClient();
   let processedSeries = {
     league_schedule_id: updates.league_schedule.id,
@@ -150,7 +191,12 @@ export const updateSeriesById = async (id: string, updates: SeriesFormType): Pro
     end_time: `${updates.date} ${updates.end_time}:00`
   };
 
-  const { data, error } = await supabase.from('series').update(processedSeries).eq('id', id).select().single();
+  const { data, error } = await supabase
+    .from('series')
+    .update(processedSeries)
+    .eq('id', id)
+    .select()
+    .single();
 
   if (error) {
     handleError(error, `updating series by ID: ${id}`);

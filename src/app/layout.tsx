@@ -23,8 +23,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${manrope.variable} ${delagothic.variable}`} suppressHydrationWarning>
-      <body>
+    <html
+      lang="en"
+      className={`${manrope.variable} ${delagothic.variable} antialiased`}
+      suppressHydrationWarning
+    >
+      <body className="bg-background font-manrope text-foreground">
         <Providers>
           <NextTopLoader color="#0f5390" />
           {children}

@@ -57,16 +57,24 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer id="site-footer" className="mx-auto w-full bg-[var(--background)] px-16 pt-16 xl:w-[80%]">
+    <footer
+      id="site-footer"
+      className="mx-auto w-full bg-[var(--background)] px-16 pt-16 xl:w-[80%]"
+    >
       <div className="flex w-full flex-col">
-        <div className="flex flex-col gap-12 border-t-2 border-neutral-300 py-8 dark:border-neutral-800 md:flex-row">
+        <div className="flex flex-col gap-12 border-t border-neutral-300 py-8 dark:border-neutral-800 md:flex-row">
           <div className="flex flex-1 flex-col gap-8">
             <div className="mx flex items-center gap-4">
               <IconCel width={64} height={64} className="fill-foreground" />
-              <span className="text-base font-semibold uppercase sm:text-xl">CESAFI Esports League</span>
+              <span className="text-base font-semibold uppercase sm:text-xl">
+                CESAFI Esports League
+              </span>
             </div>
 
-            <section className="flex flex-col justify-center gap-2" aria-labelledby="contact-details">
+            <section
+              className="flex flex-col justify-center gap-2"
+              aria-labelledby="contact-details"
+            >
               <h2 id="contact-details" className="sr-only text-base text-neutral-200 md:text-lg">
                 Contact Details
               </h2>
@@ -74,7 +82,10 @@ export default function Footer() {
                 <EnvelopeIcon className="h-auto w-4" />
 
                 <address>
-                  <a href="mailto:cesafiesportsleague@gmail.com" className="text-xs not-italic sm:text-sm">
+                  <a
+                    href="mailto:cesafiesportsleague@gmail.com"
+                    className="text-xs not-italic sm:text-sm"
+                  >
                     cesafiesportsleague@gmail.com
                   </a>
                 </address>
@@ -133,7 +144,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="flex w-full flex-col items-center gap-8 border-t-2 border-neutral-300 py-4 dark:border-neutral-800 md:flex-row md:justify-between">
+        <div className="flex w-full flex-col items-center gap-8 border-t border-neutral-300 py-4 dark:border-neutral-800 md:flex-row md:justify-between">
           <section
             aria-labelledby="social-links"
             className="flex flex-col items-center gap-4 sm:flex-row md:order-2 md:flex-col lg:flex-row"
@@ -146,7 +157,7 @@ export default function Footer() {
               {defaultSocials.map((social, index) => (
                 <li key={index} className="list-none">
                   <Link
-                    className="block rounded-md border-2 p-4 transition-colors duration-150 ease-linear hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 hover:dark:border-neutral-600 hover:dark:bg-neutral-700 active:dark:bg-neutral-900"
+                    className="block rounded-md border p-4 transition-colors duration-150 ease-linear hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 hover:dark:border-neutral-600 hover:dark:bg-neutral-700 active:dark:bg-neutral-900"
                     href={social.href}
                     aria-label={`Follow CESAFI Esports League on ${social.text}`}
                     target="_blank"

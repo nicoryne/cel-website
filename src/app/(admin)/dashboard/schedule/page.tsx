@@ -1,5 +1,5 @@
 import { getScheduleCount } from '@/api/league-schedule';
-import ScheduleClientBase from '@/app/(admin)/_ui/clients/league-schedule/base';
+import ScheduleClientBase from '@/app/(admin)/dashboard/schedule/_components/base';
 import Loading from '@/components/loading';
 import { Suspense } from 'react';
 

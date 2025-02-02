@@ -32,7 +32,7 @@ export default function HeroSection() {
         role="banner"
       >
         <header className="mb-12 flex w-[70%] max-w-full flex-col gap-4 text-center md:mb-0 md:text-left">
-          <h1 id="hero-heading" className="text-5xl text-white md:text-6xl">
+          <h1 id="hero-heading" className="text-4xl text-white md:text-6xl">
             {headerTitle}
           </h1>
           <p className="text-white">{headerDesc}</p>
@@ -74,7 +74,10 @@ export default function HeroSection() {
           className="absolute bottom-0 w-full"
         >
           <defs>
-            <path id="wave-path" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"></path>
+            <path
+              id="wave-path"
+              d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
+            ></path>
           </defs>
 
           {/* Wave 1 */}

@@ -4,7 +4,7 @@ import { getValorantCompiledStatsByPlayer } from '@/api/valorant-match-player-st
 import Dropdown from '@/components/ui/dropdown';
 import DropdownItem from '@/components/ui/dropdown-item';
 import { Player } from '@/lib/types';
-import StatisticsBase from './_ui/statistics-base';
+import StatisticsBase from '@/app/(user)/statistics/_components/statistics-base';
 
 export default function StatisticsPage() {
   const gamePlatforms = getAllGamePlatforms();

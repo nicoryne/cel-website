@@ -88,7 +88,7 @@ export interface Player {
   last_name: string;
   ingame_name: string;
   team_id: string;
-  game_platform_id: string;
+  platform_id: string;
   roles: string[];
   picture_url: string;
 }
