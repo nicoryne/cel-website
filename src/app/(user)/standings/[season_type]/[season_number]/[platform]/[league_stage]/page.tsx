@@ -46,20 +46,16 @@ export default async function StandingsPage({
   );
 
   return (
-    <main className="h-full min-h-[80vh] bg-background shadow-md">
-      <div className="overflow-x-scroll">
-        {league_stage === 'groupstage' && (
-          <GroupstageView seriesList={seriesList} teamsList={teamsList} />
-        )}
+    <main className="min-h-screen bg-background shadow-md">
+      {league_stage === 'groupstage' && (
+        <GroupstageView seriesList={seriesList} teamsList={teamsList} />
+      )}
 
-        {league_stage === 'play-ins' && (
-          <PlayinsView seriesList={seriesList} teamsList={teamsList} />
-        )}
+      {league_stage === 'play-ins' && <PlayinsView seriesList={seriesList} teamsList={teamsList} />}
 
-        {league_stage === 'play-offs' && (
-          <PlayoffsView seriesList={seriesList} teamsList={teamsList} />
-        )}
-      </div>
+      {league_stage === 'play-offs' && (
+        <PlayoffsView seriesList={seriesList} teamsList={teamsList} />
+      )}
     </main>
   );
 }

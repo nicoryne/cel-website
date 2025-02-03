@@ -57,10 +57,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer
-      id="site-footer"
-      className="mx-auto w-full bg-[var(--background)] px-16 pt-16 xl:w-[80%]"
-    >
+    <footer id="site-footer" className="mx-auto w-full bg-background px-16 pt-16 xl:w-[80%]">
       <div className="flex w-full flex-col">
         <div className="flex flex-col gap-12 border-t border-neutral-300 py-8 dark:border-neutral-800 md:flex-row">
           <div className="flex flex-1 flex-col gap-8">

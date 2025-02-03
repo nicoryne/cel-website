@@ -27,11 +27,11 @@ export default async function SeasonStandingsLayout({
   }
 
   return (
-    <div className="w-full">
-      <header className="relative border-b border-neutral-200 font-semibold dark:border-neutral-700">
+    <>
+      <header className="relative border-b border-neutral-200 font-semibold dark:border-neutral-700 md:h-32 lg:h-20">
         <div className="flex w-full flex-col justify-between gap-8 p-4 md:flex-row">
           <div className="flex items-center gap-8">
-            <span className="hidden gap-2 md:flex">
+            <span className="hidden gap-2 lg:flex">
               STAGES <ChevronDoubleRightIcon className="h-auto w-6" />
             </span>
             {stages && (
@@ -42,7 +42,7 @@ export default async function SeasonStandingsLayout({
           </div>
           <div>
             {platforms && (
-              <ul className="flex list-none gap-12 md:flex-col md:gap-3">
+              <ul className="flex list-none gap-12 md:flex-col md:gap-3 lg:flex-row">
                 <PlatformLinks platforms={platforms} />
               </ul>
             )}
@@ -50,6 +50,6 @@ export default async function SeasonStandingsLayout({
         </div>
       </header>
       {children}
-    </div>
+    </>
   );
 }
