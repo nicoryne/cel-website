@@ -5,7 +5,6 @@ import not_found from '@/../../public/images/not-found.webp';
 interface GroupstageViewProps {
   seriesList: Series[];
   teamsList: Team[];
-  platformList: GamePlatform[];
 }
 
 // the logic here is to track all matchups. all teams who face each other
@@ -15,28 +14,33 @@ interface GroupstageViewProps {
 // TODO: optimize this. looks very dirty tbh
 const updateMatchupsAndResults = (seriesList: Series[]) => {
   const matchups: Record<string, Set<string>> = {};
-  const teamResults: Record<string, { wins: number; losses: number }> = {};
+  const teamResults: Record<string, { wins: number; losses: number; draws: number }> = {};
 
-  seriesList.forEach(({ team_a_id, team_b_id, team_a_status, team_b_status }) => {
-    // make new set for every team if they don't have one already
-    if (!matchups[team_a_id]) matchups[team_a_id] = new Set();
-    if (!matchups[team_b_id]) matchups[team_b_id] = new Set();
+  seriesList.forEach(
+    ({ team_a_id, team_b_id, team_a_status, team_b_status, team_a_score, team_b_score }) => {
+      // make new set for every team if they don't have one already
+      if (!matchups[team_a_id]) matchups[team_a_id] = new Set();
+      if (!matchups[team_b_id]) matchups[team_b_id] = new Set();
 
-    matchups[team_a_id].add(team_b_id);
-    matchups[team_b_id].add(team_a_id);
+      matchups[team_a_id].add(team_b_id);
+      matchups[team_b_id].add(team_a_id);
 
-    // initialize 0 wins 0 losses
-    if (!teamResults[team_a_id]) teamResults[team_a_id] = { wins: 0, losses: 0 };
-    if (!teamResults[team_b_id]) teamResults[team_b_id] = { wins: 0, losses: 0 };
+      // initialize 0 wins 0 losses
+      if (!teamResults[team_a_id]) teamResults[team_a_id] = { wins: 0, losses: 0, draws: 0 };
+      if (!teamResults[team_b_id]) teamResults[team_b_id] = { wins: 0, losses: 0, draws: 0 };
 
-    if (team_a_status === 'Win') {
-      teamResults[team_a_id].wins += 1;
-      teamResults[team_b_id].losses += 1;
-    } else if (team_b_status === 'Win') {
-      teamResults[team_b_id].wins += 1;
-      teamResults[team_a_id].losses += 1;
+      if (team_a_score === team_b_score && team_a_score != 0 && team_b_score != 0) {
+        teamResults[team_a_id].draws += 1;
+        teamResults[team_b_id].draws += 1;
+      } else if (team_a_status === 'Win') {
+        teamResults[team_a_id].wins += 1;
+        teamResults[team_b_id].losses += 1;
+      } else if (team_b_status === 'Win') {
+        teamResults[team_b_id].wins += 1;
+        teamResults[team_a_id].losses += 1;
+      }
     }
-  });
+  );
 
   return { matchups, teamResults };
 };
@@ -92,7 +96,7 @@ const getGroupings = (seriesList: Series[], teamsList: Team[]) => {
 const getTeamStandings = (
   teamIds: string[],
   teamsList: Team[],
-  teamResults: Record<string, { wins: number; losses: number }>
+  teamResults: Record<string, { wins: number; losses: number; draws: number }>
 ) => {
   return teamIds
     .map((teamId) => {
@@ -100,7 +104,8 @@ const getTeamStandings = (
       return {
         team,
         wins: teamResults[teamId]?.wins || 0,
-        losses: teamResults[teamId]?.losses || 0
+        losses: teamResults[teamId]?.losses || 0,
+        draws: teamResults[teamId]?.draws || 0
       };
     })
     .sort((a, b) => {
@@ -111,23 +116,21 @@ const getTeamStandings = (
     });
 };
 
-export default function GroupstageView({
-  seriesList,
-  teamsList,
-  platformList
-}: GroupstageViewProps) {
+export default function GroupstageView({ seriesList, teamsList }: GroupstageViewProps) {
   const { groupAIds, groupBIds, teamResults } = getGroupings(seriesList, teamsList);
 
   const groupA = getTeamStandings(groupAIds, teamsList, teamResults);
   const groupB = getTeamStandings(groupBIds, teamsList, teamResults);
 
+  let isDrawable = seriesList.some((s) => s.series_type === 'BO2');
+
   return (
     <div className="flex flex-col p-4 md:flex-row">
       <div className="w-full p-2 md:w-1/2">
         <h3 className="mb-2 border-b py-4 text-xl dark:border-neutral-700">Group A</h3>
-        {groupA ? (
+        {groupA.length > 0 ? (
           <ul className="space-y-2">
-            {groupA.map(({ team, wins, losses }, index) => (
+            {groupA.map(({ team, wins, losses, draws }, index) => (
               <li
                 key={team?.id}
                 className="flex h-2/4 items-center gap-4 border-b p-4 dark:border-neutral-700"
@@ -141,9 +144,9 @@ export default function GroupstageView({
                   className="h-auto w-8 rounded-full md:w-16"
                 />
                 <div className="flex flex-col gap-2">
-                  <span className="line-clamp-2 text-sm md:text-base">{team?.school_name}</span>
-                  <span className="text-xs font-bold dark:text-neutral-400">
-                    {wins}W - {losses}L
+                  <span className="text-sm">{team?.school_name}</span>
+                  <span className="text-xs font-bold text-neutral-600 dark:text-neutral-400">
+                    {!isDrawable ? `${wins}W - ${losses}L` : `${wins}W - ${losses}L - ${draws}D`}
                   </span>
                 </div>
               </li>
@@ -156,11 +159,11 @@ export default function GroupstageView({
 
       <div className="w-full p-2 md:w-1/2">
         <h3 className="mb-2 border-b py-4 text-xl dark:border-neutral-700">Group B</h3>
-        {groupB ? (
+        {groupB.length > 0 ? (
           <ul className="space-y-2">
-            {groupB.map(({ team, wins, losses }, index) => (
+            {groupB.map(({ team, wins, losses, draws }, index) => (
               <li
-                key={team?.id}
+                key={index}
                 className="flex h-2/4 items-center gap-4 border-b p-4 dark:border-neutral-700"
               >
                 <span className="font-bold">{index + 1}</span>
@@ -172,9 +175,9 @@ export default function GroupstageView({
                   className="h-auto w-8 rounded-full md:w-16"
                 />
                 <div className="flex flex-col gap-2">
-                  <span className="line-clamp-2 text-sm md:text-base">{team?.school_name}</span>
-                  <span className="text-xs font-bold dark:text-neutral-400">
-                    {wins}W - {losses}L
+                  <span className="text-sm">{team?.school_name}</span>
+                  <span className="text-xs font-bold text-neutral-600 dark:text-neutral-400">
+                    {!isDrawable ? `${wins}W - ${losses}L` : `${wins}W - ${losses}L - ${draws}D`}
                   </span>
                 </div>
               </li>

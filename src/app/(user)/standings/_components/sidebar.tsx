@@ -42,7 +42,7 @@ export default async function StandingSidebar() {
   return (
     <aside className="h-24 w-full bg-background shadow-md md:h-screen md:w-80 md:border-r md:border-neutral-200 md:dark:border-neutral-700">
       <div className="hidden pt-4 md:block">
-        <header className="hidden h-24 border-b-2 border-neutral-200 px-4 dark:border-neutral-700 md:block"></header>
+        <header className="hidden h-24 border-b border-neutral-200 px-4 dark:border-neutral-700 md:block"></header>
         <ul>
           {seasonsList.map((season, index) => (
             <li key={index}>

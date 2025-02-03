@@ -184,6 +184,7 @@ export const updateSeriesById = async (
     team_b_id: updates.team_b.id,
     team_b_score: updates.team_b_score,
     team_b_status: updates.team_b_status,
+    match_number: updates.match_number,
     week: updates.week,
     status: updates.status,
     platform_id: updates.platform.id,

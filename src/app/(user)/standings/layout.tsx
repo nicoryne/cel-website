@@ -8,7 +8,7 @@ export default function StandingLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="relative mt-20 flex flex-col overflow-hidden border-b-2 dark:border-b-neutral-700 md:flex-row">
+    <div className="relative mt-20 flex flex-col overflow-hidden border-b dark:border-b-neutral-700 md:flex-row">
       <StandingSidebar />
       {children}
     </div>

@@ -5,8 +5,6 @@ import { GamePlatform, LeagueSchedule, SeriesFormType, SeriesWithDetails, Team }
 
 import { motion } from 'framer-motion';
 import { SeriesType } from '@/lib/enums';
-import Dropdown from '@/components/ui/dropdown';
-import DropdownItem from '@/components/ui/dropdown-item';
 
 type SeriesFormProps = {
   formData: React.MutableRefObject<SeriesFormType | undefined>;
@@ -34,6 +32,7 @@ export default function SeriesForm({
     team_b_status: series?.team_b_status || 'Draw',
     week: series?.week || 1,
     status: series?.status || 'Upcoming',
+    match_number: series?.match_number || 0,
     platform: series?.platform || platformList[0],
     date: series?.start_time ? new Date(series?.start_time!).toISOString().split('T')[0] : '',
     start_time:
@@ -86,6 +85,8 @@ export default function SeriesForm({
   React.useEffect(() => {
     formData.current = seriesInfo;
   }, [seriesInfo, formData]);
+
+  console.log(teamList);
 
   return (
     <form className="my-4 rounded-md border-2 border-neutral-700 bg-neutral-900 p-4">
@@ -423,6 +424,21 @@ export default function SeriesForm({
             </div>
           </div>
           {/* End of league Schedule */}
+          {seriesInfo.league_schedule?.league_stage === 'Play-offs' && (
+            <div>
+              <span className="text-xs">Match No.</span>
+              <div>
+                <input
+                  type="number"
+                  min="0"
+                  max="20"
+                  className="h-10 w-16 rounded-md border-2 border-neutral-700 bg-neutral-900"
+                  value={seriesInfo.match_number}
+                  onChange={(e) => updateSeriesInfo('match_number', e.target.valueAsNumber)}
+                />
+              </div>
+            </div>
+          )}
           {/* Week */}
           <div>
             <span className="text-xs">Week No.</span>

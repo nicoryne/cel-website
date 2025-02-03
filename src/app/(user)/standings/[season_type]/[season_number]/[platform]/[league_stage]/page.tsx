@@ -10,6 +10,8 @@ import GroupstageView from '@/app/(user)/standings/_views/groupstage';
 import { getAllTeams } from '@/api/team';
 import { getAllGamePlatforms } from '@/api/game-platform';
 import { redirect } from 'next/navigation';
+import PlayinsView from '@/app/(user)/standings/_views/playins';
+import PlayoffsView from '@/app/(user)/standings/_views/playoffs';
 
 interface StandingsPageProps {
   params: {
@@ -31,6 +33,10 @@ export default async function StandingsPage({
     league_stage.charAt(0).toUpperCase() + league_stage.slice(1)
   );
 
+  if (!leagueSchedule) {
+    redirect('/not-found');
+  }
+
   const platform_id =
     platformList.find((p) => p.platform_abbrev.toLowerCase() === platform)?.id || platform;
 
@@ -43,11 +49,15 @@ export default async function StandingsPage({
     <main className="h-full min-h-[80vh] bg-background shadow-md">
       <div className="overflow-x-scroll">
         {league_stage === 'groupstage' && (
-          <GroupstageView
-            seriesList={seriesList}
-            teamsList={teamsList}
-            platformList={platformList}
-          />
+          <GroupstageView seriesList={seriesList} teamsList={teamsList} />
+        )}
+
+        {league_stage === 'play-ins' && (
+          <PlayinsView seriesList={seriesList} teamsList={teamsList} />
+        )}
+
+        {league_stage === 'play-offs' && (
+          <PlayoffsView seriesList={seriesList} teamsList={teamsList} />
         )}
       </div>
     </main>

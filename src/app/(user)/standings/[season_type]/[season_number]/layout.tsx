@@ -20,25 +20,29 @@ export default async function SeasonStandingsLayout({
   const seasonNumber = parseInt(season_number, 10);
   const seasonType = season_type.charAt(0).toUpperCase() + season_type.slice(1);
   const stages = await getLeagueStageByTypeAndNumber(seasonType, seasonNumber);
-  const platforms = await getAllGamePlatforms();
+  let platforms = await getAllGamePlatforms();
+
+  if (seasonNumber === 1) {
+    platforms = platforms.filter((p) => p.platform_abbrev === 'MLBB');
+  }
 
   return (
-    <div className="w-full md:py-4">
-      <header className="h-36 border-b border-neutral-200 px-4 py-8 font-semibold dark:border-neutral-700 md:h-24">
-        <div className="flex w-full flex-col justify-between gap-8 px-4 md:flex-row md:items-center">
-          <div className="flex gap-8">
-            <span className="hidden items-center gap-2 md:flex">
+    <div className="w-full">
+      <header className="relative border-b border-neutral-200 font-semibold dark:border-neutral-700">
+        <div className="flex w-full flex-col justify-between gap-8 p-4 md:flex-row">
+          <div className="flex items-center gap-8">
+            <span className="hidden gap-2 md:flex">
               STAGES <ChevronDoubleRightIcon className="h-auto w-6" />
             </span>
             {stages && (
-              <ul className="flex list-none gap-6">
+              <ul className="flex list-none gap-4 xl:gap-6">
                 <StageLinks stages={stages} />
               </ul>
             )}
           </div>
           <div>
             {platforms && (
-              <ul className="flex list-none gap-6">
+              <ul className="flex list-none gap-12 md:flex-col md:gap-3">
                 <PlatformLinks platforms={platforms} />
               </ul>
             )}

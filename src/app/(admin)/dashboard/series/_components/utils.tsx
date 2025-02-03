@@ -163,8 +163,6 @@ export const handleUpdate = async (
   leagueScheduleList: LeagueSchedule[],
   setCachedSeries: React.Dispatch<React.SetStateAction<SeriesWithDetails[]>>
 ) => {
-  const processedTeamList = teamList.filter((team) => team.school_abbrev !== 'TBD');
-
   const updateExistingSeries = async () => {
     try {
       const updatedSeries: Series | null = await updateSeriesById(
@@ -203,7 +201,7 @@ export const handleUpdate = async (
         series={series}
         leagueScheduleList={leagueScheduleList}
         platformList={platformList}
-        teamList={processedTeamList}
+        teamList={teamList}
       />
     )
   };

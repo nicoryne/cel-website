@@ -13,7 +13,7 @@ export default function Accordion({ children, value }: AccordionProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="relative inline-block w-full">
+    <div className="relative z-10 inline-block w-full">
       <button
         className="flex h-full w-full items-center justify-between gap-4 rounded-sm px-6 py-3 active:bg-neutral-50 dark:border-2 dark:border-neutral-900 active:dark:bg-neutral-800"
         onClick={() => setIsOpen(!isOpen)}
@@ -25,7 +25,7 @@ export default function Accordion({ children, value }: AccordionProps) {
         {isOpen && (
           <MotionComponent
             type="div"
-            className="mt-4 rounded shadow-lg"
+            className="mt-2 rounded shadow-lg"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
