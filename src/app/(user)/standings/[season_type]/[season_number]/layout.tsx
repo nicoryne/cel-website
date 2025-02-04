@@ -1,9 +1,10 @@
-import { getLeagueStageByTypeAndNumber } from '@/api/league-schedule';
+import { Suspense } from 'react';
 import { ChevronDoubleRightIcon } from '@heroicons/react/20/solid';
 import StageLinks from '@/app/(user)/standings/_components/stage-links';
-import { getAllGamePlatforms } from '@/api/game-platform';
-
 import PlatformLinks from '@/app/(user)/standings/_components/platform-links';
+import Loading from '@/components/loading';
+import { getLeagueStageByTypeAndNumber } from '@/api/league-schedule';
+import { getAllGamePlatforms } from '@/api/game-platform';
 
 interface SeasonStandingsLayoutProps {
   params: {
@@ -13,18 +14,40 @@ interface SeasonStandingsLayoutProps {
   children: React.ReactNode;
 }
 
-export default async function SeasonStandingsLayout({
+async function StagesComponent({
+  seasonType,
+  seasonNumber
+}: {
+  seasonType: string;
+  seasonNumber: number;
+}) {
+  const stages = await getLeagueStageByTypeAndNumber(seasonType, seasonNumber);
+  return stages ? (
+    <ul className="flex list-none gap-4 xl:gap-6">
+      <StageLinks stages={stages} />
+    </ul>
+  ) : null;
+}
+
+async function PlatformsComponent({ seasonNumber }: { seasonNumber: number }) {
+  let platforms = await getAllGamePlatforms();
+  if (seasonNumber === 1) {
+    platforms = platforms.filter((p) => p.platform_abbrev === 'MLBB');
+  }
+
+  return platforms ? (
+    <ul className="flex list-none gap-12 md:flex-col md:gap-3 lg:flex-row">
+      <PlatformLinks platforms={platforms} />
+    </ul>
+  ) : null;
+}
+
+export default function SeasonStandingsLayout({
   params: { season_type, season_number },
   children
 }: SeasonStandingsLayoutProps) {
   const seasonNumber = parseInt(season_number, 10);
   const seasonType = season_type.charAt(0).toUpperCase() + season_type.slice(1);
-  const stages = await getLeagueStageByTypeAndNumber(seasonType, seasonNumber);
-  let platforms = await getAllGamePlatforms();
-
-  if (seasonNumber === 1) {
-    platforms = platforms.filter((p) => p.platform_abbrev === 'MLBB');
-  }
 
   return (
     <>
@@ -34,18 +57,14 @@ export default async function SeasonStandingsLayout({
             <span className="hidden gap-2 lg:flex">
               STAGES <ChevronDoubleRightIcon className="h-auto w-6" />
             </span>
-            {stages && (
-              <ul className="flex list-none gap-4 xl:gap-6">
-                <StageLinks stages={stages} />
-              </ul>
-            )}
+            <Suspense fallback={<Loading />}>
+              <StagesComponent seasonType={seasonType} seasonNumber={seasonNumber} />
+            </Suspense>
           </div>
           <div>
-            {platforms && (
-              <ul className="flex list-none gap-12 md:flex-col md:gap-3 lg:flex-row">
-                <PlatformLinks platforms={platforms} />
-              </ul>
-            )}
+            <Suspense fallback={<Loading />}>
+              <PlatformsComponent seasonNumber={seasonNumber} />
+            </Suspense>
           </div>
         </div>
       </header>

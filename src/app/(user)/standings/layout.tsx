@@ -1,6 +1,4 @@
-import { getLatestLeagueSchedule } from '@/api/league-schedule';
 import StandingSidebar from '@/app/(user)/standings/_components/sidebar';
-import { usePathname } from 'next/navigation';
 
 export default function StandingLayout({
   children
