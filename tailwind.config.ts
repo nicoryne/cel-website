@@ -30,7 +30,8 @@ const config: Config = {
       backgroundImage: {
         // Custom Gradients
         'hero-gradient': 'linear-gradient(to bottom, var(--pearl), var(--navy), var(--marine))',
-        'blue-red-gradient': 'linear-gradient(to right, var(--yale), var(--pale))'
+        'blue-red-gradient': 'linear-gradient(to right, var(--yale), var(--pale))',
+        'red-blue-gradient': 'linear-gradient(to right, var(--pale), var(--yale))'
       }
     }
   },

@@ -33,7 +33,12 @@ export default function ContactForm() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!messageInfo.firstName || !messageInfo.lastName || !messageInfo.email || !messageInfo.message) {
+    if (
+      !messageInfo.firstName ||
+      !messageInfo.lastName ||
+      !messageInfo.email ||
+      !messageInfo.message
+    ) {
       setErrorMessage('All fields are required.');
       setSuccessMessage('');
       return;
@@ -76,7 +81,8 @@ export default function ContactForm() {
       <header className="flex flex-col gap-4">
         <h2 className="text-xl uppercase md:text-4xl">Contact Us</h2>
         <p className="text-sm md:text-base">
-          Have questions or need assistance? We're here to help! Feel free to send us a message through this form.
+          Have questions or need assistance? We're here to help! Feel free to send us a message
+          through this form.
         </p>
       </header>
       {/* Form */}
@@ -91,7 +97,7 @@ export default function ContactForm() {
               id="firstName"
               name="firstName"
               placeholder="Juan"
-              className="ease rounded-md p-3 text-sm transition-colors duration-200 focus:border-chili focus:ring-chili focus:dark:border-neutral-300 focus:dark:ring-neutral-100"
+              className="ease rounded-md p-3 text-sm transition-colors duration-200 focus:border-chili focus:ring-chili dark:text-background focus:dark:border-neutral-300 focus:dark:ring-neutral-100"
               autoComplete="given-name"
               value={messageInfo.firstName}
               onChange={(e) => updateMessageInfo('firstName', e.target.value)}
@@ -107,7 +113,7 @@ export default function ContactForm() {
               id="lastName"
               name="lastName"
               placeholder="Dela Cruz"
-              className="ease rounded-md p-3 text-sm transition-colors duration-200 focus:border-chili focus:ring-chili focus:dark:border-neutral-300 focus:dark:ring-neutral-100"
+              className="ease rounded-md p-3 text-sm transition-colors duration-200 focus:border-chili focus:ring-chili dark:text-background focus:dark:border-neutral-300 focus:dark:ring-neutral-100"
               autoComplete="family-name"
               value={messageInfo.lastName}
               onChange={(e) => updateMessageInfo('lastName', e.target.value)}
@@ -124,7 +130,7 @@ export default function ContactForm() {
             id="email"
             name="email"
             placeholder="example@gmail.com"
-            className="ease rounded-md p-3 text-sm transition-colors duration-200 focus:border-chili focus:ring-chili focus:dark:border-neutral-300 focus:dark:ring-neutral-100"
+            className="ease rounded-md p-3 text-sm transition-colors duration-200 focus:border-chili focus:ring-chili dark:text-background focus:dark:border-neutral-300 focus:dark:ring-neutral-100"
             autoComplete="email"
             value={messageInfo.email}
             onChange={(e) => updateMessageInfo('email', e.target.value)}
@@ -141,7 +147,7 @@ export default function ContactForm() {
             id="message"
             name="message"
             placeholder="Hello! I am writing about.."
-            className="resize-none rounded-md p-4 text-sm transition-all duration-200 ease-linear focus:border-chili focus:ring-chili focus:dark:border-neutral-300 focus:dark:ring-neutral-100"
+            className="resize-none rounded-md p-4 text-sm transition-all duration-200 ease-linear focus:border-chili focus:ring-chili dark:text-background focus:dark:border-neutral-300 focus:dark:ring-neutral-100"
             value={messageInfo.message}
             onChange={(e) => updateMessageInfo('message', e.target.value)}
           />

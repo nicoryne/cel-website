@@ -12,14 +12,7 @@ export type ModalProps = {
   children?: ReactNode;
 };
 
-export default function Modal({
-  title,
-  message,
-  type,
-  onCancel,
-  onConfirm,
-  children
-}: ModalProps) {
+export default function Modal({ title, message, type, onCancel, onConfirm, children }: ModalProps) {
   const modalStyles = {
     info: {
       borderColor: 'border-neutral-500',

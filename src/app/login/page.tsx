@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -21,9 +22,7 @@ export default function LoginPage() {
       formData.append('email', email);
       formData.append('password', password);
       await login(formData);
-      // Handle successful login (e.g., redirect, show a message, etc.)
     } catch (error) {
-      // Handle login error
       console.error('Login failed:', error);
     } finally {
       setIsLoading(false);
@@ -79,27 +78,28 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="flex flex-col items-center justify-center gap-2">
-            {isLoading ? (
-              <Loading />
-            ) : (
+          <p className="text-center text-sm text-red-500">{error}</p>
+          {isLoading ? (
+            <Loading />
+          ) : (
+            <div className="flex flex-col items-center justify-center gap-2">
               <motion.button
                 type="button"
                 className="w-full rounded-md bg-pale px-8 py-1 font-bold uppercase text-white transition-colors duration-300 ease-in-out hover:bg-chili"
                 onClick={handleLogin}
                 disabled={isLoading}
               >
-                {isLoading ? 'Logging in...' : 'Login'}
+                Login
               </motion.button>
-            )}
 
-            <Link
-              href="/"
-              className="w-fit text-center text-sm font-semibold leading-6 text-gray-500 transition-colors duration-300 ease-in-out hover:text-yale"
-            >
-              Go back home
-            </Link>
-          </div>
+              <Link
+                href="/"
+                className="w-fit text-center text-sm font-semibold leading-6 text-gray-500 transition-colors duration-300 ease-in-out hover:text-yale"
+              >
+                Go back home
+              </Link>
+            </div>
+          )}
         </form>
       </div>
     </div>

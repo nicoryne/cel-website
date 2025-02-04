@@ -1,5 +1,5 @@
 import { getTeamCount } from '@/api/team';
-import TeamsClientBase from '@/app/(admin)/_ui/clients/teams/base';
+import TeamsClientBase from '@/app/(admin)/dashboard/teams/_components/base';
 import Loading from '@/components/loading';
 import { Suspense } from 'react';
 

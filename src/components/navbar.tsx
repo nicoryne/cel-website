@@ -8,8 +8,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Bars4Icon } from '@heroicons/react/20/solid';
 import ThemeSwitcher from '@/components/theme-switcher';
+import { AnimatePresence, motion } from 'framer-motion';
+import { XMarkIcon } from '@heroicons/react/24/solid';
+import { defaultSocials } from './footer';
 
 export default function Navbar() {
+  const currentYear = new Date().getFullYear();
   const pathname = usePathname();
 
   const isLanding = pathname == '/';
@@ -44,7 +48,14 @@ export default function Navbar() {
       <div className="mx-auto flex h-full items-center justify-between p-8 md:w-[700px] lg:w-[900px] xl:w-[1100px]">
         {/* Logo */}
         <Link href="/" aria-label="Go to homepage">
-          <Image className="h-auto w-12" src={cel_logo} alt="CEL Logo" priority width={64} height={64} />
+          <Image
+            className="h-auto w-12"
+            src={cel_logo}
+            alt="CEL Logo"
+            priority
+            width={64}
+            height={64}
+          />
         </Link>
         {/* End of Logo */}
 
@@ -68,38 +79,82 @@ export default function Navbar() {
           {/* End of Desktop Navigation Links */}
 
           {/* Mobile Menu Icon */}
-          <Bars4Icon
-            className="h-auto w-8 cursor-pointer md:hidden"
+          <button
             onClick={() => toggleMobileMenu(!isMobileMenuOpen)}
             aria-label="Toggle navigation menu"
             aria-expanded={isMobileMenuOpen}
-          />
+            className="md:hidden"
+          >
+            {isMobileMenuOpen ? (
+              <XMarkIcon className="h-auto w-8" />
+            ) : (
+              <Bars4Icon className="h-auto w-8" />
+            )}
+          </button>
           {/* End of Mobile Menu Icon */}
 
           <ThemeSwitcher />
         </div>
         {/* Mobile Dropdown Menu */}
-        <nav
-          className={`fixed inset-0 top-20 -z-10 w-full transition-all duration-300 md:hidden ${
-            isMobileMenuOpen ? 'bg-background opacity-100' : 'pointer-events-none bg-transparent opacity-0'
-          }`}
-          aria-label="Mobile navigation"
-        >
-          <ul className="flex flex-col items-center gap-16 p-8 text-foreground">
-            {defaultNavLinks.map((navLink, index) => (
-              <li key={index}>
-                <Link
-                  className="text-2xl font-medium"
-                  href={navLink.href}
-                  onClick={() => toggleMobileMenu(false)}
-                  prefetch
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.nav
+              className="fixed inset-0 top-20 -z-10 w-full bg-background transition-colors duration-300 dark:bg-neutral-900 md:hidden"
+              aria-label="Mobile navigation"
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 100 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+            >
+              <ul className="flex flex-col items-center gap-16 p-8 text-foreground">
+                {defaultNavLinks.map((navLink, index) => (
+                  <li key={index} className="w-full border-b">
+                    <Link
+                      className="text-xl font-medium"
+                      href={navLink.href}
+                      onClick={() => toggleMobileMenu(false)}
+                      prefetch
+                    >
+                      {navLink.text}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <div className="flex w-full flex-col items-center gap-8 border-t-2 border-neutral-300 py-4 dark:border-neutral-800 md:flex-row md:justify-between">
+                <section
+                  aria-labelledby="social-links"
+                  className="flex flex-col items-center gap-4 sm:flex-row md:order-2 md:flex-col lg:flex-row"
                 >
-                  {navLink.text}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+                  <h2 id="social-links" className="sr-only">
+                    CESAFI Esports League Socials
+                  </h2>
+                  <span className="text-xs sm:text-sm md:text-xs lg:text-sm">
+                    Follow our socials!
+                  </span>
+                  <ul className="flex gap-4">
+                    {defaultSocials.map((social, index) => (
+                      <li key={index} className="list-none">
+                        <Link
+                          className="block rounded-md border-2 p-4 transition-colors duration-150 ease-linear hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 hover:dark:border-neutral-600 hover:dark:bg-neutral-700 active:dark:bg-neutral-900"
+                          href={social.href}
+                          aria-label={`Follow CESAFI Esports League on ${social.text}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <span className="fill-foreground">{social.logo}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+
+                <small className="flex items-center text-center text-xs text-neutral-700 dark:text-neutral-300 md:order-1">
+                  &copy; {currentYear} CESAFI Esports League. All Rights Reserved.
+                </small>
+              </div>
+            </motion.nav>
+          )}
+        </AnimatePresence>
         {/* End of Mobile Dropdown Menu */}
       </div>
       {/* End of Wrapper */}

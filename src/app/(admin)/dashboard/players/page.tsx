@@ -1,7 +1,7 @@
 import { getAllGamePlatforms } from '@/api/game-platform';
 import { getPlayerCount } from '@/api/player';
 import { getAllTeams } from '@/api/team';
-import PlayersClientBase from '@/app/(admin)/_ui/clients/players/base';
+import PlayersClientBase from '@/app/(admin)/dashboard/players/_components/base';
 import { Suspense } from 'react';
 
 export default function AdminPlayers() {
@@ -12,7 +12,11 @@ export default function AdminPlayers() {
   return (
     <>
       <Suspense>
-        <PlayersClientBase playerCount={playerCount} platformList={platformList} teamList={teamList} />
+        <PlayersClientBase
+          playerCount={playerCount}
+          platformList={platformList}
+          teamList={teamList}
+        />
       </Suspense>
     </>
   );

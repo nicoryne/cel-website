@@ -4,7 +4,7 @@ import { getAllLeagueSchedules } from '@/api/league-schedule';
 import { getAllMaps } from '@/api/maps';
 import { getAllSeries } from '@/api/series';
 import { getAllTeams } from '@/api/team';
-import ValorantMultiStepBase from '@/app/(admin)/_ui/clients/add-match/valorant/base';
+import ValorantMultiStepBase from '@/app/(admin)/dashboard/add-match/valorant/_components/base';
 
 export default function AddMatchValorantPage() {
   const seriesList = getAllSeries();

@@ -10,6 +10,8 @@ export default async function StandingsPage() {
 
   const { season_type, season_number, league_stage } = schedule;
 
-  redirect(`/standings/${season_type.toLowerCase()}/${season_number}/${league_stage.toLowerCase()}`);
+  redirect(
+    `/standings/${season_type.toLowerCase()}/${season_number}/mlbb/${league_stage.toLowerCase()}`
+  );
   return null;
 }

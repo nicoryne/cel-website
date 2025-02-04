@@ -33,7 +33,11 @@ export const createPlayer = async (player: PlayerFormType): Promise<Player | nul
     }
   }
 
-  const { data, error } = await supabase.from('players').insert([processedPlayer]).select().single();
+  const { data, error } = await supabase
+    .from('players')
+    .insert([processedPlayer])
+    .select()
+    .single();
 
   if (error) {
     handleError(error, 'creating player');
@@ -49,7 +53,9 @@ export const createPlayer = async (player: PlayerFormType): Promise<Player | nul
 
 export const getPlayerCount = async (): Promise<number | null> => {
   const supabase = createClient();
-  const { count, error } = await supabase.from('players').select('*', { count: 'exact', head: true });
+  const { count, error } = await supabase
+    .from('players')
+    .select('*', { count: 'exact', head: true });
 
   if (error) {
     handleError(error, 'fetching player count');
@@ -85,7 +91,11 @@ export const getPlayerById = async (id: string): Promise<Player | null> => {
 
 export const getPlayerByName = async (name: string): Promise<Player | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase.from('players').select('*').textSearch('ingame_name', name).single();
+  const { data, error } = await supabase
+    .from('players')
+    .select('*')
+    .textSearch('ingame_name', name)
+    .single();
 
   if (error) {
     handleError(error, `fetching player by ingame name: ${name}`);
@@ -108,7 +118,10 @@ export const getPlayersByIndexRange = async (min: number, max: number): Promise<
   return data as Player[];
 };
 
-export const getPlayerByTeamAndName = async (team_id: string, ingame_name: string): Promise<Player | null> => {
+export const getPlayerByTeamAndName = async (
+  team_id: string,
+  ingame_name: string
+): Promise<Player | null> => {
   const supabase = createClient();
 
   const { data, error } = await supabase
@@ -152,7 +165,10 @@ export const getPlayersByTeam = async (team_id: string): Promise<Player[]> => {
   return data as Player[];
 };
 
-export const getPlayersByTeamAndPlatform = async (team_id: string, platform_id: string): Promise<Player[]> => {
+export const getPlayersByTeamAndPlatform = async (
+  team_id: string,
+  platform_id: string
+): Promise<Player[]> => {
   const supabase = createClient();
 
   const { data, error } = await supabase
@@ -169,14 +185,35 @@ export const getPlayersByTeamAndPlatform = async (team_id: string, platform_id: 
   return data as Player[];
 };
 
+export const doesPlayerExist = async (first_name: string, last_name: string): Promise<boolean> => {
+  const supabase = createClient();
+
+  const { count, error } = await supabase
+    .from('players')
+    .select('*', { count: 'exact', head: true })
+    .eq('first_name', first_name)
+    .eq('last_name', last_name);
+
+  if (error) {
+    handleError(error, 'fetching Player exist');
+    return true;
+  }
+
+  return count ? count > 0 : false;
+};
+
 //========
 // UTILITY
 //========
 
-export const appendPlayerDetails = (platformList: GamePlatform[], teamList: Team[], player: Player) => {
+export const appendPlayerDetails = (
+  platformList: GamePlatform[],
+  teamList: Team[],
+  player: Player
+) => {
   return {
     ...player,
-    platform: platformList.find((platform) => platform.id === player.game_platform_id) || null,
+    platform: platformList.find((platform) => platform.id === player.platform_id) || null,
     team: teamList.find((team) => team.id === player.team_id) || null
   };
 };
@@ -185,7 +222,10 @@ export const appendPlayerDetails = (platformList: GamePlatform[], teamList: Team
 // UPDATE
 //========
 
-export const updatePlayerById = async (id: string, updates: PlayerFormType): Promise<Player | null> => {
+export const updatePlayerById = async (
+  id: string,
+  updates: PlayerFormType
+): Promise<Player | null> => {
   const supabase = createClient();
   let processedPlayer = {
     first_name: updates.first_name,
@@ -207,7 +247,12 @@ export const updatePlayerById = async (id: string, updates: PlayerFormType): Pro
     }
   }
 
-  const { data, error } = await supabase.from('players').update(processedPlayer).eq('id', id).select().single();
+  const { data, error } = await supabase
+    .from('players')
+    .update(processedPlayer)
+    .eq('id', id)
+    .select()
+    .single();
 
   if (error) {
     handleError(error, `updating Player by ID: ${id}`);

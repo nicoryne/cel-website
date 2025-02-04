@@ -1,6 +1,4 @@
-import { getLatestLeagueSchedule } from '@/api/league-schedule';
-import StandingSidebar from '@/app/(user)/standings/_ui/sidebar';
-import { usePathname } from 'next/navigation';
+import StandingSidebar from '@/app/(user)/standings/_components/sidebar';
 
 export default function StandingLayout({
   children
@@ -8,9 +6,11 @@ export default function StandingLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="relative mt-20 flex flex-col overflow-hidden border-b-2 dark:border-b-neutral-700 md:flex-row">
-      <StandingSidebar />
-      {children}
+    <div className="mt-20 flex h-full min-h-screen flex-col border-b dark:border-b-neutral-700 md:flex-row">
+      <div className="min-h-full">
+        <StandingSidebar />
+      </div>
+      <div className="w-full flex-1 overflow-x-auto">{children}</div>
     </div>
   );
 }

@@ -60,6 +60,7 @@ export interface Series {
   team_b_status: string;
   week: number;
   status: string;
+  match_number: number;
   platform_id: string /* FK */;
   start_time: Date;
   end_time: Date;
@@ -76,6 +77,7 @@ export interface SeriesFormType {
   team_b_status: string;
   week: number;
   status: string;
+  match_number: number;
   platform: GamePlatform /* FK */;
   date: string;
   start_time: string;
@@ -88,7 +90,7 @@ export interface Player {
   last_name: string;
   ingame_name: string;
   team_id: string;
-  game_platform_id: string;
+  platform_id: string;
   roles: string[];
   picture_url: string;
 }
