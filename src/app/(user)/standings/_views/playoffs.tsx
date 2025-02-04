@@ -66,6 +66,7 @@ const TEN_MATCHES = {
 
 export default function PlayoffsView({ seriesList, teamsList }: PlayoffsViewProps) {
   console.log(seriesList);
+  console.log(teamsList);
   seriesList = seriesList.sort((a, b) => a.match_number - b.match_number);
   const bracketView = seriesList.length === 10 ? TEN_MATCHES : EIGHT_MATCHES;
   const columns = seriesList.length / 2;
@@ -112,37 +113,40 @@ export default function PlayoffsView({ seriesList, teamsList }: PlayoffsViewProp
               {/* Upper Bracket */}
               <div className="flex w-full">
                 {Object.entries(bracketView.upperBracket).map(
-                  ([columnIndex, { title, matches }]) => (
-                    <div
-                      key={columnIndex}
-                      style={{ minWidth: `calc(100%/${columns})` }}
-                      className="mr-20 flex select-none flex-col justify-center gap-4"
-                    >
-                      {title && <h4 className="font-extrabold">{title}</h4>}
+                  ([columnIndex, { title, matches }]) => {
+                    console.log(matches);
+                    return (
+                      <div
+                        key={columnIndex}
+                        style={{ minWidth: `calc(100%/${columns})` }}
+                        className="mr-20 flex select-none flex-col justify-center gap-4"
+                      >
+                        {title && <h4 className="font-extrabold">{title}</h4>}
 
-                      {matches.map((matchNumber) => {
-                        const series = seriesList.find((s) => s.match_number === matchNumber);
-                        if (!series) return null;
+                        {matches.map((matchNumber) => {
+                          const series = seriesList.find((s) => s.match_number === matchNumber);
+                          if (!series) return null;
 
-                        const team_a =
-                          teamsList.find((t) => t.id === series.team_a_id) || teamsList[0];
-                        const team_b =
-                          teamsList.find((t) => t.id === series.team_b_id) || teamsList[0];
+                          const team_a =
+                            teamsList.find((t) => t.id === series.team_a_id) || teamsList[0];
+                          const team_b =
+                            teamsList.find((t) => t.id === series.team_b_id) || teamsList[0];
 
-                        return (
-                          <PlayoffsMatchup
-                            key={series.match_number}
-                            team_a={team_a}
-                            team_b={team_b}
-                            team_a_status={series.team_a_status}
-                            team_b_status={series.team_b_status}
-                            team_a_score={series.team_a_score}
-                            team_b_score={series.team_b_score}
-                          />
-                        );
-                      })}
-                    </div>
-                  )
+                          return (
+                            <PlayoffsMatchup
+                              key={series.match_number}
+                              team_a={team_a}
+                              team_b={team_b}
+                              team_a_status={series.team_a_status}
+                              team_b_status={series.team_b_status}
+                              team_a_score={series.team_a_score}
+                              team_b_score={series.team_b_score}
+                            />
+                          );
+                        })}
+                      </div>
+                    );
+                  }
                 )}
               </div>
               {/* Lower Bracket */}
