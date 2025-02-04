@@ -2,7 +2,6 @@
 import React, { useState, useRef } from 'react';
 import { Series, Team } from '@/lib/types';
 import PlayoffsMatchup from '@/app/(user)/standings/_views/playoffs-matchup';
-import MotionComponent from '@/components/ui/motion-component';
 
 // If there's 8 matches in playoffs
 // Then order is
@@ -75,7 +74,6 @@ export default function PlayoffsView({ seriesList, teamsList }: PlayoffsViewProp
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
 
-  // Start Dragging
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!containerRef.current) return;
     setIsDragging(true);
@@ -83,16 +81,14 @@ export default function PlayoffsView({ seriesList, teamsList }: PlayoffsViewProp
     setScrollLeft(containerRef.current.scrollLeft);
   };
 
-  // Dragging
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !containerRef.current) return;
     e.preventDefault();
     const x = e.pageX - containerRef.current.offsetLeft;
-    const walk = (x - startX) * 1.5; // Adjust sensitivity
+    const walk = (x - startX) * 1.5;
     containerRef.current.scrollLeft = scrollLeft - walk;
   };
 
-  // Stop Dragging
   const handleMouseUp = () => {
     setIsDragging(false);
   };
@@ -115,9 +111,9 @@ export default function PlayoffsView({ seriesList, teamsList }: PlayoffsViewProp
               {/* Upper Bracket */}
               <div className="flex w-full">
                 {Object.entries(bracketView.upperBracket).map(
-                  ([columnIndex, { title, matches }], index) => (
+                  ([columnIndex, { title, matches }]) => (
                     <div
-                      key={index}
+                      key={columnIndex}
                       style={{ minWidth: `calc(100%/${columns})` }}
                       className="mr-20 flex select-none flex-col justify-center gap-4"
                     >
