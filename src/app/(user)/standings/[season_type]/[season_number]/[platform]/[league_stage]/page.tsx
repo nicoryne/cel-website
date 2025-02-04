@@ -1,11 +1,5 @@
 import { getLeagueScheduleByTypeNumberStage } from '@/api/league-schedule';
-import {
-  appendSeriesDetails,
-  getSeriesByLeagueScheduleId,
-  getSeriesByLeagueScheduleIdAndGamePlatform
-} from '@/api/series';
-import { Series } from '@/lib/types';
-import { useEffect, useState } from 'react';
+import { getSeriesByLeagueScheduleIdAndGamePlatform } from '@/api/series';
 import GroupstageView from '@/app/(user)/standings/_views/groupstage';
 import { getAllTeams } from '@/api/team';
 import { getAllGamePlatforms } from '@/api/game-platform';

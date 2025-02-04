@@ -65,6 +65,7 @@ const TEN_MATCHES = {
 };
 
 export default function PlayoffsView({ seriesList, teamsList }: PlayoffsViewProps) {
+  console.log(seriesList);
   seriesList = seriesList.sort((a, b) => a.match_number - b.match_number);
   const bracketView = seriesList.length === 10 ? TEN_MATCHES : EIGHT_MATCHES;
   const columns = seriesList.length / 2;
