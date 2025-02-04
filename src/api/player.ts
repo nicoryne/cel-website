@@ -185,6 +185,23 @@ export const getPlayersByTeamAndPlatform = async (
   return data as Player[];
 };
 
+export const doesPlayerExist = async (first_name: string, last_name: string): Promise<boolean> => {
+  const supabase = createClient();
+
+  const { count, error } = await supabase
+    .from('players')
+    .select('*', { count: 'exact', head: true })
+    .eq('first_name', first_name)
+    .eq('last_name', last_name);
+
+  if (error) {
+    handleError(error, 'fetching Player exist');
+    return true;
+  }
+
+  return count ? count > 0 : false;
+};
+
 //========
 // UTILITY
 //========

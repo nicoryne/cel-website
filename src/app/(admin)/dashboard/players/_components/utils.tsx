@@ -8,6 +8,7 @@ import {
   appendPlayerDetails,
   createPlayer,
   deletePlayerById,
+  doesPlayerExist,
   getPlayerByName,
   updatePlayerById
 } from '@/api/player';
@@ -114,6 +115,20 @@ export const handleInsert = async (
 
   const addNewPlayer = async () => {
     try {
+      const firstName = formData.current?.first_name;
+      const lastName = formData.current?.last_name;
+
+      if (!firstName || !lastName) {
+        setModalProps(callModalTemplate('Player', 'error', 'add', setModalProps));
+        return;
+      }
+
+      const playerExists: boolean = await doesPlayerExist(firstName, lastName);
+
+      if (playerExists) {
+        setModalProps(callModalTemplate('Player', 'exists', 'exists', setModalProps));
+        return;
+      }
       const createdPlayer: Player | null = await createPlayer(formData.current as PlayerFormType);
       const processedPlayer: PlayerWithDetails = appendPlayerDetails(
         platformList,
