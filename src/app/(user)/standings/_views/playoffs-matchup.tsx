@@ -17,6 +17,7 @@ interface ComponentProps {
 }
 
 const PlayoffsMatchupComponent = ({ team, status, score }: ComponentProps) => {
+  console.log('COMPONENT: ' + team.school_abbrev + status + score);
   return (
     <div
       className={`border-l-4 dark:border-b-neutral-700 ${status === 'Win' ? 'border-l-ultramarine dark:border-l-yale' : 'border-l-neutral-400 dark:border-l-neutral-600'}`}
