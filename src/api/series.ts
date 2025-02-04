@@ -131,7 +131,8 @@ export const getSeriesByLeagueScheduleIdAndGamePlatform = async (
     .select('*')
     .eq('league_schedule_id', league_schedule_id)
     .eq('platform_id', platform_id)
-    .order('start_time');
+    .order('start_time')
+    .order('match_number');
 
   if (error) {
     handleError(error, 'fetching series by league schedule ID and game platform abbrev');
