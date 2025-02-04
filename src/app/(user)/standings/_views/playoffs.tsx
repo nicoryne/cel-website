@@ -68,6 +68,7 @@ export default function PlayoffsView({ seriesList, teamsList }: PlayoffsViewProp
   console.log(seriesList);
   console.log(teamsList);
   seriesList = seriesList.sort((a, b) => a.match_number - b.match_number);
+  console.log(seriesList);
   const bracketView = seriesList.length === 10 ? TEN_MATCHES : EIGHT_MATCHES;
   const columns = seriesList.length / 2;
 
@@ -124,6 +125,8 @@ export default function PlayoffsView({ seriesList, teamsList }: PlayoffsViewProp
                         {title && <h4 className="font-extrabold">{title}</h4>}
 
                         {matches.map((matchNumber) => {
+                          console.log('match number: ' + matchNumber);
+                          console.log(seriesList);
                           const series = seriesList.find((s) => s.match_number === matchNumber);
                           console.log(series);
                           if (!series) return null;
