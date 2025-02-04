@@ -125,6 +125,7 @@ export default function PlayoffsView({ seriesList, teamsList }: PlayoffsViewProp
 
                         {matches.map((matchNumber) => {
                           const series = seriesList.find((s) => s.match_number === matchNumber);
+                          console.log(series);
                           if (!series) return null;
 
                           const team_a =
