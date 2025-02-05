@@ -39,14 +39,20 @@ export default function PlayerCard({
           </div>
 
           {/* Buttons */}
-          <div className="flex place-items-center gap-4">
-            <ButtonUpdate
-              onUpdate={() => handleUpdate(setModalProps, formData, player, setCachedPlayers)}
-            />
-            <div className="flex gap-1">
+          <div className="flex flex-col gap-2">
+            <div className="flex place-items-center gap-4">
+              <ButtonUpdate
+                onUpdate={() => handleUpdate(setModalProps, formData, player, setCachedPlayers)}
+              />
+
               <ButtonDelete
                 onDelete={() => handleDelete(setModalProps, player, setCachedPlayers)}
               />
+            </div>
+            <div>
+              <p className="text-sm text-neutral-300">
+                {player?.is_active ? 'Active' : 'Not Active'}
+              </p>
             </div>
           </div>
         </div>
@@ -69,7 +75,7 @@ export default function PlayerCard({
 
           <div>
             <p className="text-xs font-semibold text-neutral-600">Roles</p>
-            <ul className="flex list-disc flex-wrap gap-8 px-4 text-xs text-neutral-300">
+            <ul className="flex list-none flex-wrap gap-4 text-xs text-neutral-300">
               {player.roles.map((role, index) => (
                 <li key={index}>{role}</li>
               ))}

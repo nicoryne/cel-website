@@ -18,9 +18,10 @@ export const createPlayer = async (player: PlayerFormType): Promise<Player | nul
     last_name: player.last_name,
     ingame_name: player.ingame_name,
     team_id: player.team.id,
-    game_platform_id: player.game_platform.id,
+    platform_id: player.game_platform.id,
     roles: player.roles,
-    picture_url: ''
+    picture_url: '',
+    is_active: player.is_active
   };
 
   if (player.picture) {
@@ -232,9 +233,10 @@ export const updatePlayerById = async (
     last_name: updates.last_name,
     ingame_name: updates.ingame_name,
     team_id: updates.team.id,
-    game_platform_id: updates.game_platform.id,
+    platform_id: updates.game_platform.id,
     roles: updates.roles,
-    picture_url: ''
+    picture_url: '',
+    is_active: updates.is_active
   };
 
   if (updates.picture) {
