@@ -93,6 +93,7 @@ export interface Player {
   platform_id: string;
   roles: string[];
   picture_url: string;
+  is_active: boolean;
 }
 
 export interface PlayerFormType {
@@ -103,6 +104,7 @@ export interface PlayerFormType {
   game_platform: GamePlatform;
   roles: string[];
   picture: File | null;
+  is_active: boolean;
 }
 
 export interface ValorantMap {
@@ -232,7 +234,7 @@ export type MlbbMatchWithDetails = Omit<MlbbMatch, 'series_id'> & {
   series: Series;
 };
 
-export type PlayerWithDetails = Omit<Player, 'team_id' | 'game_platform_id'> & {
+export type PlayerWithDetails = Omit<Player, 'team_id' | 'platform_id'> & {
   team: Team | null;
   platform: GamePlatform | null;
 };

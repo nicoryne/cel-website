@@ -22,7 +22,8 @@ export default function PlayerForm({ formData, player, platformList, teamList }:
     team: player?.team || teamList[0],
     game_platform: player?.platform || platformList[0],
     roles: player?.roles || [],
-    picture: null
+    picture: null,
+    is_active: player?.is_active ?? true
   });
 
   const [selectedImagePreview, setSelectedImagePreview] = React.useState('');
@@ -30,14 +31,21 @@ export default function PlayerForm({ formData, player, platformList, teamList }:
   const [platformMenu, togglePlatformMenu] = React.useState(false);
 
   const generalRoles = Object.values(Roles.General);
-  const platformRoles = Object.values(Roles[playerInfo.game_platform.platform_abbrev as keyof typeof Roles] || {});
+  const platformRoles = Object.values(
+    Roles[playerInfo.game_platform.platform_abbrev as keyof typeof Roles] || {}
+  );
 
   const handleRoleChange = (role: string, checked: boolean) => {
-    const updatedRoles = checked ? [...playerInfo.roles, role] : playerInfo.roles.filter((r) => r !== role);
+    const updatedRoles = checked
+      ? [...playerInfo.roles, role]
+      : playerInfo.roles.filter((r) => r !== role);
     updatePlayerInfo('roles', updatedRoles);
   };
 
-  const updatePlayerInfo = (field: keyof PlayerFormType, value: File | string | string[] | Team | GamePlatform) => {
+  const updatePlayerInfo = (
+    field: keyof PlayerFormType,
+    value: File | string | string[] | Team | GamePlatform
+  ) => {
     setPlayerInfo((platformInfo) => ({
       ...platformInfo,
       [field]: value
@@ -122,6 +130,7 @@ export default function PlayerForm({ formData, player, platformList, teamList }:
           </label>
           <div>
             <input
+              type="text"
               id="ingameName"
               name="ingameName"
               className="h-10 w-full rounded-md border-2 border-neutral-700 bg-neutral-900"
@@ -129,6 +138,18 @@ export default function PlayerForm({ formData, player, platformList, teamList }:
               onChange={(e) => updatePlayerInfo('ingame_name', e.target.value)}
             />
           </div>
+        </div>
+        <div className="flex gap-8">
+          <label htmlFor="isActive" className="text-xs">
+            Is Active?
+          </label>
+          <input
+            type="checkbox"
+            id="isActive"
+            name="isActive"
+            checked={playerInfo.is_active}
+            onChange={(e) => setPlayerInfo((prev) => ({ ...prev, is_active: e.target.checked }))}
+          />
         </div>
         {/* Team */}
         <div className="flex flex-1 flex-col gap-2">
@@ -151,7 +172,9 @@ export default function PlayerForm({ formData, player, platformList, teamList }:
                 height={128}
                 alt={`${playerInfo.team?.school_abbrev || 'Team'} Logo`}
               />
-              <p className="text-xs md:text-base">{playerInfo.team?.school_abbrev || 'Select Team'}</p>
+              <p className="text-xs md:text-base">
+                {playerInfo.team?.school_abbrev || 'Select Team'}
+              </p>
             </button>
 
             {/* Dropdown for TeamSelection */}
@@ -208,7 +231,9 @@ export default function PlayerForm({ formData, player, platformList, teamList }:
                 height={128}
                 alt={`${playerInfo.game_platform?.platform_abbrev || 'Platform'} Logo`}
               />
-              <p className="text-xs md:text-base">{playerInfo.game_platform?.platform_title || 'Select Platform'}</p>
+              <p className="text-xs md:text-base">
+                {playerInfo.game_platform?.platform_title || 'Select Platform'}
+              </p>
             </button>
 
             {/* Dropdown for Game Platform Selection */}
@@ -221,7 +246,9 @@ export default function PlayerForm({ formData, player, platformList, teamList }:
                 {platformList.map((platform, index) => (
                   <button
                     className={`justify-left flex h-10 w-full place-items-center gap-2 px-4 text-neutral-300 hover:text-white ${
-                      platform.id === playerInfo.game_platform?.id ? 'bg-neutral-800' : 'bg-[var(--background)]'
+                      platform.id === playerInfo.game_platform?.id
+                        ? 'bg-neutral-800'
+                        : 'bg-[var(--background)]'
                     }`}
                     key={index}
                     onClick={() => {
@@ -284,12 +311,23 @@ export default function PlayerForm({ formData, player, platformList, teamList }:
             {/* Custom File Upload Button */}
             <label htmlFor="file-upload" className="cursor-pointer hover:opacity-90">
               {selectedImagePreview ? (
-                <Image src={selectedImagePreview} alt={`${player?.ingame_name} Picture`} height={60} width={60} />
+                <Image
+                  src={selectedImagePreview}
+                  alt={`${player?.ingame_name} Picture`}
+                  height={60}
+                  width={60}
+                />
               ) : (
                 <Image src={not_found} alt={`No Image Logo`} height={60} width={60} />
               )}
             </label>
-            <input id="file-upload" type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+            <input
+              id="file-upload"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileChange}
+            />
             {/* Display Selected File Name */}
             <span className="text-sm text-neutral-400">
               {playerInfo.picture ? playerInfo.picture.name : 'No file chosen'}
