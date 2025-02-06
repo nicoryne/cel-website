@@ -65,18 +65,18 @@ export const getAllMlbbMatchPlayerStats = async (): Promise<MlbbMatchesPlayerSta
 };
 
 export const getMlbbMatchPlayerStatById = async (
-  id: string
+  player_id: string
 ): Promise<MlbbMatchesPlayerStats | null> => {
   const supabase = createClient();
   const { data, error } = await supabase
     .from('mlbb_matches_player_stats')
     .select('*')
-    .eq('id', id)
+    .eq('player_id', player_id)
     .select()
     .single();
 
   if (error) {
-    handleError(error, `fetching MLBB Match by ID: ${id}`);
+    handleError(error, `fetching MLBB Match`);
     return null;
   }
 
@@ -95,24 +95,36 @@ export const getMlbbMatchPlayerStatByIndexRange = async (
     .range(min, max);
 
   if (error) {
-    handleError(error, 'fetching MLBB Matches by index range');
+    handleError(error, 'fetching MLBB Matches');
     return [];
   }
 
   return data;
 };
 
-export const getMlbbCompiledStatsByPlayer = async (
+export const getMlbbCompiledStatsByPlayer = async (q_player_id: string): Promise<any | null> => {
+  const supabase = createClient();
+  const { data, error } = await supabase.rpc('get_mlbb_compiled_stats_by_player', {
+    q_player_id: q_player_id
+  });
+
+  console.log(data);
+  if (error) {
+    handleError(error, 'fetching compiled data stats');
+    return null;
+  }
+
+  return data;
+};
+
+export const getMlbbMatchPlayerStatByPlayerId = async (
   player_id: string
-): Promise<MlbbCompiledStats | null> => {
+): Promise<MlbbMatchesPlayerStats[] | null> => {
   const supabase = createClient();
   const { data, error } = await supabase
     .from('mlbb_matches_player_stats')
-    .select(
-      'player_id, hero_id, games:player_id.count(), rating:rating.sum(), kills:kills.sum(), deaths:deaths.sum(), assists:assists.sum(), net_worth:net_worth.sum(), hero_dmg:hero_dmg.sum(), turret_dmg:turret_dmg.sum(), dmg_tkn:dmg_tkn.sum(), teamfight:teamfight.sum(), lord_slain:turtle_slain.sum(), turtle_slain:turtle_slain.sum()'
-    )
-    .eq('player_id', player_id)
-    .single();
+    .select('*')
+    .eq('player_id', player_id);
 
   if (error) {
     handleError(error, 'fetching compiled data stats');
@@ -151,7 +163,7 @@ export const updateMlbbMatchPlayerStat = async (
     .single();
 
   if (error) {
-    handleError(error, `updating Mlbb Match by ID: ${id}`);
+    handleError(error, `updating Mlbb Match`);
     return null;
   }
 
@@ -167,7 +179,7 @@ export const deleteMlbbMatchPlayerStatById = async (id: string): Promise<boolean
   const { error } = await supabase.from('mlbb_matches_player_stats').delete().eq('id', id).single();
 
   if (error) {
-    handleError(error, `deleting MLBB Match by ID: ${id}`);
+    handleError(error, `deleting MLBB Match`);
     return false;
   }
 

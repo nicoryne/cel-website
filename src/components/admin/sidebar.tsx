@@ -13,6 +13,7 @@ import {
   TvIcon,
   MapIcon,
   CalendarDateRangeIcon,
+  BriefcaseIcon,
   CalendarDaysIcon
 } from '@heroicons/react/24/outline';
 import { logout } from '@/api/auth';
@@ -27,6 +28,7 @@ const defaultSideLinks: SidebarLink[] = [
   { text: 'Schedule', href: '/dashboard/schedule', icon: CalendarDaysIcon },
   { text: 'Series', href: '/dashboard/series', icon: TableCellsIcon },
   { text: 'Teams', href: '/dashboard/teams', icon: UsersIcon },
+  { text: 'Partners', href: '/dashboard/partners', icon: BriefcaseIcon },
   { text: 'Players', href: '/dashboard/players', icon: UserIcon },
   { text: 'Platforms', href: '/dashboard/platforms', icon: TvIcon },
   { text: 'Characters', href: '/dashboard/characters', icon: BoltIcon },
@@ -56,7 +58,10 @@ export default function Sidebar() {
               const IconComponent = sideLink.icon;
 
               return (
-                <li key={index} className="rounded-sm px-5 py-2 text-neutral-500 hover:text-neutral-300">
+                <li
+                  key={index}
+                  className="rounded-sm px-5 py-2 text-neutral-500 hover:text-neutral-300"
+                >
                   <Link href={sideLink.href} className="flex items-center">
                     <IconComponent className="h-auto w-6" aria-hidden="true" />
 

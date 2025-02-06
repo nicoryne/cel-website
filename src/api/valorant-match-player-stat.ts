@@ -78,7 +78,7 @@ export const getValorantMatchPlayerStatById = async (
     .single();
 
   if (error) {
-    handleError(error, `fetching Valorant Match by ID: ${id}`);
+    handleError(error, `fetching Valorant Match`);
     return null;
   }
 
@@ -97,18 +97,21 @@ export const getValorantMatchPlayerStatByIndexRange = async (
     .range(min, max);
 
   if (error) {
-    handleError(error, 'fetching Valorant Matches by index range');
+    handleError(error, 'fetching Valorant Matches');
     return [];
   }
 
   return data;
 };
 
-export const getValorantCompiledStatsByPlayer = async (
+export const getValorantMatchPlayerStatByPlayerId = async (
   player_id: string
-): Promise<ValorantCompiledStats | null> => {
+): Promise<ValorantMatchesPlayerStats[] | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase.rpc('get_valorant_stats', { query_player_id: player_id });
+  const { data, error } = await supabase
+    .from('valorant_matches_player_stats')
+    .select('*')
+    .eq('player_id', player_id);
 
   if (error) {
     handleError(error, 'fetching compiled data stats');
@@ -152,7 +155,7 @@ export const updateValorantMatchPlayerStat = async (
     .single();
 
   if (error) {
-    handleError(error, `updating Valorant Match by ID: ${id}`);
+    handleError(error, `updating Valorant Match`);
     return null;
   }
 
@@ -172,7 +175,7 @@ export const deleteValorantMatchPlayerStatById = async (id: string): Promise<boo
     .single();
 
   if (error) {
-    handleError(error, `deleting Valorant Match by ID: ${id}`);
+    handleError(error, `deleting Valorant Match`);
     return false;
   }
 

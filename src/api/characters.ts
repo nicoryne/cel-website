@@ -13,7 +13,11 @@ import { getGamePlatformById } from '@/api/game-platform';
 
 export const createCharacter = async (character: {}): Promise<Character | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase.from('game_characters').insert([character]).select().single();
+  const { data, error } = await supabase
+    .from('game_characters')
+    .insert([character])
+    .select()
+    .single();
 
   if (error) {
     handleError(error, 'creating character');
@@ -45,7 +49,9 @@ export const getAllCharacters = async (): Promise<Character[]> => {
 
 export const getCharactersCount = async (): Promise<number | null> => {
   const supabase = createClient();
-  const { count, error } = await supabase.from('game_characters').select('*', { count: 'exact', head: true });
+  const { count, error } = await supabase
+    .from('game_characters')
+    .select('*', { count: 'exact', head: true });
 
   if (error) {
     handleError(error, 'fetching character count');
@@ -66,7 +72,7 @@ export const getCharactersByIndexRange = async (min: number, max: number): Promi
     .range(min, max);
 
   if (error) {
-    handleError(error, 'fetching characters by index range');
+    handleError(error, 'fetching characters');
     return [];
   }
 
@@ -78,7 +84,7 @@ export const getCharacterById = async (id: string): Promise<Character | null> =>
   const { data, error } = await supabase.from('game_characters').select('*').eq('id', id).single();
 
   if (error) {
-    handleError(error, `fetching character by ID: ${id}`);
+    handleError(error, `fetching character`);
     return null;
   }
 
@@ -87,17 +93,23 @@ export const getCharacterById = async (id: string): Promise<Character | null> =>
 
 export const getCharacterByName = async (name: string): Promise<Character | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase.from('game_characters').select('*').textSearch('name', name).single();
+  const { data, error } = await supabase
+    .from('game_characters')
+    .select('*')
+    .textSearch('name', name)
+    .single();
 
   if (error) {
-    handleError(error, `fetching character by name: ${name}`);
+    handleError(error, `fetching character`);
     return null;
   }
 
   return data as Character;
 };
 
-export const getCharactersByGamePlatform = async (platform_id: string): Promise<Character[] | null> => {
+export const getCharactersByGamePlatform = async (
+  platform_id: string
+): Promise<Character[] | null> => {
   const supabase = createClient();
   const { data, error } = await supabase
     .from('game_characters')
@@ -106,7 +118,7 @@ export const getCharactersByGamePlatform = async (platform_id: string): Promise<
     .order('name', { ascending: true });
 
   if (error) {
-    handleError(error, 'fetching characters by platform ID');
+    handleError(error, 'fetching characters');
     return [];
   }
 
@@ -146,12 +158,20 @@ export const appendCharacterDetails = (platformList: GamePlatform[], character: 
 // UPDATE
 //========
 
-export const updateCharacterById = async (id: string, updates: Partial<Character>): Promise<Character | null> => {
+export const updateCharacterById = async (
+  id: string,
+  updates: Partial<Character>
+): Promise<Character | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase.from('game_characters').update(updates).eq('id', id).select().single();
+  const { data, error } = await supabase
+    .from('game_characters')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
 
   if (error) {
-    handleError(error, `updating character by ID: ${id}`);
+    handleError(error, `updating character`);
     return null;
   }
 
@@ -167,7 +187,7 @@ export const deleteCharacterById = async (id: string): Promise<boolean> => {
   const { error } = await supabase.from('game_characters').delete().eq('id', id);
 
   if (error) {
-    handleError(error, `deleting character by ID: ${id}`);
+    handleError(error, `deleting character`);
     return false;
   }
 

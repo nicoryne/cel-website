@@ -1,5 +1,6 @@
 export interface Team {
   id: string /* PK */;
+  created_at: string;
   school_abbrev: string;
   school_name: string;
   logo_url: string;
@@ -11,8 +12,23 @@ export interface TeamFormType {
   logo: File | null;
 }
 
+export interface Partner {
+  id: string /* PK */;
+  created_at: string;
+  name: string;
+  logo_url: string;
+  href: string;
+}
+
+export interface PartnerFormType {
+  name: string;
+  href: string;
+  logo: File | null;
+}
+
 export interface LeagueSchedule {
   id: string /* PK */;
+  created_at: string;
   start_date: Date;
   end_date: Date;
   league_stage: string;
@@ -43,6 +59,7 @@ export interface GamePlatformFormType {
 
 export interface Character {
   id: string /* PK */;
+  created_at: string;
   name: string;
   role: string;
   platform_id: string;
@@ -50,6 +67,7 @@ export interface Character {
 
 export interface Series {
   id: string /* PK */;
+  created_at: string;
   league_schedule_id: string /* FK */;
   series_type: string;
   team_a_id: string /* FK */;
@@ -86,6 +104,7 @@ export interface SeriesFormType {
 
 export interface Player {
   id: string /* PK */;
+  created_at: string;
   first_name: string;
   last_name: string;
   ingame_name: string;
@@ -109,6 +128,7 @@ export interface PlayerFormType {
 
 export interface ValorantMap {
   id: string /* PK */;
+  created_at: string;
   name: string;
   is_active: boolean;
   splash_image_url: string;
@@ -122,6 +142,7 @@ export interface ValorantMapFormType {
 
 export interface ValorantMatch {
   id: string /* PK */;
+  created_at: string;
   series_id: string /* FK */;
   map_id: string /* FK */;
   match_duration: string;
@@ -134,6 +155,7 @@ export interface ValorantMatch {
 
 export interface MlbbMatch {
   id: string /* PK */;
+  created_at: string;
   series_id: string /* FK */;
   match_duration: string;
   match_number: number;
@@ -143,6 +165,7 @@ export interface MlbbMatch {
 
 export interface ValorantMatchesPlayerStats {
   id: string /* PK */;
+  created_at: string;
   player_id: string /* FK */;
   match_id: string /* FK */;
   agent_id: string /* FK */;
@@ -159,6 +182,7 @@ export interface ValorantMatchesPlayerStats {
 
 export interface MlbbMatchesPlayerStats {
   id: string /* PK */;
+  created_at: string;
   player_id: string /* FK */;
   match_id: string /* FK */;
   hero_id: string /* FK */;
@@ -177,34 +201,45 @@ export interface MlbbMatchesPlayerStats {
 }
 
 export interface ValorantCompiledStats {
-  player_id: string /* PK */;
-  agent_id: string /* FK */;
+  player: Player /* PK */;
+  agent: string /* FK */;
   games: number;
   rounds: number;
-  acs: number;
-  kills: number;
-  deaths: number;
-  assists: number;
-  first_bloods: number;
-  plants: number;
-  defuses: number;
+  mvps: number;
+  acs: number | string;
+  kpg: number | string;
+  dpg: number | string;
+  apg: number | string;
+  kpr: number | string;
+  dpr: number | string;
+  apr: number | string;
+  k: number;
+  d: number;
+  a: number;
+  fb: number;
+  pl: number;
+  df: number;
 }
 
 export interface MlbbCompiledStats {
-  player_id: string /* PK */;
-  hero_id: string /* FK */;
+  player: Player /* PK */;
+  hero: string /* FK */;
   games: number;
-  rating: number;
-  kills: number;
-  deaths: number;
-  assists: number;
-  net_worth: number;
-  hero_dmg: number;
-  turret_dmg: number;
-  dmg_tkn: number;
-  teamfight: number;
-  turtle_slain: number;
-  lord_slain: number;
+  mvps: number;
+  r: number | string;
+  kpg: number | string;
+  dpg: number | string;
+  apg: number | string;
+  gld: number;
+  hdmg: number;
+  tdmg: number;
+  dmgt: number;
+  tf: number | string;
+  k: number;
+  d: number;
+  a: number;
+  ls: number;
+  ts: number;
 }
 
 export type ValorantMatchesPlayerStatsWithDetails = Omit<

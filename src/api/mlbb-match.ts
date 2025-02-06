@@ -83,7 +83,7 @@ export const getMlbbMatchById = async (id: string): Promise<MlbbMatch | null> =>
     .single();
 
   if (error) {
-    handleError(error, `fetching MLBB Match by ID: ${id}`);
+    handleError(error, `fetching MLBB Match`);
     return null;
   }
 
@@ -96,7 +96,7 @@ export const getMlbbMatchByIndexRange = async (min: number, max: number): Promis
   const { data, error } = await supabase.from('mlbb_matches').select('*').range(min, max);
 
   if (error) {
-    handleError(error, 'fetching MLBB Matches by index range');
+    handleError(error, 'fetching MLBB Matches');
     return [];
   }
 
@@ -129,7 +129,7 @@ export const updateMlbbMatch = async (id: string, updates: {}): Promise<MlbbMatc
     .single();
 
   if (error) {
-    handleError(error, `updating MLBB Match by ID: ${id}`);
+    handleError(error, `updating MLBB Match`);
     return null;
   }
 
@@ -145,7 +145,7 @@ export const deleteMlbbMatchById = async (id: string): Promise<boolean> => {
   const { error } = await supabase.from('mlbb_matches').delete().eq('id', id).single();
 
   if (error) {
-    handleError(error, `deleting MLBB Match by ID: ${id}`);
+    handleError(error, `deleting MLBB Match`);
     return false;
   }
 

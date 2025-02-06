@@ -4,7 +4,6 @@ import { defaultNavLinks } from '@/components/navlink';
 import { LogoLinks, LiveChannels } from '@/app/(user)/(landing)/_sections/data';
 import IconCel from '@/../../public/icons/icon_cel.svg';
 import Link from 'next/link';
-import Image from 'next/image';
 
 export const defaultSocials: LogoLinks[] = [
   {

@@ -89,7 +89,7 @@ export const getValorantMatchById = async (id: string): Promise<ValorantMatch | 
     .single();
 
   if (error) {
-    handleError(error, `fetching Valorant Match by ID: ${id}`);
+    handleError(error, `fetching Valorant Match`);
     return null;
   }
 
@@ -105,7 +105,7 @@ export const getValorantMatchByIndexRange = async (
   const { data, error } = await supabase.from('valorant_matches').select('*').range(min, max);
 
   if (error) {
-    handleError(error, 'fetching Valorant Matches by index range');
+    handleError(error, 'fetching Valorant Matches');
     return [];
   }
 
@@ -146,7 +146,7 @@ export const updateValorantMatch = async (
     .single();
 
   if (error) {
-    handleError(error, `updating Valorant Match by ID: ${id}`);
+    handleError(error, `updating Valorant Match`);
     return null;
   }
 
@@ -162,7 +162,7 @@ export const deleteValorantMatchById = async (id: string): Promise<boolean> => {
   const { error } = await supabase.from('valorant_matches').delete().eq('id', id).single();
 
   if (error) {
-    handleError(error, `deleting Valorant Match by ID: ${id}`);
+    handleError(error, `deleting Valorant Match`);
     return false;
   }
 

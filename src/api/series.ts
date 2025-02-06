@@ -81,7 +81,7 @@ export const getSeriesById = async (id: string): Promise<Series | null> => {
   const { data, error } = await supabase.from('series').select('*').eq('id', id).select().single();
 
   if (error) {
-    handleError(error, `fetching series by ID: ${id}`);
+    handleError(error, `fetching series`);
     return null;
   }
 
@@ -94,7 +94,7 @@ export const getSeriesByIndexRange = async (min: number, max: number): Promise<S
   const { data, error } = await supabase.from('series').select('*').range(min, max);
 
   if (error) {
-    handleError(error, 'fetching series by index range');
+    handleError(error, 'fetching series');
     return [];
   }
 
@@ -113,7 +113,7 @@ export const getSeriesByLeagueScheduleId = async (
     .order('start_time');
 
   if (error) {
-    handleError(error, 'fetching series by league schedule ID');
+    handleError(error, 'fetching series');
     return [];
   }
 
@@ -135,7 +135,7 @@ export const getSeriesByLeagueScheduleIdAndGamePlatform = async (
     .order('match_number');
 
   if (error) {
-    handleError(error, 'fetching series by league schedule ID and game platform abbrev');
+    handleError(error, 'fetching series');
     return [];
   }
 
@@ -201,7 +201,7 @@ export const updateSeriesById = async (
     .single();
 
   if (error) {
-    handleError(error, `updating series by ID: ${id}`);
+    handleError(error, `updating series`);
     return null;
   }
 
@@ -217,7 +217,7 @@ export const deleteSeriesById = async (id: string): Promise<boolean> => {
   const { error } = await supabase.from('series').delete().eq('id', id).single();
 
   if (error) {
-    handleError(error, `deleting series by ID: ${id}`);
+    handleError(error, `deleting series`);
     return false;
   }
 

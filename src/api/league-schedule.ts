@@ -12,7 +12,11 @@ import { handleError } from '@/api/utils/errorHandler';
 
 export const createLeagueSchedule = async (schedule: {}): Promise<LeagueSchedule | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase.from('league_schedule').insert([schedule]).select().single();
+  const { data, error } = await supabase
+    .from('league_schedule')
+    .insert([schedule])
+    .select()
+    .single();
 
   if (error) {
     handleError(error, 'creating league schedule');
@@ -40,7 +44,9 @@ export const getAllLeagueSchedules = async (): Promise<LeagueSchedule[]> => {
 
 export const getScheduleCount = async (): Promise<number | null> => {
   const supabase = createClient();
-  const { count, error } = await supabase.from('league_schedule').select('*', { count: 'exact', head: true });
+  const { count, error } = await supabase
+    .from('league_schedule')
+    .select('*', { count: 'exact', head: true });
 
   if (error) {
     handleError(error, 'fetching schedule count');
@@ -55,14 +61,17 @@ export const getLeagueScheduleById = async (id: string): Promise<LeagueSchedule 
   const { data, error } = await supabase.from('league_schedule').select('*').eq('id', id).single();
 
   if (error) {
-    handleError(error, `fetching league schedule by ID: ${id}`);
+    handleError(error, `fetching league schedule`);
     return null;
   }
 
   return data;
 };
 
-export const getLeagueSchedulesByIndexRange = async (min: number, max: number): Promise<LeagueSchedule[]> => {
+export const getLeagueSchedulesByIndexRange = async (
+  min: number,
+  max: number
+): Promise<LeagueSchedule[]> => {
   const supabase = createClient();
 
   const { data, error } = await supabase
@@ -73,7 +82,7 @@ export const getLeagueSchedulesByIndexRange = async (min: number, max: number): 
     .range(min, max);
 
   if (error) {
-    handleError(error, 'fetching league schedule by index range');
+    handleError(error, 'fetching league schedule');
     return [];
   }
 
@@ -98,7 +107,10 @@ export const getLatestLeagueSchedule = async (): Promise<LeagueSchedule | null> 
   return data;
 };
 
-export const getLeagueStageByTypeAndNumber = async (season_type: string, season_number: number): Promise<string[]> => {
+export const getLeagueStageByTypeAndNumber = async (
+  season_type: string,
+  season_number: number
+): Promise<string[]> => {
   const supabase = createClient();
 
   const { data, error } = await supabase
@@ -109,7 +121,7 @@ export const getLeagueStageByTypeAndNumber = async (season_type: string, season_
     .order('end_date', { ascending: true });
 
   if (error) {
-    handleError(error, 'fetching league schedule by type and number');
+    handleError(error, 'fetching league schedule');
     return [];
   }
 
@@ -132,7 +144,7 @@ export const getLeagueScheduleByTypeNumberStage = async (
     .single();
 
   if (error) {
-    handleError(error, 'fetching league schedule by type, number & stage');
+    handleError(error, 'fetching league schedule');
     return null;
   }
 
@@ -148,10 +160,15 @@ export const updateLeagueScheduleById = async (
   updates: Partial<LeagueSchedule>
 ): Promise<LeagueSchedule | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase.from('league_schedule').update(updates).eq('id', id).select().single();
+  const { data, error } = await supabase
+    .from('league_schedule')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
 
   if (error) {
-    handleError(error, `updating league schedule by ID: ${id}`);
+    handleError(error, `updating league schedule`);
     return null;
   }
 
@@ -167,7 +184,7 @@ export const deleteLeagueScheduleById = async (id: string): Promise<boolean> => 
   const { error } = await supabase.from('league_schedule').delete().eq('id', id);
 
   if (error) {
-    handleError(error, `deleting league schedule by ID: ${id}`);
+    handleError(error, `deleting league schedule`);
     return false;
   }
 
