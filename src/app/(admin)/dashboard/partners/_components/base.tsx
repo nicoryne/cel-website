@@ -1,56 +1,59 @@
 'use client';
 
-import { TeamFormType, Team } from '@/lib/types';
+import { Partner, PartnerFormType } from '@/lib/types';
 import React from 'react';
 import Modal, { ModalProps } from '@/components/ui/modal';
 import PaginationControls from '@/components/admin/pagination';
 import ButtonInsert from '@/app/(admin)/dashboard/_components/button-insert';
-import { addTeamToCache, handleInsert } from '@/app/(admin)/dashboard/teams/_components/utils';
-import TeamsCard from '@/app/(admin)/dashboard/teams/_components/card';
-import { getTeamsByIndexRange } from '@/api/team';
+import {
+  addPartnerToCache,
+  handleInsert
+} from '@/app/(admin)/dashboard/partners/_components/utils';
+import { getPartnersByIndexRange } from '@/api/partner';
+import PartnersCard from '@/app/(admin)/dashboard/partners/_components/card';
 
-type TeamsClientBaseProps = {
-  teamCount: Promise<number | null>;
-};
+interface PartnersClientBaseProps {
+  partnerCount: Promise<number | null>;
+}
 
 const ITEMS_PER_PAGE = 9;
 
-export default function TeamsClientBase({ teamCount }: TeamsClientBaseProps) {
-  const processedTeamCount = React.use(teamCount);
-  const formData = React.useRef<TeamFormType>();
+export default function PartnersClientBase({ partnerCount }: PartnersClientBaseProps) {
+  const processedPartnerCount = React.use(partnerCount);
+  const formData = React.useRef<PartnerFormType>();
 
   const [totalItems, setTotalItems] = React.useState<number>(0);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
-  const [cachedTeams, setCachedTeams] = React.useState<Team[]>([]);
+  const [cachedPartners, setCachedPartners] = React.useState<Partner[]>([]);
   const [modalProps, setModalProps] = React.useState<ModalProps | null>(null);
 
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
   // Setting Total Items & Pages
   React.useEffect(() => {
-    if (processedTeamCount) {
-      setTotalItems(processedTeamCount);
+    if (processedPartnerCount) {
+      setTotalItems(processedPartnerCount);
     }
 
-    if (processedTeamCount && cachedTeams.length > processedTeamCount) {
-      setTotalItems(cachedTeams.length);
+    if (processedPartnerCount && cachedPartners.length > processedPartnerCount) {
+      setTotalItems(cachedPartners.length);
     }
-  }, [processedTeamCount, cachedTeams]);
+  }, [processedPartnerCount, cachedPartners]);
 
-  const fetchTeamsByPage = async (page: number) => {
+  const fetchPartnersByPage = async (page: number) => {
     const min = (page - 1) * ITEMS_PER_PAGE;
     const max = min + ITEMS_PER_PAGE;
-    const teamsList = await getTeamsByIndexRange(min, max);
+    const partnerList = await getPartnersByIndexRange(min, max);
 
-    teamsList.forEach((team) => {
-      addTeamToCache(team, setCachedTeams);
+    partnerList.forEach((partner) => {
+      addPartnerToCache(partner, setCachedPartners);
     });
   };
 
   // Fetch Schedule
   React.useEffect(() => {
     const loadCurrentAndPrefetchNext = async (page: number) => {
-      await fetchTeamsByPage(page);
+      await fetchPartnersByPage(page);
 
       if (page < totalPages) {
         setTimeout(() => {
@@ -62,12 +65,12 @@ export default function TeamsClientBase({ teamCount }: TeamsClientBaseProps) {
     loadCurrentAndPrefetchNext(1);
   }, [totalPages]);
 
-  const paginedTeams = React.useMemo(() => {
+  const pagintedPartners = React.useMemo(() => {
     const min = (currentPage - 1) * ITEMS_PER_PAGE;
     const max = min + ITEMS_PER_PAGE;
 
-    return cachedTeams.slice(min, max);
-  }, [cachedTeams, currentPage]);
+    return cachedPartners.slice(min, max);
+  }, [cachedPartners, currentPage]);
 
   return (
     <>
@@ -85,7 +88,7 @@ export default function TeamsClientBase({ teamCount }: TeamsClientBaseProps) {
       {/* Series Control Panel*/}
       <aside className="flex place-items-center justify-between gap-16 bg-transparent p-4 px-8">
         {/* Insert */}
-        <ButtonInsert onInsert={() => handleInsert(setModalProps, formData, setCachedTeams)} />
+        <ButtonInsert onInsert={() => handleInsert(setModalProps, formData, setCachedPartners)} />
       </aside>
       {/* End of Controls */}
 
@@ -94,12 +97,12 @@ export default function TeamsClientBase({ teamCount }: TeamsClientBaseProps) {
         <div className="relative overflow-x-auto border-2 border-neutral-800 sm:rounded-lg">
           {/* Platform Cards */}
           <ul className="grid grid-cols-1 gap-8 p-8 sm:grid-cols-2 md:grid-cols-3">
-            {paginedTeams.map((team, index) => (
+            {pagintedPartners.map((partner, index) => (
               <li key={index}>
-                <TeamsCard
-                  team={team}
+                <PartnersCard
+                  partner={partner}
                   setModalProps={setModalProps}
-                  setCachedTeams={setCachedTeams}
+                  setCachedPartners={setCachedPartners}
                   formData={formData}
                 />
               </li>

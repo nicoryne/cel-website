@@ -10,16 +10,18 @@ interface DropdownProps {
   children: React.ReactNode;
   value?: string;
   image?: string | StaticImageData;
+  disabled?: boolean;
 }
 
-export default function Dropdown({ children, value, image }: DropdownProps) {
+export default function Dropdown({ children, value, image, disabled }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className="relative inline-block w-full">
       <button
-        className="flex items-center gap-4 rounded-sm border-l-2 border-neutral-200 px-6 py-3 shadow-sm transition-all duration-300 ease-in-out hover:border-pale"
+        className="flex items-center gap-4 rounded-sm border-l-2 border-neutral-200 px-6 py-3 shadow-sm transition-all duration-300 ease-in-out hover:border-pale disabled:opacity-40"
         onClick={() => setIsOpen(!isOpen)}
+        disabled={disabled}
       >
         {image && (
           <Image src={image} className="h-auto w-6" alt={`${value} Logo`} width={32} height={32} />

@@ -11,7 +11,9 @@ import { deleteFile, uploadFile } from '@/api/utils/storage';
 // CREATE
 //========
 
-export const createGamePlatform = async (platform: GamePlatformFormType): Promise<GamePlatform | null> => {
+export const createGamePlatform = async (
+  platform: GamePlatformFormType
+): Promise<GamePlatform | null> => {
   const supabase = createClient();
   let processedPlatform = {
     platform_title: platform.platform_title,
@@ -29,7 +31,11 @@ export const createGamePlatform = async (platform: GamePlatformFormType): Promis
     }
   }
 
-  const { data, error } = await supabase.from('game_platforms').insert([processedPlatform]).select().single();
+  const { data, error } = await supabase
+    .from('game_platforms')
+    .insert([processedPlatform])
+    .select()
+    .single();
 
   if (error) {
     handleError(error, 'creating game platform');
@@ -45,7 +51,9 @@ export const createGamePlatform = async (platform: GamePlatformFormType): Promis
 
 export const getGamePlatformCount = async (): Promise<number | null> => {
   const supabase = createClient();
-  const { count, error } = await supabase.from('game_platforms').select('*', { count: 'exact', head: true });
+  const { count, error } = await supabase
+    .from('game_platforms')
+    .select('*', { count: 'exact', head: true });
 
   if (error) {
     handleError(error, 'fetching game platform count');
@@ -69,23 +77,31 @@ export const getAllGamePlatforms = async (): Promise<GamePlatform[]> => {
 
 export const getGamePlatformById = async (id: string): Promise<GamePlatform | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase.from('game_platforms').select('*').eq('id', id).select().single();
+  const { data, error } = await supabase
+    .from('game_platforms')
+    .select('*')
+    .eq('id', id)
+    .select()
+    .single();
 
   if (error) {
-    handleError(error, `fetching game platform by ID: ${id}`);
+    handleError(error, `fetching game platform`);
     return null;
   }
 
   return data;
 };
 
-export const getGamePlatformsByIndexRange = async (min: number, max: number): Promise<GamePlatform[]> => {
+export const getGamePlatformsByIndexRange = async (
+  min: number,
+  max: number
+): Promise<GamePlatform[]> => {
   const supabase = createClient();
 
   const { data, error } = await supabase.from('game_platforms').select('*').range(min, max);
 
   if (error) {
-    handleError(error, 'fetching game platforms by index range');
+    handleError(error, 'fetching game platforms');
     return [];
   }
 
@@ -95,10 +111,14 @@ export const getGamePlatformsByIndexRange = async (min: number, max: number): Pr
 export const getGamePlatformByAbbrev = async (abbrev: string): Promise<GamePlatform | null> => {
   const supabase = createClient();
 
-  const { data, error } = await supabase.from('game_platforms').select('*').eq('platform_abbrev', abbrev).single();
+  const { data, error } = await supabase
+    .from('game_platforms')
+    .select('*')
+    .eq('platform_abbrev', abbrev)
+    .single();
 
   if (error) {
-    handleError(error, 'fetching game platforms by abbrev');
+    handleError(error, 'fetching game platforms');
     return null;
   }
 
@@ -138,7 +158,7 @@ export const updateGamePlatformById = async (
     .single();
 
   if (error) {
-    handleError(error, `updating game platform by ID: ${id}`);
+    handleError(error, `updating game platform`);
     return null;
   }
 
@@ -151,7 +171,12 @@ export const updateGamePlatformById = async (
 
 export const deleteGamePlatformById = async (id: string): Promise<boolean> => {
   const supabase = createClient();
-  const { data, error } = await supabase.from('game_platforms').delete().eq('id', id).select().single();
+  const { data, error } = await supabase
+    .from('game_platforms')
+    .delete()
+    .eq('id', id)
+    .select()
+    .single();
 
   if (data.logo_url) {
     const url = new URL(data.logo_url);
@@ -159,12 +184,12 @@ export const deleteGamePlatformById = async (id: string): Promise<boolean> => {
     try {
       await deleteFile('images', [fileName]);
     } catch (error) {
-      handleError(error, `deleting logo url from game platform: ${id}`);
+      handleError(error, `deleting logo url from game platform`);
     }
   }
 
   if (error) {
-    handleError(error, `deleting game platform by ID: ${id}`);
+    handleError(error, `deleting game platform`);
     return false;
   }
 

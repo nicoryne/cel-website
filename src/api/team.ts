@@ -72,7 +72,7 @@ export const getTeamById = async (id: string): Promise<Team | null> => {
   const { data, error } = await supabase.from('teams').select('*').eq('id', id).select().single();
 
   if (error) {
-    handleError(error, `fetching team by ID: ${id}`);
+    handleError(error, `fetching team`);
     return null;
   }
 
@@ -85,7 +85,7 @@ export const getTeamsByIndexRange = async (min: number, max: number): Promise<Te
   const { data, error } = await supabase.from('teams').select('*').range(min, max);
 
   if (error) {
-    handleError(error, 'fetching team by index range');
+    handleError(error, 'fetching team');
     return [];
   }
 
@@ -114,10 +114,15 @@ export const updateTeamById = async (id: string, updates: TeamFormType): Promise
     }
   }
 
-  const { data, error } = await supabase.from('teams').update(processedTeam).eq('id', id).select().single();
+  const { data, error } = await supabase
+    .from('teams')
+    .update(processedTeam)
+    .eq('id', id)
+    .select()
+    .single();
 
   if (error) {
-    handleError(error, `updating team by ID: ${id}`);
+    handleError(error, `updating team`);
     return null;
   }
 
@@ -138,12 +143,12 @@ export const deleteTeamById = async (id: string): Promise<boolean> => {
     try {
       await deleteFile('images', [fileName]);
     } catch (error) {
-      handleError(error, `deleting logo url from team: ${id}`);
+      handleError(error, `deleting logo url`);
     }
   }
 
   if (error) {
-    handleError(error, `deleting team by ID: ${id}`);
+    handleError(error, `deleting team`);
     return false;
   }
 

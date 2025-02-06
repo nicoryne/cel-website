@@ -29,7 +29,11 @@ export const createMap = async (map: ValorantMapFormType): Promise<ValorantMap |
     }
   }
 
-  const { data, error } = await supabase.from('valorant_maps').insert([processedMap]).select().single();
+  const { data, error } = await supabase
+    .from('valorant_maps')
+    .insert([processedMap])
+    .select()
+    .single();
 
   if (error) {
     handleError(error, 'creating valorant map');
@@ -45,7 +49,9 @@ export const createMap = async (map: ValorantMapFormType): Promise<ValorantMap |
 
 export const getMapCount = async (): Promise<number | null> => {
   const supabase = createClient();
-  const { count, error } = await supabase.from('valorant_maps').select('*', { count: 'exact', head: true });
+  const { count, error } = await supabase
+    .from('valorant_maps')
+    .select('*', { count: 'exact', head: true });
 
   if (error) {
     handleError(error, 'fetching maps count');
@@ -57,7 +63,10 @@ export const getMapCount = async (): Promise<number | null> => {
 
 export const getAllMaps = async (): Promise<ValorantMap[]> => {
   const supabase = createClient();
-  const { data, error } = await supabase.from('valorant_maps').select('*').order('name', { ascending: true });
+  const { data, error } = await supabase
+    .from('valorant_maps')
+    .select('*')
+    .order('name', { ascending: true });
 
   if (error) {
     handleError(error, 'fetching valorant maps');
@@ -69,10 +78,15 @@ export const getAllMaps = async (): Promise<ValorantMap[]> => {
 
 export const getMapById = async (id: string): Promise<ValorantMap | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase.from('valorant_maps').select('*').eq('id', id).select().single();
+  const { data, error } = await supabase
+    .from('valorant_maps')
+    .select('*')
+    .eq('id', id)
+    .select()
+    .single();
 
   if (error) {
-    handleError(error, `fetching map by ID: ${id}`);
+    handleError(error, `fetching map by`);
     return null;
   }
 
@@ -85,7 +99,7 @@ export const getMapsByIndexRange = async (min: number, max: number): Promise<Val
   const { data, error } = await supabase.from('valorant_maps').select('*').range(min, max);
 
   if (error) {
-    handleError(error, 'fetching valorant map by index range');
+    handleError(error, 'fetching valorant map');
     return [];
   }
 
@@ -96,7 +110,10 @@ export const getMapsByIndexRange = async (min: number, max: number): Promise<Val
 // UPDATE
 //========
 
-export const updateMapById = async (id: string, updates: ValorantMapFormType): Promise<ValorantMap | null> => {
+export const updateMapById = async (
+  id: string,
+  updates: ValorantMapFormType
+): Promise<ValorantMap | null> => {
   const supabase = createClient();
   let processedMap = {
     name: updates.name,
@@ -114,10 +131,15 @@ export const updateMapById = async (id: string, updates: ValorantMapFormType): P
     }
   }
 
-  const { data, error } = await supabase.from('valorant_maps').update(processedMap).eq('id', id).select().single();
+  const { data, error } = await supabase
+    .from('valorant_maps')
+    .update(processedMap)
+    .eq('id', id)
+    .select()
+    .single();
 
   if (error) {
-    handleError(error, `updating map by ID: ${id}`);
+    handleError(error, `updating map`);
     return null;
   }
 
@@ -130,7 +152,12 @@ export const updateMapById = async (id: string, updates: ValorantMapFormType): P
 
 export const deleteMapById = async (id: string): Promise<boolean> => {
   const supabase = createClient();
-  const { data, error } = await supabase.from('valorant_maps').delete().eq('id', id).select().single();
+  const { data, error } = await supabase
+    .from('valorant_maps')
+    .delete()
+    .eq('id', id)
+    .select()
+    .single();
 
   if (data.splash_image_url) {
     const url = new URL(data.splash_image_url);
@@ -138,12 +165,12 @@ export const deleteMapById = async (id: string): Promise<boolean> => {
     try {
       await deleteFile('images', [fileName]);
     } catch (error) {
-      handleError(error, `deleting splash image from map ID: ${id}`);
+      handleError(error, `deleting splash image from map`);
     }
   }
 
   if (error) {
-    handleError(error, `deleting map by ID: ${id}`);
+    handleError(error, `deleting map`);
     return false;
   }
 

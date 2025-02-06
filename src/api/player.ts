@@ -83,7 +83,7 @@ export const getPlayerById = async (id: string): Promise<Player | null> => {
   const { data, error } = await supabase.from('players').select('*').eq('id', id).select().single();
 
   if (error) {
-    handleError(error, `fetching player by ID: ${id}`);
+    handleError(error, `fetching player}`);
     return null;
   }
 
@@ -99,7 +99,7 @@ export const getPlayerByName = async (name: string): Promise<Player | null> => {
     .single();
 
   if (error) {
-    handleError(error, `fetching player by ingame name: ${name}`);
+    handleError(error, `fetching player`);
     return null;
   }
 
@@ -112,7 +112,7 @@ export const getPlayersByIndexRange = async (min: number, max: number): Promise<
   const { data, error } = await supabase.from('players').select('*').range(min, max);
 
   if (error) {
-    handleError(error, 'fetching players by index range');
+    handleError(error, 'fetching players');
     return [];
   }
 
@@ -133,7 +133,7 @@ export const getPlayerByTeamAndName = async (
     .single();
 
   if (error) {
-    handleError(error, 'fetching player by team and ingame name');
+    handleError(error, 'fetching player');
     return null;
   }
 
@@ -146,7 +146,7 @@ export const getPlayersByPlatform = async (platform_id: string): Promise<Player[
   const { data, error } = await supabase.from('players').select('*').eq('platform_id', platform_id);
 
   if (error) {
-    handleError(error, 'fetching player by platform');
+    handleError(error, 'fetching player');
     return [];
   }
 
@@ -159,7 +159,7 @@ export const getPlayersByTeam = async (team_id: string): Promise<Player[]> => {
   const { data, error } = await supabase.from('players').select('*').eq('team_id', team_id);
 
   if (error) {
-    handleError(error, 'fetching player by team');
+    handleError(error, 'fetching player');
     return [];
   }
 
@@ -179,7 +179,7 @@ export const getPlayersByTeamAndPlatform = async (
     .eq('platform_id', platform_id);
 
   if (error) {
-    handleError(error, 'fetching player by team and platform');
+    handleError(error, 'fetching player');
     return [];
   }
 
@@ -196,7 +196,7 @@ export const doesPlayerExist = async (first_name: string, last_name: string): Pr
     .eq('last_name', last_name);
 
   if (error) {
-    handleError(error, 'fetching Player exist');
+    handleError(error, 'fetching player exist');
     return true;
   }
 
@@ -257,7 +257,7 @@ export const updatePlayerById = async (
     .single();
 
   if (error) {
-    handleError(error, `updating Player by ID: ${id}`);
+    handleError(error, `updating player`);
     return null;
   }
 
@@ -278,12 +278,12 @@ export const deletePlayerById = async (id: string): Promise<boolean> => {
     try {
       await deleteFile('images', [fileName]);
     } catch (error) {
-      handleError(error, `deleting logo url from Player: ${id}`);
+      handleError(error, `deleting logo url from player`);
     }
   }
 
   if (error) {
-    handleError(error, `deleting Player by ID: ${id}`);
+    handleError(error, `deleting player`);
     return false;
   }
 

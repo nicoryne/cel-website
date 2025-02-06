@@ -106,11 +106,11 @@ export default function Navbar() {
               exit={{ opacity: 0, x: 100 }}
               transition={{ duration: 0.3, ease: 'easeInOut' }}
             >
-              <ul className="flex flex-col items-center gap-16 p-8 text-foreground">
+              <ul className="flex flex-col items-center gap-4 p-8 text-foreground">
                 {defaultNavLinks.map((navLink, index) => (
-                  <li key={index} className="w-full border-b">
+                  <li key={index} className="w-full border-b py-8 dark:border-neutral-700">
                     <Link
-                      className="text-xl font-medium"
+                      className="text-lg font-medium"
                       href={navLink.href}
                       onClick={() => toggleMobileMenu(false)}
                       prefetch
@@ -120,7 +120,7 @@ export default function Navbar() {
                   </li>
                 ))}
               </ul>
-              <div className="flex w-full flex-col items-center gap-8 border-t-2 border-neutral-300 py-4 dark:border-neutral-800 md:flex-row md:justify-between">
+              <div className="flex w-full flex-col items-center gap-8 border-t border-neutral-300 py-4 dark:border-neutral-800 md:flex-row md:justify-between">
                 <section
                   aria-labelledby="social-links"
                   className="flex flex-col items-center gap-4 sm:flex-row md:order-2 md:flex-col lg:flex-row"
