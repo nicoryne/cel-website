@@ -704,7 +704,9 @@ export default function StatisticsBase({
                           className="h-8 w-8"
                         />
                         <div className="flex flex-col">
-                          <span className="font-semibold">{stats.player.ingame_name}</span>
+                          <span className="w-60 text-wrap font-semibold lg:w-fit">
+                            {stats.player.ingame_name}
+                          </span>
                           <span className="text-xs text-neutral-400">
                             {teams.find((t) => t.id === stats.player.team_id)?.school_abbrev!}
                           </span>
