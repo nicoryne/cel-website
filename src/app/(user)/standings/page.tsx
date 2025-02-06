@@ -13,5 +13,6 @@ export default async function StandingsPage() {
   redirect(
     `/standings/${season_type.toLowerCase()}/${season_number}/mlbb/${league_stage.toLowerCase()}`
   );
+
   return null;
 }
