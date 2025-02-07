@@ -1,6 +1,6 @@
 # CESAFI Esports League Website
 
-(Not official yet) CESAFI Esports League website that centralizes information on the games from CESAFI Esports League.
+CESAFI Esports League website that centralizes information on the games from CESAFI Esports League.
 
 ## ⏱️ Status
 
