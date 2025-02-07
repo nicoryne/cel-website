@@ -6,7 +6,8 @@ import '@/app/globals.css';
 
 export const metadata: Metadata = {
   title: 'CESAFI Esports League | We forge legends!',
-  description: 'The den of the best esports student athletes in Cebu',
+  description:
+    'Stay updated with the latest schedule, standings, and stats of the CESAFI Esports League!',
   icons: {
     icon: [
       {
@@ -14,6 +15,22 @@ export const metadata: Metadata = {
         href: 'favicon.ico'
       }
     ]
+  },
+  openGraph: {
+    title: 'CESAFI Esports League',
+    description:
+      'Stay updated with the latest schedule, standings, and stats of the CESAFI Esports League!',
+    url: 'https://cesafiesportsleague.com',
+    siteName: 'CESAFI Esports League',
+    images: [
+      {
+        url: 'https://cesafiesportsleague.com/banner.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'CESAFI Esports League Banner'
+      }
+    ],
+    type: 'website'
   }
 };
 
