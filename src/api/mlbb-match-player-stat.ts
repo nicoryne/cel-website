@@ -134,6 +134,22 @@ export const getMlbbMatchPlayerStatByPlayerId = async (
   return data;
 };
 
+
+export const getMlbbMatchPlayerStatByMatch = async (match_id: string): Promise<MlbbMatchesPlayerStats[]> => {
+  const supabase = createClient();
+  const { data, error} = await supabase
+    .from('mlbb_matches_player_stats')
+    .select('*')
+    .eq('match_id', match_id)
+
+  if (error) {
+    handleError(error, 'fetching compiled data stats');
+    return [];
+  }
+
+  return data
+}
+
 //========
 // UTILITY
 //========

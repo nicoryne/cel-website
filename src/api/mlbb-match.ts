@@ -47,6 +47,21 @@ export const doesMlbbMatchExist = async (
   return count ? count > 0 : false;
 };
 
+export const getMlbbMatchBySeries = async (series_id: string): Promise<Series[]> => {
+  const supabase = createClient();
+  const { data, error} = await supabase
+    .from('mlbb_matches')
+    .select('*')
+    .eq('series_id', series_id)
+  
+  if (error) {
+    handleError(error, 'fetching MLBB Matches')
+    return [];
+  }
+
+  return data;
+}
+
 export const getMlbbMatchCount = async (): Promise<number | null> => {
   const supabase = createClient();
   const { count, error } = await supabase

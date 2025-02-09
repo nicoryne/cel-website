@@ -106,7 +106,7 @@ export const getValorantMatchPlayerStatByIndexRange = async (
 
 export const getValorantMatchPlayerStatByPlayerId = async (
   player_id: string
-): Promise<ValorantMatchesPlayerStats[] | null> => {
+): Promise<ValorantMatchesPlayerStats[]> => {
   const supabase = createClient();
   const { data, error } = await supabase
     .from('valorant_matches_player_stats')
@@ -115,12 +115,27 @@ export const getValorantMatchPlayerStatByPlayerId = async (
 
   if (error) {
     handleError(error, 'fetching compiled data stats');
-    return null;
+    return [];
   }
 
   return data;
 };
 
+export const getValorantMatchPlayerStatByMatchId = async (match_id: string): Promise<ValorantMatchesPlayerStats[]> => {
+  const supabase = createClient();
+  const { data, error} = await supabase
+    .from('valorant_matches_player_stats')
+    .select('*')
+    .eq('match_id', match_id)
+
+  if (error) {
+    handleError(error, 'fetching compiled data stats');
+    return [];
+  }
+
+  return data
+
+}
 //========
 // UTILITY
 //========

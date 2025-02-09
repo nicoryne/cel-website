@@ -53,6 +53,21 @@ export const doesValorantMatchExist = async (
   return count ? count > 0 : false;
 };
 
+export const getValorantMatchBySeries = async (series_id: string): Promise<Series[]> => {
+  const supabase = createClient();
+  const { data, error} = await supabase
+    .from('valorant_matches')
+    .select('*')
+    .eq('series_id', series_id)
+  
+  if (error) {
+    handleError(error, 'fetching MLBB Matches')
+    return [];
+  }
+
+  return data;
+}
+
 export const getValorantMatchCount = async (): Promise<number | null> => {
   const supabase = createClient();
   const { count, error } = await supabase

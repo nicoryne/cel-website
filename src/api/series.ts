@@ -142,6 +142,27 @@ export const getSeriesByLeagueScheduleIdAndGamePlatform = async (
   return data as Series[];
 };
 
+export const getLatestSeries = async (): Promise<Series | null> => {
+  const supabase = createClient();
+  const dateToday = new Date().toISOString();                               
+
+  const { data, error } = await supabase
+    .from('series')
+    .select('*')
+    .lt('start_time', dateToday) 
+    .order('start_time', { ascending: false }) 
+    .limit(1)
+    .single(); 
+
+  if (error) {
+    handleError(error, 'fetching latest past series');
+    return null;
+  }
+
+  return data as Series;
+};
+
+
 //========
 // UTILITY
 //========
