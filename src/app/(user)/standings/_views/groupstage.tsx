@@ -112,6 +112,12 @@ const getTeamStandings = (
       if (b.wins !== a.wins) {
         return b.wins - a.wins;
       }
+
+      if (b.losses !== a.losses) {
+        return a.losses - b.losses
+      }
+    
+      
       return (a.team?.school_abbrev || '').localeCompare(b.team?.school_abbrev || '');
     });
 };

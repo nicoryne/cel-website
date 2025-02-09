@@ -267,6 +267,8 @@ export default function ValidatePlayerStatisticsPanel({
       };
       const data = await createValorantMatch(processedMatchInfo);
       if (!data) throw new Error('Match creation failed');
+      
+      
 
       playerStatsList.forEach(async (playerStat) => {
         try {

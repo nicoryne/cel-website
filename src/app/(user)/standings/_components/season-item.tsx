@@ -16,9 +16,11 @@ export default function SeasonItem({ season }: SeasonItemProps) {
     match?.[1]?.toLowerCase() === season.season_type.toLowerCase() &&
     match?.[2] === season.season_number.toString();
 
+  const platform = match?.[3] || 'mlbb'
+
   return (
     <Link
-      href={`/standings/${season.season_type.toLowerCase()}/${season.season_number}/${match?.[3]}/groupstage`}
+      href={`/standings/${season.season_type.toLowerCase()}/${season.season_number}/${platform}/groupstage`}
     >
       <div
         className={`border-b px-4 py-4 opacity-80 hover:bg-neutral-50 hover:opacity-100 active:bg-neutral-100 dark:border-b-neutral-700 dark:opacity-60 hover:dark:bg-neutral-900 active:dark:bg-neutral-950 ${isSelected ? 'border-r-4 border-r-chili' : ''}`}

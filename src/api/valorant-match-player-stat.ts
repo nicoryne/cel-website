@@ -134,7 +134,6 @@ export const getValorantMatchPlayerStatByMatchId = async (match_id: string): Pro
   }
 
   return data
-
 }
 //========
 // UTILITY
