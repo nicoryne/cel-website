@@ -136,7 +136,7 @@ export async function getTeamRoundDiff(teamId: string, leagueScheduleId: string)
       `
       team_a_rounds, 
       team_b_rounds, 
-      series (
+      series!inner (
         league_schedule_id,
         team_a_id,
         team_b_id
@@ -155,16 +155,12 @@ export async function getTeamRoundDiff(teamId: string, leagueScheduleId: string)
 
   data.forEach((match) => {
     const series = match.series as Partial<Series>;
-    if (series?.team_a_id && series?.team_b_id) {
-      const teamAId = series.team_a_id;
-      const teamBId = series.team_b_id;
-      if (teamAId === teamId) {
-        totalRoundsWon += match.team_a_rounds;
-        totalRoundsLost += match.team_b_rounds;
-      } else if (teamBId === teamId) {
-        totalRoundsWon += match.team_b_rounds;
-        totalRoundsLost += match.team_a_rounds;
-      }
+    if (series?.team_a_id === teamId) {
+      totalRoundsWon += match.team_a_rounds;
+      totalRoundsLost += match.team_b_rounds;
+    } else if (series?.team_b_id === teamId) {
+      totalRoundsWon += match.team_b_rounds;
+      totalRoundsLost += match.team_a_rounds;
     }
   });
 

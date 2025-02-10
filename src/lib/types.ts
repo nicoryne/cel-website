@@ -3,6 +3,7 @@ export interface Team {
   created_at: string;
   school_abbrev: string;
   school_name: string;
+  team_name: string;
   logo_url: string;
 }
 
@@ -111,6 +112,7 @@ export interface Player {
   team_id: string;
   platform_id: string;
   roles: string[];
+  league_schedules: string[];
   picture_url: string;
   is_active: boolean;
 }

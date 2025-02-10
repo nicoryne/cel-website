@@ -1,65 +1,77 @@
-import { Team } from '@/lib/types';
-import { GroupResults } from '@/app/(user)/standings/_views/groupstage';
+import { GroupStanding } from '@/app/(user)/standings/_views/utils';
 import not_found from '@/../../public/images/not-found.webp';
 import Image from 'next/image';
 
 interface GroupContainer {
-  team: Team | undefined;
-  results: GroupResults;
+  standing: GroupStanding;
   index: number;
   isValorant: boolean;
   showRoundDiff: boolean;
 }
 
 export default function GroupContainer({
-  team,
-  results,
+  standing,
   index,
   isValorant,
   showRoundDiff
 }: GroupContainer) {
   return (
-    <li
-      key={team?.id}
-      className="flex h-2/4 items-center gap-4 border-b p-4 dark:border-neutral-700"
-    >
-      <span className="font-bold">{index + 1}</span>
-      <Image
-        src={team?.logo_url || not_found}
-        alt={team?.school_abbrev || 'Logo not found'}
-        width={128}
-        height={128}
-        className="h-auto w-8 rounded-full md:w-16"
-      />
-      <div className="flex w-full flex-col gap-2">
-        <div className="flex w-full justify-between">
-          <span className="hidden text-sm font-bold sm:block md:hidden 2xl:block">
-            {team?.school_name}
-          </span>
-          <span className="block text-sm font-bold sm:hidden md:block 2xl:hidden">
-            {team?.school_abbrev}
-          </span>
-        </div>
-        <div className="flex w-full flex-row justify-between gap-2 md:flex-col lg:flex-row">
-          <span className="text-xs font-semibold text-neutral-600 dark:text-neutral-400">
-            {!isValorant
-              ? `${results.wins}W - ${results.losses}L`
-              : `${results.wins}W - ${results.losses}L - ${results.draws}D`}
-          </span>
-          <div className="flex gap-6">
-            {showRoundDiff && isValorant && (
-              <span className="text-xs font-semibold text-neutral-600 dark:text-neutral-400">
-                (
-                {`${results.roundDiff ? `${results.roundDiff > 0 || results.roundDiff === 0 ? `+${results.roundDiff}` : `${results.roundDiff}`}` : '0'}`}
-                ) &nbsp; RNDΔ
-              </span>
-            )}
-            <span className="text-xs font-semibold text-neutral-600 dark:text-neutral-400">
-              {`${results.points}${results.points === 1 ? 'pt' : 'pts'}`}
+    <tr key={index} className="h-2/4 items-center gap-4 border-b p-4 dark:border-neutral-700">
+      <td>
+        <div className="flex items-center gap-4 px-1 py-4 sm:p-4">
+          <Image
+            src={standing.team?.logo_url || not_found}
+            alt={standing.team?.school_abbrev || 'Logo not found'}
+            width={128}
+            height={128}
+            className="h-auto w-8 rounded-full md:w-12"
+          />
+          <div className="flex flex-col gap-1">
+            <span className="hidden text-xs font-semibold sm:block md:hidden 2xl:block">
+              {standing.team?.school_name}
+            </span>
+            <span className="block text-xs font-semibold sm:hidden sm:text-base md:block 2xl:hidden">
+              {standing.team?.school_abbrev}
+            </span>
+            <span className="text-xs text-neutral-600 dark:text-neutral-400">
+              {standing.team?.team_name}
             </span>
           </div>
         </div>
-      </div>
-    </li>
+      </td>
+      <td className="text-center">
+        <span className="text-xs font-semibold text-neutral-600 dark:text-neutral-400">
+          {!isValorant
+            ? `${standing.wins} - ${standing.losses}`
+            : `${standing.wins} - ${standing.losses} - ${standing.draws}`}
+        </span>
+      </td>
+      <td className="hidden text-center md:table-cell">
+        <span className="text-xs font-semibold text-neutral-600 dark:text-neutral-400">
+          {`${standing.wins + standing.losses + standing.draws}`}
+        </span>
+      </td>
+      {showRoundDiff && isValorant && (
+        <td className="text-center">
+          <span
+            className={`text-xs font-semibold text-neutral-600 dark:text-neutral-400 ${standing.roundDiff! > 0 && 'text-green-400 dark:text-green-300'} ${standing.roundDiff! < 0 && 'text-red-500 dark:text-red-400'}`}
+          >
+            {`${standing.roundDiff ? `${standing.roundDiff > 0 || standing.roundDiff === 0 ? `+${standing.roundDiff}` : `${standing.roundDiff}`}` : '0'}`}
+          </span>
+        </td>
+      )}
+      {showRoundDiff && !isValorant && (
+        <td className="text-center">
+          <span className="text-xs font-semibold text-neutral-600 dark:text-neutral-400">
+            {`${standing.matchDuration}`}
+          </span>
+        </td>
+      )}
+      <td className="text-center">
+        <span className="text-xs font-semibold text-neutral-600 dark:text-neutral-400">
+          {standing.points}
+        </span>
+      </td>
+    </tr>
   );
 }

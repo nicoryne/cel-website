@@ -47,7 +47,14 @@ export default async function StandingsPage({
         />
       )}
 
-      {league_stage === 'play-ins' && <PlayinsView seriesList={seriesList} teamsList={teamsList} />}
+      {league_stage === 'play-ins' && (
+        <PlayinsView
+          seriesList={seriesList}
+          teamsList={teamsList}
+          matchedPlatform={matchedPlatform}
+          leagueSchedule={leagueSchedule}
+        />
+      )}
 
       {league_stage === 'play-offs' && (
         <PlayoffsView seriesList={seriesList} teamsList={teamsList} />

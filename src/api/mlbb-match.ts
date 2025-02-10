@@ -49,18 +49,18 @@ export const doesMlbbMatchExist = async (
 
 export const getMlbbMatchBySeries = async (series_id: string): Promise<Series[]> => {
   const supabase = createClient();
-  const { data, error} = await supabase
+  const { data, error } = await supabase
     .from('mlbb_matches')
     .select('*')
-    .eq('series_id', series_id)
-  
+    .eq('series_id', series_id);
+
   if (error) {
-    handleError(error, 'fetching MLBB Matches')
+    handleError(error, 'fetching MLBB Matches');
     return [];
   }
 
   return data;
-}
+};
 
 export const getMlbbMatchCount = async (): Promise<number | null> => {
   const supabase = createClient();
@@ -104,6 +104,58 @@ export const getMlbbMatchById = async (id: string): Promise<MlbbMatch | null> =>
 
   return data;
 };
+
+export async function getVictoryAverageMatchDuration(teamId: string, leagueScheduleId: string) {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('mlbb_matches')
+    .select(
+      `
+      team_a_status, 
+      team_b_status,
+      match_duration,
+      series!inner (
+        league_schedule_id,
+        team_a_id,
+        team_b_id
+      )
+    `
+    )
+    .eq('series.league_schedule_id', leagueScheduleId);
+
+  if (error) {
+    console.error('Error fetching victory match data:', error);
+    return null;
+  }
+
+  let totalDurationInSeconds = 0;
+  let matchCount = 0;
+
+  data.forEach((match) => {
+    const series = match.series as Partial<Series>;
+
+    if (match.match_duration) {
+      const [minutes, seconds] = match.match_duration.split(':').map(Number);
+      const durationInSeconds = minutes * 60 + seconds;
+      if (series?.team_a_id === teamId && match.team_a_status === 'Win') {
+        totalDurationInSeconds += durationInSeconds;
+        matchCount++;
+      } else if (series?.team_b_id === teamId && match.team_b_status === 'Win') {
+        totalDurationInSeconds += durationInSeconds;
+        matchCount++;
+      }
+    }
+  });
+
+  if (matchCount === 0) return '00:00';
+
+  const averageSeconds = Math.floor(totalDurationInSeconds / matchCount);
+  const avgMinutes = Math.floor(averageSeconds / 60);
+  const avgSeconds = averageSeconds % 60;
+
+  return `${String(avgMinutes).padStart(2, '0')}:${String(avgSeconds).padStart(2, '0')}`;
+}
 
 export const getMlbbMatchByIndexRange = async (min: number, max: number): Promise<MlbbMatch[]> => {
   const supabase = createClient();
