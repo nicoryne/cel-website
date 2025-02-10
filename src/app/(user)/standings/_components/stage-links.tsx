@@ -23,7 +23,7 @@ export default function StageLinks({ stages }: StageLinksProps) {
           <li key={index}>
             <Link
               href={`${basePath}${stage.toLowerCase()}`}
-              className={`${isSelected ? 'border-l-ultramarine' : 'border-l-neutral-600'} border-l-2 px-4 py-2 text-xs font-bold uppercase shadow-sm transition-all duration-300 ease-in-out hover:text-yale md:px-4 md:text-sm`}
+              className={`${isSelected ? 'border-l-ultramarine' : 'border-l-neutral-600'} border-l-2 px-4 py-2 text-xs font-bold uppercase shadow-sm transition-all duration-300 ease-in-out hover:text-yale md:px-4`}
             >
               {stage}
             </Link>

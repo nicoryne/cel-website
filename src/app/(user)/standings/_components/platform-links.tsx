@@ -26,7 +26,7 @@ export default function PlatformLinks({ platforms }: PlatformLinksProps) {
           <li key={index}>
             <Link
               href={`${basePath}${platform.platform_abbrev.toLowerCase()}/${leagueStage}`}
-              className={`${isSelected ? `${platform.platform_abbrev === 'MLBB' ? 'border-l-federal' : 'border-l-chili'}` : 'border-l-neutral-600'} ${platform.platform_abbrev === 'MLBB' ? 'hover:text-yale' : 'hover:text-pale'} flex gap-4 border-l-2 px-2 py-2 text-xs font-bold uppercase shadow-sm transition-all duration-300 ease-in-out md:px-4 md:text-sm`}
+              className={`${isSelected ? `${platform.platform_abbrev === 'MLBB' ? 'border-l-federal' : 'border-l-chili'}` : 'border-l-neutral-600'} ${platform.platform_abbrev === 'MLBB' ? 'hover:text-yale' : 'hover:text-pale'} flex items-center gap-4 border-l-2 px-2 py-2 text-xs font-bold uppercase shadow-sm transition-all duration-300 ease-in-out md:px-4`}
             >
               <Image
                 src={platform.logo_url}

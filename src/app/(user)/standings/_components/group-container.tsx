@@ -33,25 +33,31 @@ export default function GroupContainer({
       />
       <div className="flex w-full flex-col gap-2">
         <div className="flex w-full justify-between">
-          <span className="block text-sm sm:hidden lg:block">{team?.school_name}</span>
-          <span className="hidden text-sm sm:block lg:hidden">{team?.school_abbrev}</span>
-          {showRoundDiff && isValorant && (
-            <span className="text-xs font-bold text-neutral-600 dark:text-neutral-400">
-              R.DIFF (
-              {`${results.roundDiff ? `${results.roundDiff > 0 ? `+${results.roundDiff}` : `${results.roundDiff}`}` : '0'}`}
-              )
-            </span>
-          )}
+          <span className="hidden text-sm font-bold sm:block md:hidden 2xl:block">
+            {team?.school_name}
+          </span>
+          <span className="block text-sm font-bold sm:hidden md:block 2xl:hidden">
+            {team?.school_abbrev}
+          </span>
         </div>
-        <div className="flex w-full justify-between">
-          <span className="text-xs font-bold text-neutral-600 dark:text-neutral-400">
+        <div className="flex w-full flex-row justify-between gap-2 md:flex-col lg:flex-row">
+          <span className="text-xs font-semibold text-neutral-600 dark:text-neutral-400">
             {!isValorant
               ? `${results.wins}W - ${results.losses}L`
               : `${results.wins}W - ${results.losses}L - ${results.draws}D`}
           </span>
-          <span className="text-xs font-bold text-neutral-600 dark:text-neutral-400">
-            {`${results.points}${results.points === 1 ? 'pt' : 'pts'}`}
-          </span>
+          <div className="flex gap-6">
+            {showRoundDiff && isValorant && (
+              <span className="text-xs font-semibold text-neutral-600 dark:text-neutral-400">
+                (
+                {`${results.roundDiff ? `${results.roundDiff > 0 || results.roundDiff === 0 ? `+${results.roundDiff}` : `${results.roundDiff}`}` : '0'}`}
+                ) &nbsp; RNDΔ
+              </span>
+            )}
+            <span className="text-xs font-semibold text-neutral-600 dark:text-neutral-400">
+              {`${results.points}${results.points === 1 ? 'pt' : 'pts'}`}
+            </span>
+          </div>
         </div>
       </div>
     </li>
