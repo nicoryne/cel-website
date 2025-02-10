@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { manrope, delagothic } from '@/lib/fonts';
 import { Providers } from '@/app/providers';
+import { Analytics } from '@vercel/analytics/react';
 import NextTopLoader from 'nextjs-toploader';
 import '@/app/globals.css';
 
@@ -49,6 +50,7 @@ export default function RootLayout({
         <Providers>
           <NextTopLoader color="#0f5390" />
           {children}
+          <Analytics />
         </Providers>
       </body>
     </html>

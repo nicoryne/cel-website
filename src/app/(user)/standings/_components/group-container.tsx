@@ -54,9 +54,19 @@ export default function GroupContainer({
       {showRoundDiff && isValorant && (
         <td className="text-center">
           <span
-            className={`text-xs font-semibold text-neutral-600 dark:text-neutral-400 ${standing.roundDiff! > 0 && 'text-green-400 dark:text-green-300'} ${standing.roundDiff! < 0 && 'text-red-500 dark:text-red-400'}`}
+            className={`text-xs font-semibold ${
+              standing.roundDiff
+                ? standing.roundDiff > 0
+                  ? 'text-green-400 dark:text-green-300'
+                  : 'text-red-500 dark:text-red-400'
+                : 'text-neutral-600 dark:text-neutral-400'
+            }`}
           >
-            {`${standing.roundDiff ? `${standing.roundDiff > 0 || standing.roundDiff === 0 ? `+${standing.roundDiff}` : `${standing.roundDiff}`}` : '0'}`}
+            {standing.roundDiff
+              ? standing.roundDiff > 0
+                ? `+${standing.roundDiff}`
+                : standing.roundDiff
+              : '0'}
           </span>
         </td>
       )}

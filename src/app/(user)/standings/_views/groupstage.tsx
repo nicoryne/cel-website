@@ -1,8 +1,6 @@
 import { GamePlatform, LeagueSchedule, Series, Team } from '@/lib/types';
-import { getTeamRoundDiff } from '@/api/valorant-match';
-import GroupContainer from '../_components/group-container';
-import GroupTable from '../_components/group-table';
-import { getTeamStandings, updateMatchupsAndResults } from './utils';
+import GroupTable from '@/app/(user)/standings/_components/group-table';
+import { getTeamStandings, updateMatchupsAndResults } from '@/app/(user)/standings/_views/utils';
 
 interface GroupstageViewProps {
   seriesList: Series[];
@@ -53,7 +51,6 @@ const assignTeamsToGroups = (seriesList: Series[], matchups: Record<string, Set<
 
 const getGroupings = async (
   seriesList: Series[],
-  teamsList: Team[],
   isValorant: boolean,
   leagueScheduleId: string
 ) => {
@@ -80,7 +77,6 @@ export default async function GroupstageView({
 
   const { groupAIds, groupBIds, teamResults } = await getGroupings(
     seriesList,
-    teamsList,
     isValorant,
     leagueSchedule.id
   );
