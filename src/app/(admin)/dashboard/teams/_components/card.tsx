@@ -48,13 +48,18 @@ export default function TeamsCard({
         </div>
         <div className="flex flex-col gap-4">
           <div>
-            <p className="text-xs font-semibold text-neutral-600">Full Title</p>
+            <p className="text-xs font-semibold text-neutral-600">School Name</p>
             <p className="text-md text-neutral-300">{team.school_name}</p>
           </div>
 
           <div>
             <p className="text-xs font-semibold text-neutral-600">Abbreviation</p>
             <p className="text-md text-neutral-300">{team.school_abbrev}</p>
+          </div>
+
+          <div>
+            <p className="text-xs font-semibold text-neutral-600">Team Name</p>
+            <p className="text-md text-neutral-300">{team.team_name}</p>
           </div>
         </div>
       </div>

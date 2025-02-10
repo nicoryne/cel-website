@@ -13,6 +13,7 @@ export default function TeamsForm({ formData, team }: CharacterFormProps) {
   const [teamInfo, setTeamInfo] = React.useState<TeamFormType>({
     school_name: team?.school_name || '',
     school_abbrev: team?.school_abbrev || '',
+    team_name: team?.team_name || '',
     logo: null
   });
 
@@ -70,17 +71,34 @@ export default function TeamsForm({ formData, team }: CharacterFormProps) {
       <div className="flex flex-col gap-4">
         {/* Title */}
         <div>
-          <label htmlFor="name" className="text-xs">
+          <label htmlFor="schoolName" className="text-xs">
             School Name
           </label>
           <div>
             <input
               type="text"
-              name="name"
-              id="name"
+              name="schoolName"
+              id="schoolName"
               className="h-10 w-full rounded-md border-2 border-neutral-700 bg-neutral-900"
               value={teamInfo.school_name}
               onChange={(e) => updateTeamInfo('school_name', e.target.value)}
+            />
+          </div>
+        </div>
+
+        {/* Team Name */}
+        <div>
+          <label htmlFor="teamName" className="text-xs">
+            Team Name
+          </label>
+          <div>
+            <input
+              type="text"
+              name="teamName"
+              id="teamName"
+              className="h-10 w-full rounded-md border-2 border-neutral-700 bg-neutral-900"
+              value={teamInfo.team_name}
+              onChange={(e) => updateTeamInfo('team_name', e.target.value)}
             />
           </div>
         </div>
@@ -109,14 +127,27 @@ export default function TeamsForm({ formData, team }: CharacterFormProps) {
             {/* Custom File Upload Button */}
             <label htmlFor="file-upload" className="cursor-pointer hover:opacity-40">
               {selectedImagePreview ? (
-                <Image src={selectedImagePreview} alt={`${team?.school_abbrev} Picture`} height={60} width={60} />
+                <Image
+                  src={selectedImagePreview}
+                  alt={`${team?.school_abbrev} Picture`}
+                  height={60}
+                  width={60}
+                />
               ) : (
                 <Image src={not_found} alt={`No Image Logo`} height={60} width={60} />
               )}
             </label>
-            <input id="file-upload" type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+            <input
+              id="file-upload"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileChange}
+            />
             {/* Display Selected File Name */}
-            <span className="text-sm text-neutral-400">{teamInfo.logo ? teamInfo.logo.name : 'No file chosen'}</span>
+            <span className="text-sm text-neutral-400">
+              {teamInfo.logo ? teamInfo.logo.name : 'No file chosen'}
+            </span>
           </div>
         </div>
       </div>

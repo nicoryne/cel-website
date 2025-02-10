@@ -101,6 +101,7 @@ export const updateTeamById = async (id: string, updates: TeamFormType): Promise
   let processedTeam = {
     school_name: updates.school_name,
     school_abbrev: updates.school_abbrev,
+    team_name: updates.team_name,
     logo_url: ''
   };
 

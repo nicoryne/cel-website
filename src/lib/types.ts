@@ -10,6 +10,7 @@ export interface Team {
 export interface TeamFormType {
   school_abbrev: string;
   school_name: string;
+  team_name: string;
   logo: File | null;
 }
 
