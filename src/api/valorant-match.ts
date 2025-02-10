@@ -55,18 +55,18 @@ export const doesValorantMatchExist = async (
 
 export const getValorantMatchBySeries = async (series_id: string): Promise<Series[]> => {
   const supabase = createClient();
-  const { data, error} = await supabase
+  const { data, error } = await supabase
     .from('valorant_matches')
     .select('*')
-    .eq('series_id', series_id)
-  
+    .eq('series_id', series_id);
+
   if (error) {
-    handleError(error, 'fetching MLBB Matches')
+    handleError(error, 'fetching MLBB Matches');
     return [];
   }
 
   return data;
-}
+};
 
 export const getValorantMatchCount = async (): Promise<number | null> => {
   const supabase = createClient();
@@ -127,6 +127,49 @@ export const getValorantMatchByIndexRange = async (
   return data as ValorantMatch[];
 };
 
+export async function getTeamRoundDiff(teamId: string, leagueScheduleId: string) {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('valorant_matches')
+    .select(
+      `
+      team_a_rounds, 
+      team_b_rounds, 
+      series (
+        league_schedule_id,
+        team_a_id,
+        team_b_id
+      )
+    `
+    )
+    .eq('series.league_schedule_id', leagueScheduleId);
+
+  if (error) {
+    console.error('Error fetching round data:', error);
+    return null;
+  }
+
+  let totalRoundsWon = 0;
+  let totalRoundsLost = 0;
+
+  data.forEach((match) => {
+    const series = match.series as Partial<Series>;
+    if (series?.team_a_id && series?.team_b_id) {
+      const teamAId = series.team_a_id;
+      const teamBId = series.team_b_id;
+      if (teamAId === teamId) {
+        totalRoundsWon += match.team_a_rounds;
+        totalRoundsLost += match.team_b_rounds;
+      } else if (teamBId === teamId) {
+        totalRoundsWon += match.team_b_rounds;
+        totalRoundsLost += match.team_a_rounds;
+      }
+    }
+  });
+
+  return totalRoundsWon - totalRoundsLost;
+}
 //========
 // UTILITY
 //========

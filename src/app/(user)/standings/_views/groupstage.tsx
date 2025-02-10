@@ -1,10 +1,20 @@
-import { GamePlatform, Series, Team } from '@/lib/types';
-import Image from 'next/image';
-import not_found from '@/../../public/images/not-found.webp';
+import { GamePlatform, LeagueSchedule, Series, Team } from '@/lib/types';
+import { getTeamRoundDiff } from '@/api/valorant-match';
+import GroupContainer from '../_components/group-container';
 
 interface GroupstageViewProps {
   seriesList: Series[];
   teamsList: Team[];
+  matchedPlatform: GamePlatform;
+  leagueSchedule: LeagueSchedule;
+}
+
+export interface GroupResults {
+  wins: number;
+  losses: number;
+  draws: number;
+  points: number;
+  roundDiff?: number;
 }
 
 // the logic here is to track all matchups. all teams who face each other
@@ -12,35 +22,66 @@ interface GroupstageViewProps {
 // then they aren't in the same group.
 
 // TODO: optimize this. looks very dirty tbh
-const updateMatchupsAndResults = (seriesList: Series[]) => {
+const updateMatchupsAndResults = async (
+  seriesList: Series[],
+  isValorant: boolean,
+  leagueScheduleId: string
+) => {
   const matchups: Record<string, Set<string>> = {};
-  const teamResults: Record<string, { wins: number; losses: number; draws: number }> = {};
+  const teamResults: Record<string, GroupResults> = {};
 
-  seriesList.forEach(
-    ({ team_a_id, team_b_id, team_a_status, team_b_status, team_a_score, team_b_score }) => {
-      // make new set for every team if they don't have one already
-      if (!matchups[team_a_id]) matchups[team_a_id] = new Set();
-      if (!matchups[team_b_id]) matchups[team_b_id] = new Set();
+  for (const {
+    team_a_id,
+    team_b_id,
+    team_a_status,
+    team_b_status,
+    team_a_score,
+    team_b_score
+  } of seriesList) {
+    // Initialize matchups if they don't exist
+    if (!matchups[team_a_id]) matchups[team_a_id] = new Set();
+    if (!matchups[team_b_id]) matchups[team_b_id] = new Set();
 
-      matchups[team_a_id].add(team_b_id);
-      matchups[team_b_id].add(team_a_id);
+    matchups[team_a_id].add(team_b_id);
+    matchups[team_b_id].add(team_a_id);
 
-      // initialize 0 wins 0 losses
-      if (!teamResults[team_a_id]) teamResults[team_a_id] = { wins: 0, losses: 0, draws: 0 };
-      if (!teamResults[team_b_id]) teamResults[team_b_id] = { wins: 0, losses: 0, draws: 0 };
+    // Initialize team results if they don't exist
+    if (!teamResults[team_a_id])
+      teamResults[team_a_id] = { wins: 0, losses: 0, draws: 0, points: 0, roundDiff: 0 };
+    if (!teamResults[team_b_id])
+      teamResults[team_b_id] = { wins: 0, losses: 0, draws: 0, points: 0, roundDiff: 0 };
 
-      if (team_a_score === team_b_score && team_a_score != 0 && team_b_score != 0) {
-        teamResults[team_a_id].draws += 1;
-        teamResults[team_b_id].draws += 1;
-      } else if (team_a_status === 'Win') {
-        teamResults[team_a_id].wins += 1;
-        teamResults[team_b_id].losses += 1;
-      } else if (team_b_status === 'Win') {
-        teamResults[team_b_id].wins += 1;
-        teamResults[team_a_id].losses += 1;
+    // Handle wins, draws, and losses
+    if (team_a_score === team_b_score && team_a_score !== 0 && team_b_score !== 0) {
+      teamResults[team_a_id].draws += 1;
+      teamResults[team_b_id].draws += 1;
+      teamResults[team_a_id].points += 1;
+      teamResults[team_b_id].points += 1;
+    } else if (team_a_status === 'Win') {
+      teamResults[team_a_id].wins += 1;
+      teamResults[team_a_id].points += 3;
+      teamResults[team_b_id].losses += 1;
+    } else if (team_b_status === 'Win') {
+      teamResults[team_b_id].wins += 1;
+      teamResults[team_b_id].points += 3;
+      teamResults[team_a_id].losses += 1;
+    }
+
+    // **Fix: Fetch round difference properly**
+    if (isValorant) {
+      try {
+        const [teamARoundDiff, teamBRoundDiff] = await Promise.all([
+          getTeamRoundDiff(team_a_id, leagueScheduleId),
+          getTeamRoundDiff(team_b_id, leagueScheduleId)
+        ]);
+
+        teamResults[team_a_id].roundDiff = teamARoundDiff || 0;
+        teamResults[team_b_id].roundDiff = teamBRoundDiff || 0;
+      } catch (error) {
+        console.error(`Error fetching roundDiff: ${error}`);
       }
     }
-  );
+  }
 
   return { matchups, teamResults };
 };
@@ -85,8 +126,17 @@ const assignTeamsToGroups = (seriesList: Series[], matchups: Record<string, Set<
   return { groupA, groupB };
 };
 
-const getGroupings = (seriesList: Series[], teamsList: Team[]) => {
-  const { matchups, teamResults } = updateMatchupsAndResults(seriesList);
+const getGroupings = async (
+  seriesList: Series[],
+  teamsList: Team[],
+  isValorant: boolean,
+  leagueScheduleId: string
+) => {
+  const { matchups, teamResults } = await updateMatchupsAndResults(
+    seriesList,
+    isValorant,
+    leagueScheduleId
+  );
 
   const { groupA, groupB } = assignTeamsToGroups(seriesList, matchups);
 
@@ -96,7 +146,7 @@ const getGroupings = (seriesList: Series[], teamsList: Team[]) => {
 const getTeamStandings = (
   teamIds: string[],
   teamsList: Team[],
-  teamResults: Record<string, { wins: number; losses: number; draws: number }>
+  teamResults: Record<string, GroupResults>
 ) => {
   return teamIds
     .map((teamId) => {
@@ -105,7 +155,9 @@ const getTeamStandings = (
         team,
         wins: teamResults[teamId]?.wins || 0,
         losses: teamResults[teamId]?.losses || 0,
-        draws: teamResults[teamId]?.draws || 0
+        draws: teamResults[teamId]?.draws || 0,
+        points: teamResults[teamId]?.points || 0,
+        roundDiff: teamResults[teamId]?.roundDiff || 0
       };
     })
     .sort((a, b) => {
@@ -114,21 +166,37 @@ const getTeamStandings = (
       }
 
       if (b.losses !== a.losses) {
-        return a.losses - b.losses
+        return a.losses - b.losses;
       }
-    
-      
+
+      if (b.draws !== a.draws) {
+        return b.draws - a.draws;
+      }
+
+      if (b.roundDiff !== a.roundDiff) {
+        return b.roundDiff - a.roundDiff;
+      }
+
       return (a.team?.school_abbrev || '').localeCompare(b.team?.school_abbrev || '');
     });
 };
 
-export default function GroupstageView({ seriesList, teamsList }: GroupstageViewProps) {
-  const { groupAIds, groupBIds, teamResults } = getGroupings(seriesList, teamsList);
+export default async function GroupstageView({
+  seriesList,
+  teamsList,
+  matchedPlatform,
+  leagueSchedule
+}: GroupstageViewProps) {
+  const isValorant = matchedPlatform.platform_abbrev === 'VALO';
+  const { groupAIds, groupBIds, teamResults } = await getGroupings(
+    seriesList,
+    teamsList,
+    isValorant,
+    leagueSchedule.id
+  );
 
   const groupA = getTeamStandings(groupAIds, teamsList, teamResults);
   const groupB = getTeamStandings(groupBIds, teamsList, teamResults);
-
-  let isDrawable = seriesList.some((s) => s.series_type === 'BO2');
 
   return (
     <div className="flex flex-col p-4 md:flex-row">
@@ -136,26 +204,16 @@ export default function GroupstageView({ seriesList, teamsList }: GroupstageView
         <h3 className="mb-2 border-b py-4 text-xl dark:border-neutral-700">Group A</h3>
         {groupA.length > 0 ? (
           <ul className="space-y-2">
-            {groupA.map(({ team, wins, losses, draws }, index) => (
-              <li
-                key={team?.id}
-                className="flex h-2/4 items-center gap-4 border-b p-4 dark:border-neutral-700"
-              >
-                <span className="font-bold">{index + 1}</span>
-                <Image
-                  src={team?.logo_url || not_found}
-                  alt={team?.school_abbrev || 'Logo not found'}
-                  width={128}
-                  height={128}
-                  className="h-auto w-8 rounded-full md:w-16"
-                />
-                <div className="flex flex-col gap-2">
-                  <span className="text-sm">{team?.school_name}</span>
-                  <span className="text-xs font-bold text-neutral-600 dark:text-neutral-400">
-                    {!isDrawable ? `${wins}W - ${losses}L` : `${wins}W - ${losses}L - ${draws}D`}
-                  </span>
-                </div>
-              </li>
+            {groupA.map(({ team, wins, losses, draws, points, roundDiff }, index) => (
+              <GroupContainer
+                team={team}
+                results={{ wins, losses, draws, points, roundDiff }}
+                index={index}
+                isValorant={isValorant}
+                showRoundDiff={
+                  leagueSchedule.season_type === 'Season' && leagueSchedule.season_number === 3
+                }
+              />
             ))}
           </ul>
         ) : (
@@ -167,26 +225,16 @@ export default function GroupstageView({ seriesList, teamsList }: GroupstageView
         <h3 className="mb-2 border-b py-4 text-xl dark:border-neutral-700">Group B</h3>
         {groupB.length > 0 ? (
           <ul className="space-y-2">
-            {groupB.map(({ team, wins, losses, draws }, index) => (
-              <li
-                key={index}
-                className="flex h-2/4 items-center gap-4 border-b p-4 dark:border-neutral-700"
-              >
-                <span className="font-bold">{index + 1}</span>
-                <Image
-                  src={team?.logo_url || not_found}
-                  alt={team?.school_abbrev || 'Logo not found'}
-                  width={128}
-                  height={128}
-                  className="h-auto w-8 rounded-full md:w-16"
-                />
-                <div className="flex flex-col gap-2">
-                  <span className="text-sm">{team?.school_name}</span>
-                  <span className="text-xs font-bold text-neutral-600 dark:text-neutral-400">
-                    {!isDrawable ? `${wins}W - ${losses}L` : `${wins}W - ${losses}L - ${draws}D`}
-                  </span>
-                </div>
-              </li>
+            {groupB.map(({ team, wins, losses, draws, points, roundDiff }, index) => (
+              <GroupContainer
+                team={team}
+                results={{ wins, losses, draws, points, roundDiff }}
+                index={index}
+                isValorant={isValorant}
+                showRoundDiff={
+                  leagueSchedule.season_type === 'Season' && leagueSchedule.season_number === 3
+                }
+              />
             ))}
           </ul>
         ) : (
