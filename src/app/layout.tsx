@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { manrope, delagothic } from '@/lib/fonts';
 import { Providers } from '@/app/providers';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import NextTopLoader from 'nextjs-toploader';
 import '@/app/globals.css';
 
@@ -51,6 +52,7 @@ export default function RootLayout({
           <NextTopLoader color="#0f5390" />
           {children}
           <Analytics />
+          <SpeedInsights />
         </Providers>
       </body>
     </html>
