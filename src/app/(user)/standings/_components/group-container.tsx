@@ -43,7 +43,7 @@ export default function GroupContainer({
         <span className="text-xs font-semibold text-neutral-600 dark:text-neutral-400">
           {!isValorant
             ? `${standing.wins} - ${standing.losses}`
-            : `${standing.wins} - ${standing.losses} - ${standing.draws}`}
+            : `${standing.wins} - ${standing.draws} - ${standing.losses}`}
         </span>
       </td>
       <td className="hidden text-center md:table-cell">
