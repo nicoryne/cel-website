@@ -34,6 +34,26 @@ export default function PlayerStatsTable({
     'is MVP?'
   ];
 
+  const defaultPlayerStats: Partial<ValorantMatchesPlayerStatsWithDetails> = {
+    agent: undefined,
+    player: undefined,
+    acs: undefined,
+    kills: undefined,
+    deaths: undefined,
+    assists: undefined,
+    econ_rating: undefined,
+    first_bloods: undefined,
+    plants: undefined,
+    defuses: undefined,
+    is_mvp: false
+  };
+
+  // Ensure there are at least 10 rows
+  const filledPlayerStatsList = [
+    ...playerStatsList,
+    ...Array(Math.max(0, 10 - playerStatsList.length)).fill(defaultPlayerStats)
+  ];
+
   return (
     <div className="w-full rounded-md border border-neutral-700 bg-neutral-900 p-4 text-neutral-600">
       <h2 className="text-lg font-semibold text-neutral-200">Editable Player Statistics</h2>
@@ -48,7 +68,7 @@ export default function PlayerStatsTable({
           </tr>
         </thead>
         <tbody>
-          {playerStatsList.map((playerStat, index) => {
+          {filledPlayerStatsList.map((playerStat, index) => {
             const key = index;
             const players = Object.values(availablePlayers).flat().filter(Boolean) as Player[];
             return (

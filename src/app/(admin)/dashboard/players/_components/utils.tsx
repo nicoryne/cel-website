@@ -219,11 +219,11 @@ export const handleUpdate = async (
 
   const updateExistingPlayer = async () => {
     try {
-      console.log(formData.current);
       const updatedPlayer: Player | null = await updatePlayerById(
         player.id,
         formData.current as PlayerFormType
       );
+
       const processedPlayer: PlayerWithDetails = appendPlayerDetails(
         platformList,
         teamList,
@@ -238,7 +238,13 @@ export const handleUpdate = async (
           const fileName = url.pathname.replace('/storage/v1/object/sign/images/', '');
           deleteFile('images', [fileName]);
         }
+
+        if (formData.current?.league_schedules) {
+          processedPlayer.league_schedules = formData.current.league_schedules;
+        }
+
         updatePlayerFromCache(processedPlayer, setCachedPlayers);
+
         setModalProps(null);
       }, 500);
     } catch (error) {

@@ -34,6 +34,29 @@ export default function PlayerStatsTable({
     'is MVP?'
   ];
 
+  const defaultPlayerStats: Partial<MlbbMatchesPlayerStatsWithDetails> = {
+    hero: undefined,
+    player: undefined,
+    rating: undefined,
+    kills: undefined,
+    deaths: undefined,
+    assists: undefined,
+    net_worth: undefined,
+    hero_dmg: undefined,
+    turret_dmg: undefined,
+    dmg_tkn: undefined,
+    teamfight: undefined,
+    lord_slain: undefined,
+    turtle_slain: undefined,
+    is_mvp: false
+  };
+
+  // Ensure there are at least 10 rows
+  const filledPlayerStatsList = [
+    ...playerStatsList,
+    ...Array(Math.max(0, 10 - playerStatsList.length)).fill(defaultPlayerStats)
+  ];
+
   return (
     <div className="w-full rounded-md border border-neutral-700 bg-neutral-900 p-4 text-neutral-600">
       <h2 className="text-lg font-semibold text-neutral-200">Editable Player Statistics</h2>
@@ -48,7 +71,7 @@ export default function PlayerStatsTable({
           </tr>
         </thead>
         <tbody>
-          {playerStatsList.map((playerStat, index) => {
+          {filledPlayerStatsList.map((playerStat, index) => {
             const key = index;
             return (
               <PlayerStatsRow
