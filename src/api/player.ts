@@ -2,6 +2,10 @@ import { createClient } from '@/lib/supabase/client';
 import { GamePlatform, Player, PlayerFormType, Team } from '@/lib/types';
 import { handleError } from '@/api/utils/errorHandler';
 import { deleteFile, uploadFile } from '@/api/utils/storage';
+import {
+  createPlayerLeagueSchedule,
+  getPlayerLeagueSchedulesByPlayer
+} from '@/api/player-league-schedules';
 
 //====================
 // Player API
@@ -45,6 +49,12 @@ export const createPlayer = async (player: PlayerFormType): Promise<Player | nul
     return null;
   }
 
+  if (data && data.id) {
+    for (const schedule of player.league_schedules) {
+      await createPlayerLeagueSchedule(data.id, schedule);
+    }
+  }
+
   return data as Player;
 };
 
@@ -75,19 +85,37 @@ export const getAllPlayers = async (): Promise<Player[]> => {
     return [];
   }
 
-  return data || [];
+  if (data) {
+    return await Promise.all(
+      data.map(async (player) => ({
+        ...player,
+        league_schedules: await getPlayerLeagueSchedulesByPlayer(player.id)
+      }))
+    );
+  }
+
+  return [];
 };
 
 export const getPlayerById = async (id: string): Promise<Player | null> => {
   const supabase = createClient();
-  const { data, error } = await supabase.from('players').select('*').eq('id', id).select().single();
+  const { data, error } = await supabase.from('players').select('*').eq('id', id).single();
 
   if (error) {
-    handleError(error, `fetching player}`);
+    handleError(error, `fetching player`);
     return null;
   }
 
-  return data;
+  if (data) {
+    return {
+      ...data,
+      league_schedules: (await getPlayerLeagueSchedulesByPlayer(data.id)).map(
+        (s) => s.league_schedule_id
+      )
+    };
+  }
+
+  return data as Player;
 };
 
 export const getPlayerByName = async (name: string): Promise<Player | null> => {
@@ -103,6 +131,15 @@ export const getPlayerByName = async (name: string): Promise<Player | null> => {
     return null;
   }
 
+  if (data) {
+    return {
+      ...data,
+      league_schedules: (await getPlayerLeagueSchedulesByPlayer(data.id)).map(
+        (s) => s.league_schedule_id
+      )
+    };
+  }
+
   return data as Player;
 };
 
@@ -116,7 +153,18 @@ export const getPlayersByIndexRange = async (min: number, max: number): Promise<
     return [];
   }
 
-  return data as Player[];
+  if (data) {
+    return await Promise.all(
+      data.map(async (player) => ({
+        ...player,
+        league_schedules: (await getPlayerLeagueSchedulesByPlayer(player.id)).map(
+          (s) => s.league_schedule_id
+        )
+      }))
+    );
+  }
+
+  return [];
 };
 
 export const getPlayerByTeamAndName = async (
@@ -137,6 +185,11 @@ export const getPlayerByTeamAndName = async (
     return null;
   }
 
+  if (data) {
+    const leagueSchedules = await getPlayerLeagueSchedulesByPlayer(data.id);
+    return { ...data, league_schedules: leagueSchedules };
+  }
+
   return data as Player;
 };
 
@@ -150,7 +203,18 @@ export const getPlayersByPlatform = async (platform_id: string): Promise<Player[
     return [];
   }
 
-  return data as Player[];
+  if (data) {
+    return await Promise.all(
+      data.map(async (player) => ({
+        ...player,
+        league_schedules: (await getPlayerLeagueSchedulesByPlayer(player.id)).map(
+          (s) => s.league_schedule_id
+        )
+      }))
+    );
+  }
+
+  return [];
 };
 
 export const getPlayersByTeam = async (team_id: string): Promise<Player[]> => {
@@ -163,7 +227,18 @@ export const getPlayersByTeam = async (team_id: string): Promise<Player[]> => {
     return [];
   }
 
-  return data as Player[];
+  if (data) {
+    return await Promise.all(
+      data.map(async (player) => ({
+        ...player,
+        league_schedules: (await getPlayerLeagueSchedulesByPlayer(player.id)).map(
+          (s) => s.league_schedule_id
+        )
+      }))
+    );
+  }
+
+  return [];
 };
 
 export const getPlayersByTeamAndPlatform = async (
@@ -183,7 +258,18 @@ export const getPlayersByTeamAndPlatform = async (
     return [];
   }
 
-  return data as Player[];
+  if (data) {
+    return await Promise.all(
+      data.map(async (player) => ({
+        ...player,
+        league_schedules: (await getPlayerLeagueSchedulesByPlayer(player.id)).map(
+          (s) => s.league_schedule_id
+        )
+      }))
+    );
+  }
+
+  return [];
 };
 
 export const doesPlayerExist = async (first_name: string, last_name: string): Promise<boolean> => {
@@ -228,6 +314,7 @@ export const updatePlayerById = async (
   updates: PlayerFormType
 ): Promise<Player | null> => {
   const supabase = createClient();
+
   let processedPlayer = {
     first_name: updates.first_name,
     last_name: updates.last_name,
@@ -257,8 +344,16 @@ export const updatePlayerById = async (
     .single();
 
   if (error) {
-    handleError(error, `updating player`);
+    handleError(error, 'updating player');
     return null;
+  }
+
+  if (data && id) {
+    await supabase.from('player_league_schedules').delete().eq('player_id', id);
+
+    for (const schedule of updates.league_schedules) {
+      await createPlayerLeagueSchedule(id, schedule);
+    }
   }
 
   return data;
@@ -272,8 +367,8 @@ export const deletePlayerById = async (id: string): Promise<boolean> => {
   const supabase = createClient();
   const { data, error } = await supabase.from('players').delete().eq('id', id).select().single();
 
-  if (data.logo_url) {
-    const url = new URL(data.logo_url);
+  if (data.picture_url) {
+    const url = new URL(data.picture_url);
     const fileName = url.pathname.replace('/storage/v1/object/sign/images/', '');
     try {
       await deleteFile('images', [fileName]);

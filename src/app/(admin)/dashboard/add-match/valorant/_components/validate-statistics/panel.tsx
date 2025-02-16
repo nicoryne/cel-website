@@ -5,8 +5,13 @@ import Tesseract from 'tesseract.js';
 import { preprocessImageAndExtractRows } from '@/app/(admin)/dashboard/add-match/valorant/_components/utils';
 import {
   Character,
+  GamePlatform,
+  LeagueSchedule,
   Player,
+  Series,
+  SeriesFormType,
   Team,
+  ValorantMatch,
   ValorantMatchesPlayerStatsWithDetails,
   ValorantMatchWithDetails
 } from '@/lib/types';
@@ -20,6 +25,10 @@ import { getCharactersByGamePlatform } from '@/api/characters';
 import { createValorantMatch } from '@/api/valorant-match';
 import { createValorantMatchPlayerStat } from '@/api/valorant-match-player-stat';
 import { useRouter } from 'next/navigation';
+import { getSeriesById, updateSeriesById } from '@/api/series';
+import { getLeagueScheduleById } from '@/api/league-schedule';
+import { getGamePlatformById } from '@/api/game-platform';
+import { SeriesType } from '@/lib/enums';
 
 type ValidatePlayerStatisticsProps = {
   imageData: React.MutableRefObject<string | undefined>;
@@ -253,6 +262,106 @@ export default function ValidatePlayerStatisticsPanel({
     }
   };
 
+  const updateSeries = async (series_id: string, matchUpdates: ValorantMatch) => {
+    try {
+      const series = await getSeriesById(series_id);
+
+      if (!series) {
+        console.error('Series not found');
+        return;
+      }
+
+      if (series.status === 'Finished') {
+        console.error('Series is already finished');
+        return;
+      }
+
+      const teamA = playingTeams.find((s) => s.id === series.team_a_id);
+      const teamB = playingTeams.find((s) => s.id === series.team_b_id);
+      const leagueSchedule = await getLeagueScheduleById(series.league_schedule_id);
+      const platform = await getGamePlatformById(series.platform_id);
+
+      if (!teamA || !teamB || !leagueSchedule || !platform) {
+        console.error('Series or required data not found');
+        return;
+      }
+
+      let teamAScore = series.team_a_score;
+      let teamBScore = series.team_b_score;
+
+      if (matchUpdates.team_a_status === 'Win') {
+        teamAScore++;
+      } else if (matchUpdates.team_b_status === 'Win') {
+        teamBScore++;
+      }
+
+      const requiredWins: Record<string, number> = {
+        [SeriesType.BO1]: 1,
+        [SeriesType.BO2]: 2,
+        [SeriesType.BO3]: 2,
+        [SeriesType.BO5]: 3,
+        [SeriesType.BO7]: 4
+      };
+
+      let teamAStatus = 'Draw';
+      let teamBStatus = 'Draw';
+      let seriesStatus = 'Ongoing';
+
+      if (series.series_type === SeriesType.BO2) {
+        if (teamAScore === 2) {
+          teamAStatus = 'Win';
+          teamBStatus = 'Loss';
+          seriesStatus = 'Finished';
+        } else if (teamBScore === 2) {
+          teamBStatus = 'Win';
+          teamAStatus = 'Loss';
+          seriesStatus = 'Finished';
+        } else if (teamAScore === 1 && teamBScore === 1) {
+          seriesStatus = 'Finished';
+        }
+      } else {
+        if (teamAScore >= requiredWins[series.series_type]) {
+          teamAStatus = 'Win';
+          teamBStatus = 'Loss';
+          seriesStatus = 'Finished';
+        } else if (teamBScore >= requiredWins[series.series_type]) {
+          teamBStatus = 'Win';
+          teamAStatus = 'Loss';
+          seriesStatus = 'Finished';
+        }
+      }
+
+      let updatedSeries: SeriesFormType = {
+        league_schedule: leagueSchedule as LeagueSchedule,
+        series_type: series.series_type,
+        team_a: teamA as Team,
+        team_a_score: teamAScore,
+        team_a_status: teamAStatus,
+        team_b: teamB as Team,
+        team_b_score: teamBScore,
+        team_b_status: teamBStatus,
+        week: series.week,
+        status: seriesStatus,
+        match_number: series.match_number,
+        platform: platform as GamePlatform,
+        date: new Date(series.start_time!).toISOString().split('T')[0],
+        start_time: new Date(series.start_time!).toLocaleTimeString('en-GB', {
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        end_time: new Date(series.end_time!).toLocaleTimeString('en-GB', {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      };
+
+      await updateSeriesById(series_id, updatedSeries);
+      console.log('Series updated successfully:', updatedSeries);
+    } catch (error) {
+      console.error('Error updating series:', error);
+    }
+  };
+
   const handleStatsSubmit = async () => {
     try {
       const processedMatchInfo = {
@@ -267,8 +376,6 @@ export default function ValidatePlayerStatisticsPanel({
       };
       const data = await createValorantMatch(processedMatchInfo);
       if (!data) throw new Error('Match creation failed');
-      
-      
 
       playerStatsList.forEach(async (playerStat) => {
         try {
@@ -292,6 +399,7 @@ export default function ValidatePlayerStatisticsPanel({
         }
       });
 
+      await updateSeries(data.series_id, data);
       router.push('/dashboard');
     } catch (error) {
       setError('Failed to submit statistics.');

@@ -113,9 +113,17 @@ export interface Player {
   team_id: string;
   platform_id: string;
   roles: string[];
-  league_schedules: string[];
+  league_schedules?: string[];
   picture_url: string;
   is_active: boolean;
+}
+
+export interface PlayerLeagueSchedules {
+  league_schedule_id: string[];
+}
+
+export interface LeagueSchedulePlayers {
+  player_id: string[];
 }
 
 export interface PlayerFormType {
@@ -125,6 +133,7 @@ export interface PlayerFormType {
   team: Team;
   game_platform: GamePlatform;
   roles: string[];
+  league_schedules: string[];
   picture: File | null;
   is_active: boolean;
 }

@@ -5,9 +5,13 @@ import Tesseract from 'tesseract.js';
 import { preprocessImageAndExtractRows } from '@/app/(admin)/dashboard/add-match/mlbb/_components/utils';
 import {
   Character,
+  GamePlatform,
+  LeagueSchedule,
+  MlbbMatch,
   MlbbMatchesPlayerStatsWithDetails,
   MlbbMatchWithDetails,
   Player,
+  SeriesFormType,
   Team
 } from '@/lib/types';
 import { getPlayersByTeamAndPlatform } from '@/api/player';
@@ -17,6 +21,10 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { createMlbbMatch } from '@/api/mlbb-match';
 import { createMlbbMatchPlayerStat } from '@/api/mlbb-match-player-stat';
+import { getSeriesById, updateSeriesById } from '@/api/series';
+import { getLeagueScheduleById } from '@/api/league-schedule';
+import { getGamePlatformById } from '@/api/game-platform';
+import { SeriesType } from '@/lib/enums';
 
 type ValidatePlayerStatisticsProps = {
   equipmentImageData: React.MutableRefObject<string | undefined>;
@@ -251,6 +259,94 @@ export default function ValidatePlayerStatisticsPanel({
     }
   };
 
+  const updateSeries = async (series_id: string, matchUpdates: MlbbMatch) => {
+    try {
+      const series = await getSeriesById(series_id);
+
+      if (!series) {
+        console.error('Series not found');
+        return;
+      }
+
+      if (series.status === 'Finished') {
+        console.error('Series is already finished');
+        return;
+      }
+
+      const teamA = playingTeams.find((s) => s.id === series.team_a_id);
+      const teamB = playingTeams.find((s) => s.id === series.team_b_id);
+      const leagueSchedule = await getLeagueScheduleById(series.league_schedule_id);
+      const platform = await getGamePlatformById(series.platform_id);
+
+      if (!teamA || !teamB || !leagueSchedule || !platform) {
+        console.error('Series or required data not found');
+        return;
+      }
+
+      let teamAScore = series.team_a_score;
+      let teamBScore = series.team_b_score;
+
+      if (matchUpdates.team_a_status === 'Win') {
+        teamAScore++;
+      } else if (matchUpdates.team_b_status === 'Win') {
+        teamBScore++;
+      }
+
+      const requiredWins: Record<string, number> = {
+        [SeriesType.BO1]: 1,
+        [SeriesType.BO2]: 2,
+        [SeriesType.BO3]: 2,
+        [SeriesType.BO5]: 3,
+        [SeriesType.BO7]: 4
+      };
+
+      let teamAStatus = 'Ongoing';
+      let teamBStatus = 'Ongoing';
+      let seriesStatus = 'Ongoing';
+
+      const winsNeeded = requiredWins[series.series_type];
+
+      if (teamAScore >= winsNeeded) {
+        teamAStatus = 'Win';
+        teamBStatus = 'Loss';
+        seriesStatus = 'Finished';
+      } else if (teamBScore >= winsNeeded) {
+        teamAStatus = 'Loss';
+        teamBStatus = 'Win';
+        seriesStatus = 'Finished';
+      }
+
+      let updatedSeries: SeriesFormType = {
+        league_schedule: leagueSchedule as LeagueSchedule,
+        series_type: series.series_type,
+        team_a: teamA as Team,
+        team_a_score: teamAScore,
+        team_a_status: teamAStatus,
+        team_b: teamB as Team,
+        team_b_score: teamBScore,
+        team_b_status: teamBStatus,
+        week: series.week,
+        status: seriesStatus,
+        match_number: series.match_number,
+        platform: platform as GamePlatform,
+        date: new Date(series.start_time!).toISOString().split('T')[0],
+        start_time: new Date(series.start_time!).toLocaleTimeString('en-GB', {
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        end_time: new Date(series.end_time!).toLocaleTimeString('en-GB', {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      };
+
+      await updateSeriesById(series_id, updatedSeries);
+      console.log('Series updated successfully:', updatedSeries);
+    } catch (error) {
+      console.error('Error updating series:', error);
+    }
+  };
+
   const handleStatsSubmit = async () => {
     try {
       const processedMatchInfo = {
@@ -289,6 +385,7 @@ export default function ValidatePlayerStatisticsPanel({
         }
       });
 
+      await updateSeries(data.series_id, data);
       router.push('/dashboard');
     } catch (error) {
       setError('Failed to submit statistics.');

@@ -1,5 +1,12 @@
 import { ModalProps } from '@/components/ui/modal';
-import { GamePlatform, Player, PlayerFormType, PlayerWithDetails, Team } from '@/lib/types';
+import {
+  GamePlatform,
+  LeagueSchedule,
+  Player,
+  PlayerFormType,
+  PlayerWithDetails,
+  Team
+} from '@/lib/types';
 import React from 'react';
 import PlayerForm from '@/app/(admin)/dashboard/players/_components/form';
 import { deleteFile } from '@/api/utils/storage';
@@ -12,8 +19,6 @@ import {
   getPlayerByName,
   updatePlayerById
 } from '@/api/player';
-import { getAllGamePlatforms } from '@/api/game-platform';
-import { getAllTeams } from '@/api/team';
 
 export const sortBySchoolPlayerName = (a: PlayerWithDetails, b: PlayerWithDetails): number => {
   if (a.team?.id && b.team?.id && a.team.id !== b.team.id) {
@@ -107,10 +112,11 @@ export const updatePlayerFromCache = (
 export const handleInsert = async (
   setModalProps: React.Dispatch<React.SetStateAction<ModalProps | null>>,
   formData: React.MutableRefObject<PlayerFormType | undefined>,
-  setCachedPlayers: React.Dispatch<React.SetStateAction<PlayerWithDetails[]>>
+  setCachedPlayers: React.Dispatch<React.SetStateAction<PlayerWithDetails[]>>,
+  platformList: GamePlatform[],
+  teamList: Team[],
+  leagueSchedules: Record<string, LeagueSchedule[]>
 ) => {
-  const platformList = await getAllGamePlatforms();
-  const teamList = await getAllTeams();
   const processedTeamList = teamList.filter((team) => team.school_abbrev !== 'TBD');
 
   const addNewPlayer = async () => {
@@ -159,6 +165,7 @@ export const handleInsert = async (
         player={null}
         platformList={platformList}
         teamList={processedTeamList}
+        leagueSchedules={leagueSchedules}
       />
     )
   };
@@ -203,14 +210,16 @@ export const handleUpdate = async (
   setModalProps: React.Dispatch<React.SetStateAction<ModalProps | null>>,
   formData: React.MutableRefObject<PlayerFormType | undefined>,
   player: PlayerWithDetails,
-  setCachedPlayers: React.Dispatch<React.SetStateAction<PlayerWithDetails[]>>
+  setCachedPlayers: React.Dispatch<React.SetStateAction<PlayerWithDetails[]>>,
+  platformList: GamePlatform[],
+  teamList: Team[],
+  leagueSchedules: Record<string, LeagueSchedule[]>
 ) => {
-  const platformList = await getAllGamePlatforms();
-  const teamList = await getAllTeams();
   const processedTeamList = teamList.filter((team) => team.school_abbrev !== 'TBD');
 
   const updateExistingPlayer = async () => {
     try {
+      console.log(formData.current);
       const updatedPlayer: Player | null = await updatePlayerById(
         player.id,
         formData.current as PlayerFormType
@@ -251,6 +260,7 @@ export const handleUpdate = async (
         player={player}
         platformList={platformList}
         teamList={processedTeamList}
+        leagueSchedules={leagueSchedules}
       />
     )
   };

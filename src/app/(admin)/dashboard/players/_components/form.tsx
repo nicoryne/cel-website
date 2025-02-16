@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
-import { GamePlatform, PlayerFormType, PlayerWithDetails, Team } from '@/lib/types';
+import { GamePlatform, LeagueSchedule, PlayerFormType, PlayerWithDetails, Team } from '@/lib/types';
 import not_found from '@/../../public/images/not-found.webp';
 import { fetchImage } from '@/api/utils/storage';
 import { motion } from 'framer-motion';
@@ -12,9 +12,16 @@ type PlayerFormProps = {
   player: PlayerWithDetails | null;
   platformList: GamePlatform[];
   teamList: Team[];
+  leagueSchedules: Record<string, LeagueSchedule[]>;
 };
 
-export default function PlayerForm({ formData, player, platformList, teamList }: PlayerFormProps) {
+export default function PlayerForm({
+  formData,
+  player,
+  platformList,
+  teamList,
+  leagueSchedules
+}: PlayerFormProps) {
   const [playerInfo, setPlayerInfo] = React.useState<PlayerFormType>({
     first_name: player?.first_name || '',
     last_name: player?.last_name || '',
@@ -23,7 +30,8 @@ export default function PlayerForm({ formData, player, platformList, teamList }:
     game_platform: player?.platform || platformList[0],
     roles: player?.roles || [],
     picture: null,
-    is_active: player?.is_active ?? true
+    is_active: player?.is_active ?? true,
+    league_schedules: player?.league_schedules || []
   });
 
   const [selectedImagePreview, setSelectedImagePreview] = React.useState('');
@@ -42,15 +50,12 @@ export default function PlayerForm({ formData, player, platformList, teamList }:
     updatePlayerInfo('roles', updatedRoles);
   };
 
-  const updatePlayerInfo = (
-    field: keyof PlayerFormType,
-    value: File | string | string[] | Team | GamePlatform
-  ) => {
-    setPlayerInfo((platformInfo) => ({
-      ...platformInfo,
+  const updatePlayerInfo = React.useCallback((field: keyof PlayerFormType, value: any) => {
+    setPlayerInfo((prev) => ({
+      ...prev,
       [field]: value
     }));
-  };
+  }, []);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -73,12 +78,10 @@ export default function PlayerForm({ formData, player, platformList, teamList }:
 
   React.useEffect(() => {
     if (player?.picture_url) {
-      const url = player?.picture_url;
-
-      setPlayerImage(url, player?.ingame_name);
-      setSelectedImagePreview(url);
+      setPlayerImage(player.picture_url, player.ingame_name);
+      setSelectedImagePreview(player.picture_url);
     }
-  }, [player?.picture_url]);
+  }, [player]);
 
   // Insert New Platform
   React.useEffect(() => {
@@ -139,18 +142,7 @@ export default function PlayerForm({ formData, player, platformList, teamList }:
             />
           </div>
         </div>
-        <div className="flex gap-8">
-          <label htmlFor="isActive" className="text-xs">
-            Is Active?
-          </label>
-          <input
-            type="checkbox"
-            id="isActive"
-            name="isActive"
-            checked={playerInfo.is_active}
-            onChange={(e) => setPlayerInfo((prev) => ({ ...prev, is_active: e.target.checked }))}
-          />
-        </div>
+
         {/* Team */}
         <div className="flex flex-1 flex-col gap-2">
           <label htmlFor="team" className="text-xs">
@@ -270,6 +262,31 @@ export default function PlayerForm({ formData, player, platformList, teamList }:
             )}
           </div>
         </div>
+        <div>
+          <label className="text-xs">League Schedules</label>
+          <div className="mt-2 flex gap-8">
+            {Object.entries(leagueSchedules).map(([season, schedules]) => {
+              const scheduleIds = schedules.map((s) => s.id);
+              return (
+                <div key={season} className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id={season}
+                    checked={scheduleIds.every((id) => playerInfo.league_schedules.includes(id))}
+                    onChange={(e) => {
+                      const selectedSchedules = e.target.checked
+                        ? [...playerInfo.league_schedules, ...scheduleIds]
+                        : playerInfo.league_schedules.filter((id) => !scheduleIds.includes(id));
+
+                      updatePlayerInfo('league_schedules', selectedSchedules);
+                    }}
+                  />
+                  <label htmlFor={season}>{season}</label>
+                </div>
+              );
+            })}
+          </div>
+        </div>
 
         {/* Roles */}
         {/* Roles Section */}
@@ -304,6 +321,7 @@ export default function PlayerForm({ formData, player, platformList, teamList }:
             ))}
           </div>
         </div>
+
         {/* Player Image */}
         <div>
           <label className="mb-2 block text-xs">Team Image</label>
