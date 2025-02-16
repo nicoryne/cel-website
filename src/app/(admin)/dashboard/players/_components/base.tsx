@@ -225,8 +225,8 @@ export default function PlayersClientBase({
                         const scheduleIds = schedules.map((s) => s.id);
                         const playerLeagues = player.league_schedules?.map((s) => s) || [];
 
-                        const hasMatchingSchedule = playerLeagues.some((id) =>
-                          scheduleIds.includes(id)
+                        const hasMatchingSchedule = playerLeagues.some((schedule) =>
+                          scheduleIds.includes(schedule.league_schedule_id)
                         );
 
                         return hasMatchingSchedule ? season : null;

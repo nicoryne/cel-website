@@ -31,7 +31,7 @@ export default function PlayerForm({
     roles: player?.roles || [],
     picture: null,
     is_active: player?.is_active ?? true,
-    league_schedules: player?.league_schedules || []
+    league_schedules: player?.league_schedules?.map((schedule) => schedule.league_schedule_id) || []
   });
 
   const [selectedImagePreview, setSelectedImagePreview] = React.useState('');

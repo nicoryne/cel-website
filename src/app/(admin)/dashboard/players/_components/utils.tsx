@@ -240,7 +240,9 @@ export const handleUpdate = async (
         }
 
         if (formData.current?.league_schedules) {
-          processedPlayer.league_schedules = formData.current.league_schedules;
+          processedPlayer.league_schedules = formData.current.league_schedules.map((id) => ({
+            league_schedule_id: id
+          }));
         }
 
         updatePlayerFromCache(processedPlayer, setCachedPlayers);
