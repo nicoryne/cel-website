@@ -113,7 +113,7 @@ export interface Player {
   team_id: string;
   platform_id: string;
   roles: string[];
-  league_schedules?: string[];
+  league_schedules?: { league_schedule_id: string }[];
   picture_url: string;
   is_active: boolean;
 }

@@ -70,6 +70,10 @@ export default function StatisticsBase({
   const valoPlatform = platforms.find((p) => p.platform_abbrev === 'VALO');
   const valoPlayers = Array.from(players.filter((p) => p.platform_id === valoPlatform?.id));
 
+  const [filteredMlbbPlayers, setFilteredMlbbPlayers] = useState<Player[]>(mlbbPlayers);
+
+  const [filteredValoPlayers, setFilteredValoPlayers] = useState<Player[]>(valoPlayers);
+
   const filteredSeasonNumbers =
     filterSeasonType && filterSeasonType !== 'All'
       ? [
@@ -139,16 +143,27 @@ export default function StatisticsBase({
       const relevantSeriesIds = new Set(relevantSeries.map((s) => s.id));
       const filteredMatches = mlbbMatches.filter((m) => relevantSeriesIds.has(m.series_id));
       const relevantMatchIds = new Set(filteredMatches.map((m) => m.id));
+
+      const filteredPlayers = mlbbPlayers.filter((player) =>
+        player.league_schedules?.some((scheduleId) =>
+          filteredScheduleIds.has(scheduleId.league_schedule_id)
+        )
+      );
+
+      const filteredPlayerIds = new Set(filteredPlayers.map((player) => player.id));
+
       setFilteredMlbbMatchRecords(() => {
         const updatedRecords: Record<string, MlbbMatchesPlayerStats[] | null> = {};
 
         Object.keys(mlbbPlayerMatchRecord).forEach((playerId) => {
-          const playerStats = mlbbPlayerMatchRecord[playerId];
+          if (filteredPlayerIds.has(playerId)) {
+            const playerStats = mlbbPlayerMatchRecord[playerId];
 
-          if (playerStats) {
-            updatedRecords[playerId] = playerStats.filter((match) =>
-              relevantMatchIds.has(match.match_id)
-            );
+            if (playerStats) {
+              updatedRecords[playerId] = playerStats.filter((match) =>
+                relevantMatchIds.has(match.match_id)
+              );
+            }
           }
         });
 
@@ -156,21 +171,32 @@ export default function StatisticsBase({
       });
     } else {
       const filteredScheduleIds = new Set(filteredSchedules.map((s) => s.id));
+
       const relevantSeries = series.filter((s) => filteredScheduleIds.has(s.league_schedule_id));
       const relevantSeriesIds = new Set(relevantSeries.map((s) => s.id));
       const filteredMatches = valorantMatches.filter((m) => relevantSeriesIds.has(m.series_id));
       const relevantMatchIds = new Set(filteredMatches.map((m) => m.id));
 
+      const filteredPlayers = valoPlayers.filter((player) =>
+        player.league_schedules?.some((schedule) =>
+          filteredScheduleIds.has(schedule.league_schedule_id!)
+        )
+      );
+
+      const filteredPlayerIds = new Set(filteredPlayers.map((player) => player.id));
+
       setFilteredValoMatchRecords(() => {
         const updatedRecords: Record<string, ValorantMatchesPlayerStats[] | null> = {};
 
         Object.keys(valoPlayerMatchRecord).forEach((playerId) => {
-          const playerStats = valoPlayerMatchRecord[playerId];
+          if (filteredPlayerIds.has(playerId)) {
+            const playerStats = valoPlayerMatchRecord[playerId];
 
-          if (playerStats) {
-            updatedRecords[playerId] = playerStats.filter((match) =>
-              relevantMatchIds.has(match.match_id)
-            );
+            if (playerStats) {
+              updatedRecords[playerId] = playerStats.filter((match) =>
+                relevantMatchIds.has(match.match_id)
+              );
+            }
           }
         });
 
@@ -401,36 +427,42 @@ export default function StatisticsBase({
               newSortOrder === 'asc' ? Number(a.kpg) - Number(b.kpg) : Number(b.kpg) - Number(a.kpg)
             )
           );
+          break;
         case 'dpg':
           setValorantData((prevData) =>
             [...(prevData || [])].sort((a, b) =>
               newSortOrder === 'asc' ? Number(a.dpg) - Number(b.dpg) : Number(b.dpg) - Number(a.dpg)
             )
           );
+          break;
         case 'apg':
           setValorantData((prevData) =>
             [...(prevData || [])].sort((a, b) =>
               newSortOrder === 'asc' ? Number(a.apg) - Number(b.apg) : Number(b.apg) - Number(a.apg)
             )
           );
+          break;
         case 'kpr':
           setValorantData((prevData) =>
             [...(prevData || [])].sort((a, b) =>
               newSortOrder === 'asc' ? Number(a.kpr) - Number(b.kpr) : Number(b.kpr) - Number(a.kpr)
             )
           );
+          break;
         case 'dpr':
           setValorantData((prevData) =>
             [...(prevData || [])].sort((a, b) =>
               newSortOrder === 'asc' ? Number(a.dpr) - Number(b.dpr) : Number(b.dpr) - Number(a.dpr)
             )
           );
+          break;
         case 'apr':
           setValorantData((prevData) =>
             [...(prevData || [])].sort((a, b) =>
               newSortOrder === 'asc' ? Number(a.apr) - Number(b.apr) : Number(b.apr) - Number(a.apr)
             )
           );
+          break;
         case 'k':
           setValorantData((prevData) =>
             [...(prevData || [])].sort((a, b) => (newSortOrder === 'asc' ? a.k - b.k : b.k - a.k))
@@ -670,6 +702,8 @@ export default function StatisticsBase({
                           </span>
                           <span className="text-xs text-neutral-400">
                             {teams.find((t) => t.id === stats.player.team_id)?.school_abbrev!}
+                            &nbsp;
+                            {stats.player.last_name}
                           </span>
                         </div>
                       </td>
@@ -708,7 +742,9 @@ export default function StatisticsBase({
                             {stats.player.ingame_name}
                           </span>
                           <span className="text-xs text-neutral-400">
-                            {teams.find((t) => t.id === stats.player.team_id)?.school_abbrev!}
+                            {teams.find((t) => t.id === stats.player.team_id)?.school_abbrev!}{' '}
+                            &nbsp;
+                            {stats.player.last_name}
                           </span>
                         </div>
                       </td>
