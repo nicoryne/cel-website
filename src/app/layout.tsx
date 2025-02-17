@@ -10,13 +10,16 @@ export const metadata: Metadata = {
   title: 'CESAFI Esports League | We forge legends!',
   description:
     'Stay updated with the latest schedule, standings, and stats of the CESAFI Esports League!',
+  keywords: [
+    'CESAFI Esports League',
+    'esports schedule',
+    'esports standings',
+    'esports stats',
+    'CESAFI',
+    'gaming tournament'
+  ],
   icons: {
-    icon: [
-      {
-        url: 'favicon.ico',
-        href: 'favicon.ico'
-      }
-    ]
+    icon: [{ url: 'favicon.ico', href: 'favicon.ico' }]
   },
   openGraph: {
     title: 'CESAFI Esports League',
@@ -33,7 +36,23 @@ export const metadata: Metadata = {
       }
     ],
     type: 'website'
-  }
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@CESAFIEsports',
+    title: 'CESAFI Esports League',
+    description:
+      'Stay updated with the latest schedule, standings, and stats of the CESAFI Esports League!',
+    images: ['https://cesafiesportsleague.com/banner.jpg']
+  },
+  alternates: {
+    canonical: 'https://cesafiesportsleague.com'
+  },
+  robots: {
+    index: true,
+    follow: true
+  },
+  themeColor: '#16166b'
 };
 
 export default function RootLayout({
