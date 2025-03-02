@@ -19,6 +19,7 @@ export const updateMatchupsAndResults = async (
 ) => {
   const matchups: Record<string, Set<string>> = {};
   const teamResults: Record<string, GroupStanding> = {};
+  const headToHeadWins: Record<string, Record<string, number>> = {};
 
   for (const {
     team_a_id,
@@ -54,6 +55,18 @@ export const updateMatchupsAndResults = async (
       teamResults[team_a_id].losses += 1;
     }
 
+    if (!headToHeadWins[team_a_id]) headToHeadWins[team_a_id] = {};
+    if (!headToHeadWins[team_b_id]) headToHeadWins[team_b_id] = {};
+
+    if (!headToHeadWins[team_a_id][team_b_id]) headToHeadWins[team_a_id][team_b_id] = 0;
+    if (!headToHeadWins[team_b_id][team_a_id]) headToHeadWins[team_b_id][team_a_id] = 0;
+
+    if (team_a_status === 'Win') {
+      headToHeadWins[team_a_id][team_b_id] += 1;
+    } else if (team_b_status === 'Win') {
+      headToHeadWins[team_b_id][team_a_id] += 1;
+    }
+
     if (isValorant) {
       try {
         const [teamARoundDiff, teamBRoundDiff] = await Promise.all([
@@ -81,13 +94,14 @@ export const updateMatchupsAndResults = async (
     }
   }
 
-  return { matchups, teamResults };
+  return { matchups, teamResults, headToHeadWins };
 };
 
 export const getTeamStandings = (
   teamIds: string[],
   teamsList: Team[],
-  teamResults: Record<string, GroupStanding>
+  teamResults: Record<string, GroupStanding>,
+  headToHeadWins: Record<string, Record<string, number>>
 ) => {
   return teamIds
     .map((teamId) => {
@@ -113,6 +127,13 @@ export const getTeamStandings = (
 
       if (b.draws !== a.draws) {
         return b.draws - a.draws;
+      }
+
+      const aWinsOverB = headToHeadWins[a.team?.id || '']?.[b.team?.id || ''] || 0;
+      const bWinsOverA = headToHeadWins[b.team?.id || '']?.[a.team?.id || ''] || 0;
+
+      if (aWinsOverB !== bWinsOverA) {
+        return bWinsOverA - aWinsOverB;
       }
 
       if (b.roundDiff !== a.roundDiff) {

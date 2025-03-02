@@ -54,7 +54,7 @@ const getGroupings = async (
   isValorant: boolean,
   leagueScheduleId: string
 ) => {
-  const { matchups, teamResults } = await updateMatchupsAndResults(
+  const { matchups, teamResults, headToHeadWins } = await updateMatchupsAndResults(
     seriesList,
     isValorant,
     leagueScheduleId
@@ -62,7 +62,12 @@ const getGroupings = async (
 
   const { groupA, groupB } = assignTeamsToGroups(seriesList, matchups);
 
-  return { groupAIds: Array.from(groupA), groupBIds: Array.from(groupB), teamResults };
+  return {
+    groupAIds: Array.from(groupA),
+    groupBIds: Array.from(groupB),
+    teamResults,
+    headToHeadWins
+  };
 };
 
 export default async function GroupstageView({
@@ -75,14 +80,14 @@ export default async function GroupstageView({
   const showRoundDiff =
     leagueSchedule.season_type === 'Season' && leagueSchedule.season_number === 3;
 
-  const { groupAIds, groupBIds, teamResults } = await getGroupings(
+  const { groupAIds, groupBIds, teamResults, headToHeadWins } = await getGroupings(
     seriesList,
     isValorant,
     leagueSchedule.id
   );
 
-  const groupA = getTeamStandings(groupAIds, teamsList, teamResults);
-  const groupB = getTeamStandings(groupBIds, teamsList, teamResults);
+  const groupA = getTeamStandings(groupAIds, teamsList, teamResults, headToHeadWins);
+  const groupB = getTeamStandings(groupBIds, teamsList, teamResults, headToHeadWins);
 
   return (
     <div className="flex flex-col p-4 xl:flex-row">

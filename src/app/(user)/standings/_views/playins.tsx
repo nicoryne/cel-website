@@ -31,8 +31,12 @@ export default async function PlayinsView({
     leagueSchedule.season_type === 'Season' && leagueSchedule.season_number === 3;
 
   const teamIds = getDistinctTeamIds(seriesList);
-  const { teamResults } = await updateMatchupsAndResults(seriesList, isValorant, leagueSchedule.id);
-  let teamStandings = getTeamStandings(teamIds, teamsList, teamResults);
+  const { teamResults, headToHeadWins } = await updateMatchupsAndResults(
+    seriesList,
+    isValorant,
+    leagueSchedule.id
+  );
+  let teamStandings = getTeamStandings(teamIds, teamsList, teamResults, headToHeadWins);
 
   if (teamStandings.length === 1) {
     while (teamStandings.length < 4) {
