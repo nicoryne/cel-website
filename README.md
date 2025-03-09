@@ -4,7 +4,7 @@ CESAFI Esports League website that centralizes information on the games from CES
 
 ## ⏱️ Status
 
-The project is currently **under development**
+The project is currently on v1.0
 
 ## 🚀 Features
 
