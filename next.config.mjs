@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['uqulenyafyepinfweagp.supabase.co']
+    domains: ['uqulenyafyepinfweagp.supabase.co'],
+    unoptimized: true
   },
   webpack: (config) => {
     config.resolve.fallback = { fs: false, path: false, crypto: false };
