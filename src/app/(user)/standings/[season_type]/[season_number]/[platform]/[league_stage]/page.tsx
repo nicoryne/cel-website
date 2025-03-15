@@ -1,8 +1,8 @@
-import { getLeagueScheduleByTypeNumberStage } from '@/api/league-schedule';
-import { getSeriesByLeagueScheduleIdAndGamePlatform } from '@/api/series';
+import { getLeagueScheduleByTypeNumberStage } from '@/services/league-schedule';
+import { getSeriesByLeagueScheduleIdAndGamePlatform } from '@/services/series';
 import GroupstageView from '@/app/(user)/standings/_views/groupstage';
-import { getAllTeams } from '@/api/team';
-import { getAllGamePlatforms, getGamePlatformByAbbrev } from '@/api/game-platform';
+import { getAllTeams } from '@/services/team';
+import { getAllGamePlatforms, getGamePlatformByAbbrev } from '@/services/game-platform';
 import { redirect } from 'next/navigation';
 import PlayinsView from '@/app/(user)/standings/_views/playins';
 import PlayoffsView from '@/app/(user)/standings/_views/playoffs';

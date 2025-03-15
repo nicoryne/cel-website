@@ -14,7 +14,7 @@ import {
   createSeries,
   deleteSeriesById,
   updateSeriesById
-} from '@/api/series';
+} from '@/services/series';
 import SeriesForm from '@/app/(admin)/dashboard/series/_components/form';
 
 export const sortByStartTime = (

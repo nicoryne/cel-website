@@ -6,7 +6,7 @@ import Modal, { ModalProps } from '@/components/ui/modal';
 import PaginationControls from '@/components/admin/pagination';
 import ButtonInsert from '@/app/(admin)/dashboard/_components/button-insert';
 import { addMapToCache, handleInsert } from '@/app/(admin)/dashboard/maps/_components/utils';
-import { getMapsByIndexRange } from '@/api/maps';
+import { getMapsByIndexRange } from '@/services/maps';
 import MapsCard from '@/app/(admin)/dashboard/maps/_components/card';
 
 type MapsClientBaseProps = {

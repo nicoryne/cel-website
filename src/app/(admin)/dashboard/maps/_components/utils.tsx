@@ -1,9 +1,9 @@
-import { createMap, deleteMapById, updateMapById } from '@/api/maps';
+import { createMap, deleteMapById, updateMapById } from '@/services/maps';
 import { ModalProps } from '@/components/ui/modal';
 import { ValorantMap, ValorantMapFormType } from '@/lib/types';
 import React from 'react';
 import ValorantMapForm from '@/app/(admin)/dashboard/maps/_components/form';
-import { deleteFile } from '@/api/utils/storage';
+import { deleteFile } from '@/services/utils/storage';
 import { callModalTemplate } from '@/app/(admin)/dashboard/utils';
 
 export const sortByName = (a: ValorantMap, b: ValorantMap): number => {

@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import MotionComponent from '@/components/ui/motion-component';
-import { getAllPartners } from '@/api/partner';
+import { getAllPartners } from '@/services/partner';
 import Link from 'next/link';
 
 export default async function PartnersSection() {

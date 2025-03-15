@@ -9,7 +9,7 @@ import {
   addPartnerToCache,
   handleInsert
 } from '@/app/(admin)/dashboard/partners/_components/utils';
-import { getPartnersByIndexRange } from '@/api/partner';
+import { getPartnersByIndexRange } from '@/services/partner';
 import PartnersCard from '@/app/(admin)/dashboard/partners/_components/card';
 
 interface PartnersClientBaseProps {

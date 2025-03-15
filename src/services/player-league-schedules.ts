@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/client';
 import { LeagueSchedulePlayers, PlayerLeagueSchedules } from '@/lib/types';
-import { handleError } from '@/api/utils/errorHandler';
+import { handleError } from '@/services/utils/errorHandler';
 
 //====================
 // Player API

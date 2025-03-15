@@ -7,7 +7,7 @@ import PaginationControls from '@/components/admin/pagination';
 import ButtonInsert from '@/app/(admin)/dashboard/_components/button-insert';
 import { addTeamToCache, handleInsert } from '@/app/(admin)/dashboard/teams/_components/utils';
 import TeamsCard from '@/app/(admin)/dashboard/teams/_components/card';
-import { getTeamsByIndexRange } from '@/api/team';
+import { getTeamsByIndexRange } from '@/services/team';
 
 type TeamsClientBaseProps = {
   teamCount: Promise<number | null>;

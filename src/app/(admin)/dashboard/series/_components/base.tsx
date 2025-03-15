@@ -7,7 +7,7 @@ import PaginationControls from '@/components/admin/pagination';
 import ButtonInsert from '@/app/(admin)/dashboard/_components/button-insert';
 import { addSeriesToCache, handleInsert } from '@/app/(admin)/dashboard/series/_components/utils';
 import SeriesCard from '@/app/(admin)/dashboard/series/_components/card';
-import { appendSeriesDetails, getSeriesByIndexRange } from '@/api/series';
+import { appendSeriesDetails, getSeriesByIndexRange } from '@/services/series';
 
 type SeriesClientBaseProps = {
   seriesCount: Promise<number | null>;

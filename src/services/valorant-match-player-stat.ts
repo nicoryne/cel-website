@@ -8,7 +8,7 @@ import {
   ValorantMatchesPlayerStats,
   ValorantCompiledStats
 } from '@/lib/types';
-import { handleError } from '@/api/utils/errorHandler';
+import { handleError } from '@/services/utils/errorHandler';
 
 //====================
 // Valorant Match Player Stat API
@@ -121,20 +121,22 @@ export const getValorantMatchPlayerStatByPlayerId = async (
   return data;
 };
 
-export const getValorantMatchPlayerStatByMatchId = async (match_id: string): Promise<ValorantMatchesPlayerStats[]> => {
+export const getValorantMatchPlayerStatByMatchId = async (
+  match_id: string
+): Promise<ValorantMatchesPlayerStats[]> => {
   const supabase = createClient();
-  const { data, error} = await supabase
+  const { data, error } = await supabase
     .from('valorant_matches_player_stats')
     .select('*')
-    .eq('match_id', match_id)
+    .eq('match_id', match_id);
 
   if (error) {
     handleError(error, 'fetching compiled data stats');
     return [];
   }
 
-  return data
-}
+  return data;
+};
 //========
 // UTILITY
 //========

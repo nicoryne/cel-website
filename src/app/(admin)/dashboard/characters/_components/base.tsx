@@ -17,7 +17,7 @@ import {
   handleInsert,
   handleUpdate
 } from '@/app/(admin)/dashboard/characters/_components/utils';
-import { appendCharacterDetails, getCharactersByIndexRange } from '@/api/characters';
+import { appendCharacterDetails, getCharactersByIndexRange } from '@/services/characters';
 
 type CharactersClientBaseProps = {
   charactersCount: Promise<number | null>;

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import cel_logo from '@/../public/logos/cel.webp';
 import Link from 'next/link';
-import { login } from '@/api/auth';
+import { login } from '@/services/auth';
 import { motion } from 'framer-motion';
 import Loading from '@/components/loading';
 

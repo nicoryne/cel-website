@@ -7,8 +7,8 @@ import {
   LeagueSchedule,
   SeriesWithDetails
 } from '@/lib/types';
-import { handleError } from '@/api/utils/errorHandler';
-import { deleteFile, uploadFile } from '@/api/utils/storage';
+import { handleError } from '@/services/utils/errorHandler';
+import { deleteFile, uploadFile } from '@/services/utils/storage';
 
 //====================
 // Series API
@@ -144,15 +144,15 @@ export const getSeriesByLeagueScheduleIdAndGamePlatform = async (
 
 export const getLatestSeries = async (): Promise<Series | null> => {
   const supabase = createClient();
-  const dateToday = new Date().toISOString();                               
+  const dateToday = new Date().toISOString();
 
   const { data, error } = await supabase
     .from('series')
     .select('*')
-    .lt('start_time', dateToday) 
-    .order('start_time', { ascending: false }) 
+    .lt('start_time', dateToday)
+    .order('start_time', { ascending: false })
     .limit(1)
-    .single(); 
+    .single();
 
   if (error) {
     handleError(error, 'fetching latest past series');
@@ -161,7 +161,6 @@ export const getLatestSeries = async (): Promise<Series | null> => {
 
   return data as Series;
 };
-
 
 //========
 // UTILITY

@@ -1,4 +1,4 @@
-import { getLatestLeagueSchedule } from '@/api/league-schedule';
+import { getLatestLeagueSchedule } from '@/services/league-schedule';
 import { redirect } from 'next/navigation';
 
 export default async function StandingsPage() {

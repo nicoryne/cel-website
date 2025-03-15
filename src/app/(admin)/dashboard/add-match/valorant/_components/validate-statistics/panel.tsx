@@ -19,15 +19,15 @@ import {
   getPlayerByTeamAndName,
   getPlayersByTeam,
   getPlayersByTeamAndPlatform
-} from '@/api/player'; // Assume this API exists
+} from '@/services/player'; // Assume this API exists
 import PlayerStatsTable from '@/app/(admin)/dashboard/add-match/valorant/_components/validate-statistics/table';
-import { getCharactersByGamePlatform } from '@/api/characters';
-import { createValorantMatch } from '@/api/valorant-match';
-import { createValorantMatchPlayerStat } from '@/api/valorant-match-player-stat';
+import { getCharactersByGamePlatform } from '@/services/characters';
+import { createValorantMatch } from '@/services/valorant-match';
+import { createValorantMatchPlayerStat } from '@/services/valorant-match-player-stat';
 import { useRouter } from 'next/navigation';
-import { getSeriesById, updateSeriesById } from '@/api/series';
-import { getLeagueScheduleById } from '@/api/league-schedule';
-import { getGamePlatformById } from '@/api/game-platform';
+import { getSeriesById, updateSeriesById } from '@/services/series';
+import { getLeagueScheduleById } from '@/services/league-schedule';
+import { getGamePlatformById } from '@/services/game-platform';
 import { SeriesType } from '@/lib/enums';
 
 type ValidatePlayerStatisticsProps = {

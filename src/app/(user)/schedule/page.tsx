@@ -1,10 +1,10 @@
 import { Suspense } from 'react';
 import ScheduleBase from '@/app/(user)/schedule/_components/schedule-base';
 import Loading from '@/components/loading';
-import { getAllGamePlatforms } from '@/api/game-platform';
-import { getSeriesByIndexRange } from '@/api/series';
-import { getAllTeams } from '@/api/team';
-import { getAllLeagueSchedules } from '@/api/league-schedule';
+import { getAllGamePlatforms } from '@/services/game-platform';
+import { getSeriesByIndexRange } from '@/services/series';
+import { getAllTeams } from '@/services/team';
+import { getAllLeagueSchedules } from '@/services/league-schedule';
 
 export default function SchedulePage() {
   const series = getSeriesByIndexRange(0, 200);

@@ -1,9 +1,9 @@
-import { getAllCharacters } from '@/api/characters';
-import { getAllGamePlatforms } from '@/api/game-platform';
-import { getAllLeagueSchedules } from '@/api/league-schedule';
-import { getAllMaps } from '@/api/maps';
-import { getAllSeries } from '@/api/series';
-import { getAllTeams } from '@/api/team';
+import { getAllCharacters } from '@/services/characters';
+import { getAllGamePlatforms } from '@/services/game-platform';
+import { getAllLeagueSchedules } from '@/services/league-schedule';
+import { getAllMaps } from '@/services/maps';
+import { getAllSeries } from '@/services/series';
+import { getAllTeams } from '@/services/team';
 import ValorantMultiStepBase from '@/app/(admin)/dashboard/add-match/valorant/_components/base';
 
 export default function AddMatchValorantPage() {

@@ -10,7 +10,7 @@ import {
   handleInsert
 } from '@/app/(admin)/dashboard/platforms/_components/utils';
 import GamePlatformsCard from '@/app/(admin)/dashboard/platforms/_components/card';
-import { getGamePlatformsByIndexRange } from '@/api/game-platform';
+import { getGamePlatformsByIndexRange } from '@/services/game-platform';
 
 type GamePlatformsClientBaseProps = {
   platformCount: Promise<number | null>;

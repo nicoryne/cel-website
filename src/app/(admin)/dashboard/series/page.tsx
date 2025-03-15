@@ -1,7 +1,7 @@
-import { getAllLeagueSchedules } from '@/api/league-schedule';
-import { getAllGamePlatforms } from '@/api/game-platform';
-import { getAllTeams } from '@/api/team';
-import { getSeriesCount } from '@/api/series';
+import { getAllLeagueSchedules } from '@/services/league-schedule';
+import { getAllGamePlatforms } from '@/services/game-platform';
+import { getAllTeams } from '@/services/team';
+import { getSeriesCount } from '@/services/series';
 import { Suspense } from 'react';
 import SeriesClientBase from '@/app/(admin)/dashboard/series/_components/base';
 import Loading from '@/components/loading';

@@ -1,6 +1,6 @@
 import { Series, Team } from '@/lib/types';
-import { getTeamRoundDiff } from '@/api/valorant-match';
-import { getVictoryAverageMatchDuration } from '@/api/mlbb-match';
+import { getTeamRoundDiff } from '@/services/valorant-match';
+import { getVictoryAverageMatchDuration } from '@/services/mlbb-match';
 
 export interface GroupStanding {
   team?: Team | undefined;

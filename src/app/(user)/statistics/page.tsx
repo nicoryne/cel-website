@@ -1,17 +1,17 @@
-import { getAllCharacters } from '@/api/characters';
-import { getAllGamePlatforms } from '@/api/game-platform';
-import { getAllMlbbMatches } from '@/api/mlbb-match';
-import { getAllPlayers } from '@/api/player';
-import { getAllTeams } from '@/api/team';
-import { getAllValorantMatches } from '@/api/valorant-match';
+import { getAllCharacters } from '@/services/characters';
+import { getAllGamePlatforms } from '@/services/game-platform';
+import { getAllMlbbMatches } from '@/services/mlbb-match';
+import { getAllPlayers } from '@/services/player';
+import { getAllTeams } from '@/services/team';
+import { getAllValorantMatches } from '@/services/valorant-match';
 import StatisticsBase from './_components/statistics-base';
 import { Suspense } from 'react';
 import Loading from '@/components/loading';
-import { getAllLeagueSchedules } from '@/api/league-schedule';
+import { getAllLeagueSchedules } from '@/services/league-schedule';
 import { MlbbMatchesPlayerStats, ValorantMatchesPlayerStats } from '@/lib/types';
-import { getMlbbMatchPlayerStatByPlayerId } from '@/api/mlbb-match-player-stat';
-import { getValorantMatchPlayerStatByPlayerId } from '@/api/valorant-match-player-stat';
-import { getAllSeries } from '@/api/series';
+import { getMlbbMatchPlayerStatByPlayerId } from '@/services/mlbb-match-player-stat';
+import { getValorantMatchPlayerStatByPlayerId } from '@/services/valorant-match-player-stat';
+import { getAllSeries } from '@/services/series';
 
 export default async function StatisticsPage() {
   const platforms = await getAllGamePlatforms();

@@ -5,8 +5,8 @@ import {
   getCharacterByName,
   getCharactersByIndexRange,
   updateCharacterById
-} from '@/api/characters';
-import { getAllGamePlatforms } from '@/api/game-platform';
+} from '@/services/characters';
+import { getAllGamePlatforms } from '@/services/game-platform';
 import { ModalProps } from '@/components/ui/modal';
 import { Character, CharacterWithDetails, GamePlatform } from '@/lib/types';
 import CharactersForm from '@/app/(admin)/dashboard/characters/_components/form';

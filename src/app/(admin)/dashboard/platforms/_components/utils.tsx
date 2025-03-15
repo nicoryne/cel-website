@@ -2,12 +2,12 @@ import {
   createGamePlatform,
   deleteGamePlatformById,
   updateGamePlatformById
-} from '@/api/game-platform';
+} from '@/services/game-platform';
 import { ModalProps } from '@/components/ui/modal';
 import { GamePlatform, GamePlatformFormType } from '@/lib/types';
 import React from 'react';
 import GamePlatformForm from '@/app/(admin)/dashboard/platforms/_components/form';
-import { deleteFile } from '@/api/utils/storage';
+import { deleteFile } from '@/services/utils/storage';
 import { callModalTemplate } from '@/app/(admin)/dashboard/utils';
 
 export const sortByName = (a: GamePlatform, b: GamePlatform): number => {

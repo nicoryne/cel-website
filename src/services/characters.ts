@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/client';
 import { Character, CharacterWithDetails, GamePlatform } from '@/lib/types';
-import { handleError } from '@/api/utils/errorHandler';
-import { getGamePlatformById } from '@/api/game-platform';
+import { handleError } from '@/services/utils/errorHandler';
+import { getGamePlatformById } from '@/services/game-platform';
 
 //==================
 // Character API

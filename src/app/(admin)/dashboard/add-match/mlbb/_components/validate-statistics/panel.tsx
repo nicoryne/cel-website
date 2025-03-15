@@ -14,16 +14,16 @@ import {
   SeriesFormType,
   Team
 } from '@/lib/types';
-import { getPlayersByTeamAndPlatform } from '@/api/player';
+import { getPlayersByTeamAndPlatform } from '@/services/player';
 import PlayerStatsTable from '@/app/(admin)/dashboard/add-match/mlbb/_components/validate-statistics/table';
-import { getCharactersByGamePlatform } from '@/api/characters';
+import { getCharactersByGamePlatform } from '@/services/characters';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { createMlbbMatch } from '@/api/mlbb-match';
-import { createMlbbMatchPlayerStat } from '@/api/mlbb-match-player-stat';
-import { getSeriesById, updateSeriesById } from '@/api/series';
-import { getLeagueScheduleById } from '@/api/league-schedule';
-import { getGamePlatformById } from '@/api/game-platform';
+import { createMlbbMatch } from '@/services/mlbb-match';
+import { createMlbbMatchPlayerStat } from '@/services/mlbb-match-player-stat';
+import { getSeriesById, updateSeriesById } from '@/services/series';
+import { getLeagueScheduleById } from '@/services/league-schedule';
+import { getGamePlatformById } from '@/services/game-platform';
 import { SeriesType } from '@/lib/enums';
 
 type ValidatePlayerStatisticsProps = {

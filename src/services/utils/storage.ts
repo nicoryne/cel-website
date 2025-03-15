@@ -1,10 +1,12 @@
 import { createClient } from '@/lib/supabase/client';
-import { handleError } from '@/api/utils/errorHandler';
+import { handleError } from '@/services/utils/errorHandler';
 
 export const getSignedUrl = async (filePath: string, fileName: string): Promise<string | null> => {
   const supabase = createClient();
   const signedURLTime = 60 * 60 * 24 * 365;
-  const { data, error } = await supabase.storage.from(filePath).createSignedUrl(fileName, signedURLTime);
+  const { data, error } = await supabase.storage
+    .from(filePath)
+    .createSignedUrl(fileName, signedURLTime);
 
   if (error) {
     handleError(error, 'creating signed url');

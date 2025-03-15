@@ -9,7 +9,7 @@ import {
 } from '@/lib/types';
 import React from 'react';
 import PlayerForm from '@/app/(admin)/dashboard/players/_components/form';
-import { deleteFile } from '@/api/utils/storage';
+import { deleteFile } from '@/services/utils/storage';
 import { callModalTemplate } from '@/app/(admin)/dashboard/utils';
 import {
   appendPlayerDetails,
@@ -18,7 +18,7 @@ import {
   doesPlayerExist,
   getPlayerByName,
   updatePlayerById
-} from '@/api/player';
+} from '@/services/player';
 
 export const sortBySchoolPlayerName = (a: PlayerWithDetails, b: PlayerWithDetails): number => {
   if (a.team?.id && b.team?.id && a.team.id !== b.team.id) {

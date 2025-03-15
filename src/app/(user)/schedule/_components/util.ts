@@ -1,6 +1,6 @@
 import { GamePlatform, LeagueSchedule, Series, SeriesWithDetails, Team } from '@/lib/types';
 import { FilterState } from '@/app/(user)/schedule/_components/types';
-import { appendSeriesDetails } from '@/api/series';
+import { appendSeriesDetails } from '@/services/series';
 import { sortByStartTime } from '@/app/(admin)/dashboard/series/_components/utils';
 
 const reduceSeriesByDate = (list: SeriesWithDetails[]) => {

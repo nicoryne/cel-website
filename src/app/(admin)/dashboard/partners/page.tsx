@@ -1,4 +1,4 @@
-import { getPartnerCount } from '@/api/partner';
+import { getPartnerCount } from '@/services/partner';
 import Loading from '@/components/loading';
 import { Suspense } from 'react';
 import PartnersClientBase from './_components/base';

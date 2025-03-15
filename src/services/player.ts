@@ -1,11 +1,11 @@
 import { createClient } from '@/lib/supabase/client';
 import { GamePlatform, Player, PlayerFormType, Team } from '@/lib/types';
-import { handleError } from '@/api/utils/errorHandler';
-import { deleteFile, uploadFile } from '@/api/utils/storage';
+import { handleError } from '@/services/utils/errorHandler';
+import { deleteFile, uploadFile } from '@/services/utils/storage';
 import {
   createPlayerLeagueSchedule,
   getPlayerLeagueSchedulesByPlayer
-} from '@/api/player-league-schedules';
+} from '@/services/player-league-schedules';
 
 //====================
 // Player API

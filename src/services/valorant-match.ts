@@ -6,7 +6,7 @@ import {
   ValorantMatchWithDetails,
   Series
 } from '@/lib/types';
-import { handleError } from '@/api/utils/errorHandler';
+import { handleError } from '@/services/utils/errorHandler';
 
 //====================
 // Valorant Match API

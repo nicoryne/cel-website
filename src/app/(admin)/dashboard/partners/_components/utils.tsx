@@ -1,9 +1,9 @@
-import { createPartner, deletePartnerById, updatePartnerById } from '@/api/partner';
+import { createPartner, deletePartnerById, updatePartnerById } from '@/services/partner';
 import { ModalProps } from '@/components/ui/modal';
 import { Partner, PartnerFormType } from '@/lib/types';
 import React from 'react';
 import PartnerForm from '@/app/(admin)/dashboard/partners/_components/form';
-import { deleteFile } from '@/api/utils/storage';
+import { deleteFile } from '@/services/utils/storage';
 import { callModalTemplate } from '@/app/(admin)/dashboard/utils';
 
 export const sortByName = (a: Partner, b: Partner): number => {

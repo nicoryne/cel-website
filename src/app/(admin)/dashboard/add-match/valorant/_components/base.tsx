@@ -22,8 +22,8 @@ import MatchDetailsForm from '@/app/(admin)/dashboard/add-match/valorant/_compon
 import UploadPlayerStatisticsPanel from '@/app/(admin)/dashboard/add-match/valorant/_components/upload-image/panel';
 import ValidatePlayerStatisticsPanel from '@/app/(admin)/dashboard/add-match/valorant/_components/validate-statistics/panel';
 import ChooseSeries from '@/app/(admin)/dashboard/add-match/valorant/_components/choose-series/panel';
-import { appendSeriesDetails } from '@/api/series';
-import { doesValorantMatchExist } from '@/api/valorant-match';
+import { appendSeriesDetails } from '@/services/series';
+import { doesValorantMatchExist } from '@/services/valorant-match';
 
 const steps = [
   { id: 1, name: 'Choose Series' },

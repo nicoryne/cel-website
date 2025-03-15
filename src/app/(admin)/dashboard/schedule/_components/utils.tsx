@@ -2,7 +2,7 @@ import {
   createLeagueSchedule,
   deleteLeagueScheduleById,
   updateLeagueScheduleById
-} from '@/api/league-schedule';
+} from '@/services/league-schedule';
 import { ModalProps } from '@/components/ui/modal';
 import { LeagueSchedule } from '@/lib/types';
 import React from 'react';

@@ -7,7 +7,7 @@ import {
   ValorantMatchWithDetails
 } from '@/lib/types';
 import React from 'react';
-import { getTeamById } from '@/api/team';
+import { getTeamById } from '@/services/team';
 import Image from 'next/image';
 import { CalendarIcon, ClockIcon } from '@heroicons/react/16/solid';
 import not_found from '@/../../public/images/not-found.webp';

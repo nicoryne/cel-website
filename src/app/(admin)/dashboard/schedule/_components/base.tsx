@@ -13,7 +13,7 @@ import {
   handleInsert,
   handleUpdate
 } from '@/app/(admin)/dashboard/schedule/_components/utils';
-import { getLeagueSchedulesByIndexRange } from '@/api/league-schedule';
+import { getLeagueSchedulesByIndexRange } from '@/services/league-schedule';
 
 type ScheduleClientBaseProps = {
   scheduleCount: Promise<number | null>;

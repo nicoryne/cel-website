@@ -19,8 +19,8 @@ import { mlbbHeaders, valoHeaders } from '@/app/(user)/statistics/_components/he
 import Image from 'next/image';
 import { Suspense, useEffect, useState } from 'react';
 import { ArrowsUpDownIcon } from '@heroicons/react/24/solid';
-import { getMlbbCompiledStatsByPlayer } from '@/api/mlbb-match-player-stat';
-import { getValorantMatchPlayerStatByPlayerId } from '@/api/valorant-match-player-stat';
+import { getMlbbCompiledStatsByPlayer } from '@/services/mlbb-match-player-stat';
+import { getValorantMatchPlayerStatByPlayerId } from '@/services/valorant-match-player-stat';
 import { processMlbbStats, processValorantStats } from './utils';
 import Loading from '@/components/loading';
 

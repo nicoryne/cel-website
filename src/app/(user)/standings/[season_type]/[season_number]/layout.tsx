@@ -3,8 +3,8 @@ import { ChevronDoubleRightIcon } from '@heroicons/react/20/solid';
 import StageLinks from '@/app/(user)/standings/_components/stage-links';
 import PlatformLinks from '@/app/(user)/standings/_components/platform-links';
 import Loading from '@/components/loading';
-import { getLeagueStageByTypeAndNumber } from '@/api/league-schedule';
-import { getAllGamePlatforms } from '@/api/game-platform';
+import { getLeagueStageByTypeAndNumber } from '@/services/league-schedule';
+import { getAllGamePlatforms } from '@/services/game-platform';
 
 interface SeasonStandingsLayoutProps {
   params: {

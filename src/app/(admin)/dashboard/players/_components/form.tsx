@@ -3,7 +3,7 @@ import React from 'react';
 import Image from 'next/image';
 import { GamePlatform, LeagueSchedule, PlayerFormType, PlayerWithDetails, Team } from '@/lib/types';
 import not_found from '@/../../public/images/not-found.webp';
-import { fetchImage } from '@/api/utils/storage';
+import { fetchImage } from '@/services/utils/storage';
 import { motion } from 'framer-motion';
 import { Roles } from '@/lib/enums';
 

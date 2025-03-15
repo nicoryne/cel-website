@@ -1,7 +1,7 @@
 'use client';
 import { Series, Team, ValorantMap, ValorantMatchWithDetails } from '@/lib/types';
 import React from 'react';
-import { getTeamById } from '@/api/team';
+import { getTeamById } from '@/services/team';
 import Image from 'next/image';
 import { CalendarIcon, ClockIcon } from '@heroicons/react/16/solid';
 import not_found from '@/../../public/images/not-found.webp';
@@ -11,9 +11,16 @@ type MatchDetailsFormProps = {
   seriesList: Series[];
   mapList: ValorantMap[];
   matchInfo: Partial<ValorantMatchWithDetails>;
-  updateMatchInfo: (field: keyof ValorantMatchWithDetails, value: string | number | Series | ValorantMap) => void;
+  updateMatchInfo: (
+    field: keyof ValorantMatchWithDetails,
+    value: string | number | Series | ValorantMap
+  ) => void;
 };
-export default function MatchDetailsForm({ mapList, matchInfo, updateMatchInfo }: MatchDetailsFormProps) {
+export default function MatchDetailsForm({
+  mapList,
+  matchInfo,
+  updateMatchInfo
+}: MatchDetailsFormProps) {
   const mapIndex = matchInfo.map ? mapList.findIndex((map) => map.id === matchInfo.map?.id) + 1 : 1;
   const secondsInitial = matchInfo.match_duration?.split(':')[1];
   const minutesInitial = matchInfo.match_duration?.split(':')[0];
@@ -108,7 +115,11 @@ export default function MatchDetailsForm({ mapList, matchInfo, updateMatchInfo }
                 {matchInfo?.map?.name}
               </span>
             </div>
-            <PaginationControls currentPage={currentPage} totalPages={mapList.length} setCurrentPage={setCurrentPage} />
+            <PaginationControls
+              currentPage={currentPage}
+              totalPages={mapList.length}
+              setCurrentPage={setCurrentPage}
+            />
           </div>
         </div>
         <div className="flex flex-1 px-8">
@@ -124,7 +135,13 @@ export default function MatchDetailsForm({ mapList, matchInfo, updateMatchInfo }
                     height={100}
                   />
                 ) : (
-                  <Image className="rounded-full" src={not_found} alt={'Not Found Picture'} height={100} width={100} />
+                  <Image
+                    className="rounded-full"
+                    src={not_found}
+                    alt={'Not Found Picture'}
+                    height={100}
+                    width={100}
+                  />
                 )}
                 <figcaption className="rounded bg-neutral-800 px-4 py-1 text-xs font-semibold text-neutral-300">
                   {teams.team_a?.school_abbrev}
@@ -212,7 +229,13 @@ export default function MatchDetailsForm({ mapList, matchInfo, updateMatchInfo }
                     height={100}
                   />
                 ) : (
-                  <Image className="rounded-full" src={not_found} alt={'Not Found Picture'} height={100} width={100} />
+                  <Image
+                    className="rounded-full"
+                    src={not_found}
+                    alt={'Not Found Picture'}
+                    height={100}
+                    width={100}
+                  />
                 )}
                 <figcaption className="rounded bg-neutral-800 px-4 py-1 text-xs font-semibold text-neutral-300">
                   {teams.team_b?.school_abbrev}

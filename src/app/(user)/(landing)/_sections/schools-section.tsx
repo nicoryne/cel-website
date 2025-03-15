@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { getAllTeams } from '@/api/team';
+import { getAllTeams } from '@/services/team';
 import MotionComponent from '@/components/ui/motion-component';
 
 const fetchTeams = async () => {

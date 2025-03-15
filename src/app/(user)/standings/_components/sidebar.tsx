@@ -1,8 +1,8 @@
-import { getAllLeagueSchedules } from '@/api/league-schedule';
+import { getAllLeagueSchedules } from '@/services/league-schedule';
 import { SeasonInfo } from '@/lib/types';
 import SeasonItem from '@/app/(user)/standings/_components/season-item';
 import SeasonAccordion from './season-accordion';
-import { getAllGamePlatforms } from '@/api/game-platform';
+import { getAllGamePlatforms } from '@/services/game-platform';
 import Dropdown from '@/components/ui/dropdown';
 
 export default async function StandingSidebar() {

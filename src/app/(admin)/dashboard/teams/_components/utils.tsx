@@ -1,9 +1,9 @@
-import { createTeam, deleteTeamById, updateTeamById } from '@/api/team';
+import { createTeam, deleteTeamById, updateTeamById } from '@/services/team';
 import { ModalProps } from '@/components/ui/modal';
 import { Team, TeamFormType } from '@/lib/types';
 import React from 'react';
 import TeamForm from '@/app/(admin)/dashboard/teams/_components/form';
-import { deleteFile } from '@/api/utils/storage';
+import { deleteFile } from '@/services/utils/storage';
 import { callModalTemplate } from '@/app/(admin)/dashboard/utils';
 
 export const sortByName = (a: Team, b: Team): number => {

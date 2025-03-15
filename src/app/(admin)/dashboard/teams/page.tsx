@@ -1,4 +1,4 @@
-import { getTeamCount } from '@/api/team';
+import { getTeamCount } from '@/services/team';
 import TeamsClientBase from '@/app/(admin)/dashboard/teams/_components/base';
 import Loading from '@/components/loading';
 import { Suspense } from 'react';

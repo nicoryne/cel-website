@@ -13,7 +13,7 @@ import {
   handleInsert,
   handleUpdate
 } from '@/app/(admin)/dashboard/players/_components/utils';
-import { appendPlayerDetails, getPlayersByIndexRange } from '@/api/player';
+import { appendPlayerDetails, getPlayersByIndexRange } from '@/services/player';
 import InputSearch from '@/components/admin/input-search';
 import Image from 'next/image';
 import ButtonUpdate from '@/app/(admin)/dashboard/_components/button-update';

@@ -1,4 +1,4 @@
-import { getLatestLeagueSchedule } from '@/api/league-schedule';
+import { getLatestLeagueSchedule } from '@/services/league-schedule';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { type NextRequest, NextResponse } from 'next/server';
 
@@ -23,7 +23,9 @@ export const updateSession = async (request: NextRequest) => {
             response = NextResponse.next({
               request
             });
-            cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+            cookiesToSet.forEach(({ name, value, options }) =>
+              response.cookies.set(name, value, options)
+            );
           }
         }
       }
