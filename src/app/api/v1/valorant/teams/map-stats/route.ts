@@ -17,10 +17,10 @@ interface TeamStat {
 }
 
 interface ValorantMatchStat {
-  valorant_maps: { name: any };
+  valorant_maps: { name: string };
   series: {
-    team_a: { school_abbrev: any };
-    team_b: { school_abbrev: any };
+    team_a: { school_abbrev: string };
+    team_b: { school_abbrev: string };
   };
   team_a_status: any;
   team_b_status: any;
@@ -63,7 +63,7 @@ export async function GET(): Promise<Response> {
   };
 
   try {
-    const { data, error } = await supabase
+    const { data, error } = (await supabase
       .from('valorant_matches')
       .select(
         `team_a_status,
@@ -79,7 +79,7 @@ export async function GET(): Promise<Response> {
         'eeeca5ef-5fc8-4077-937b-8db91acda6b4',
         'bb9a49cb-305e-4e53-8ed6-cd8c18cd807c',
         '7cbe290b-2f8c-4963-b118-4ecee10eb31a'
-      ]);
+      ])) as unknown as { data: ValorantMatchStat[] | null; error: any };
 
     console.log(data);
     if (error) {
