@@ -75,21 +75,24 @@ export async function GET(): Promise<Response> {
         team_b:teams!team_b_id (school_abbrev)
         )`
       )
-      .eq('series.league_schedule.id', 'eeeca5ef-5fc8-4077-937b-8db91acda6b4')
-      .eq('series.league_schedule_id', 'bb9a49cb-305e-4e53-8ed6-cd8c18cd807c')
-      .eq('series.league_schedule_id', '7cbe290b-2f8c-4963-b118-4ecee10eb31a');
+      .in('series.league_schedule.id', [
+        'eeeca5ef-5fc8-4077-937b-8db91acda6b4',
+        'bb9a49cb-305e-4e53-8ed6-cd8c18cd807c',
+        '7cbe290b-2f8c-4963-b118-4ecee10eb31a'
+      ]);
 
+    console.log(data);
     if (error) {
       throw error;
     }
 
     if (data) {
       data.map((match) => {
-        const mapName = match.valorant_maps[0].name;
+        const mapName = match.valorant_maps.name;
 
-        const teamA = match.series[0].team_a[0].school_abbrev;
+        const teamA = match.series.team_a.school_abbrev;
         const teamAStatus = match.team_a_status;
-        const teamB = match.series[0].team_b[0].school_abbrev;
+        const teamB = match.series.team_b.school_abbrev;
         const teamBStatus = match.team_b_status;
 
         if (mapName && teamA && teamAStatus) {
