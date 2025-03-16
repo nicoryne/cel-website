@@ -1,6 +1,7 @@
 import { Series, Team } from '@/lib/types';
 import { getTeamRoundDiff } from '@/services/valorant-match';
 import { getVictoryAverageMatchDuration } from '@/services/mlbb-match';
+import { group } from 'console';
 
 export interface GroupStanding {
   team?: Team | undefined;
@@ -100,9 +101,8 @@ export const updateMatchupsAndResults = async (
 export const getTeamStandings = (
   teamIds: string[],
   teamsList: Team[],
-  teamResults: Record<string, GroupStanding>,
-  headToHeadWins: Record<string, Record<string, number>>
-) => {
+  teamResults: Record<string, GroupStanding>
+): GroupStanding[] => {
   return teamIds
     .map((teamId) => {
       const team = teamsList.find((t) => t.id === teamId);
@@ -117,41 +117,85 @@ export const getTeamStandings = (
       };
     })
     .sort((a, b) => {
-      if (b.wins !== a.wins) {
-        return b.wins - a.wins;
-      }
+      return b.points - a.points;
+    });
+};
 
-      if (b.losses !== a.losses) {
-        return a.losses - b.losses;
-      }
+export const resolveTieBreakers = (
+  groupStanding: GroupStanding[],
+  headToHeadWins: Record<string, Record<string, number>>,
+  tiedPoints: number[]
+): GroupStanding[] => {
+  const tiedTeams = groupStanding.filter(({ points }) => tiedPoints.includes(points));
+  const nonTiedTeams = groupStanding.filter(({ points }) => !tiedPoints.includes(points));
 
-      if (b.draws !== a.draws) {
-        return b.draws - a.draws;
-      }
+  const headToHeadPoints: Record<string, number> = tiedTeams.reduce(
+    (acc, team) => {
+      const teamId = team.team?.id || '';
+      acc[teamId] = tiedTeams.reduce((total, opponent) => {
+        const opponentId = opponent.team?.id || '';
+        if (teamId !== opponentId) {
+          total += headToHeadWins[teamId]?.[opponentId] || 0;
+        }
+        return total;
+      }, 0);
+      return acc;
+    },
+    {} as Record<string, number>
+  );
 
-      const aWinsOverB = headToHeadWins[a.team?.id || '']?.[b.team?.id || ''] || 0;
-      const bWinsOverA = headToHeadWins[b.team?.id || '']?.[a.team?.id || ''] || 0;
+  const getSeconds = (duration: string) => {
+    const [minutes, seconds] = duration.split(':').map(Number);
+    return minutes * 60 + seconds;
+  };
 
-      if (aWinsOverB !== bWinsOverA) {
-        return bWinsOverA - aWinsOverB;
-      }
+  const resolvedTiedTeams = tiedTeams.sort((a, b) => {
+    const teamA = a.team?.id || '';
+    const teamB = b.team?.id || '';
 
-      if (b.roundDiff !== a.roundDiff) {
-        return b.roundDiff - a.roundDiff;
-      }
+    const headToHeadA = headToHeadPoints[teamA] || 0;
+    const headToHeadB = headToHeadPoints[teamB] || 0;
 
-      const getSeconds = (duration: string) => {
-        const [minutes, seconds] = duration.split(':').map(Number);
-        return minutes * 60 + seconds;
-      };
+    if (headToHeadA !== headToHeadB) {
+      return headToHeadB - headToHeadA;
+    }
 
+    if (a.roundDiff && b.roundDiff) {
+      const roundDiffA = a.roundDiff || 0;
+      const roundDiffB = b.roundDiff || 0;
+
+      return roundDiffB - roundDiffA;
+    }
+
+    if (a.matchDuration && b.matchDuration) {
       const durationA = getSeconds(a.matchDuration);
       const durationB = getSeconds(b.matchDuration);
 
-      if (durationA !== durationB) {
-        return durationA - durationB;
-      }
+      return durationA - durationB;
+    }
 
-      return (a.team?.school_abbrev || '').localeCompare(b.team?.school_abbrev || '');
-    });
+    return b.points - a.points;
+  });
+
+  return [...nonTiedTeams, ...resolvedTiedTeams].sort((a, b) => b.points - a.points);
+};
+
+export const checkTie = (groupStanding: GroupStanding[]) => {
+  const pointsFrequency: Record<number, number> = {};
+  const tiedPoints: number[] = [];
+
+  groupStanding.forEach(({ points }) => {
+    pointsFrequency[points] = (pointsFrequency[points] || 0) + 1;
+  });
+
+  for (const [point, count] of Object.entries(pointsFrequency)) {
+    if (count > 1) {
+      tiedPoints.push(Number(point));
+    }
+  }
+
+  return {
+    hasTie: tiedPoints.length > 0,
+    tiedPoints
+  };
 };

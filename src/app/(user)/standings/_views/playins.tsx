@@ -1,5 +1,10 @@
 import { GamePlatform, LeagueSchedule, Series, Team } from '@/lib/types';
-import { getTeamStandings, updateMatchupsAndResults } from '@/app/(user)/standings/_views/utils';
+import {
+  checkTie,
+  getTeamStandings,
+  resolveTieBreakers,
+  updateMatchupsAndResults
+} from '@/app/(user)/standings/_views/utils';
 import GroupTable from '@/app/(user)/standings/_components/group-table';
 
 interface GroupstageViewProps {
@@ -36,7 +41,14 @@ export default async function PlayinsView({
     isValorant,
     leagueSchedule.id
   );
-  let teamStandings = getTeamStandings(teamIds, teamsList, teamResults, headToHeadWins);
+
+  let teamStandings = getTeamStandings(teamIds, teamsList, teamResults);
+
+  const { hasTie, tiedPoints } = checkTie(teamStandings);
+
+  if (hasTie) {
+    teamStandings = resolveTieBreakers(teamStandings, headToHeadWins, tiedPoints);
+  }
 
   if (teamStandings.length === 1) {
     while (teamStandings.length < 4) {

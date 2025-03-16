@@ -1,6 +1,11 @@
 import { GamePlatform, LeagueSchedule, Series, Team } from '@/lib/types';
 import GroupTable from '@/app/(user)/standings/_components/group-table';
-import { getTeamStandings, updateMatchupsAndResults } from '@/app/(user)/standings/_views/utils';
+import {
+  checkTie,
+  getTeamStandings,
+  resolveTieBreakers,
+  updateMatchupsAndResults
+} from '@/app/(user)/standings/_views/utils';
 
 interface GroupstageViewProps {
   seriesList: Series[];
@@ -86,9 +91,25 @@ export default async function GroupstageView({
     leagueSchedule.id
   );
 
-  const groupA = getTeamStandings(groupAIds, teamsList, teamResults, headToHeadWins);
-  const groupB = getTeamStandings(groupBIds, teamsList, teamResults, headToHeadWins);
+  let groupA = getTeamStandings(groupAIds, teamsList, teamResults);
 
+  if (groupA) {
+    const { hasTie, tiedPoints } = checkTie(groupA);
+
+    if (hasTie) {
+      groupA = resolveTieBreakers(groupA, headToHeadWins, tiedPoints);
+    }
+  }
+
+  let groupB = getTeamStandings(groupBIds, teamsList, teamResults);
+
+  if (groupB) {
+    const { hasTie, tiedPoints } = checkTie(groupB);
+
+    if (hasTie) {
+      groupB = resolveTieBreakers(groupB, headToHeadWins, tiedPoints);
+    }
+  }
   return (
     <div className="flex flex-col p-4 xl:flex-row">
       <div className="w-full p-2 pt-4 xl:w-1/2">
